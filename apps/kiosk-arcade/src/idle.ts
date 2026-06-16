@@ -4,6 +4,7 @@
 import { navigate, getCurrentRoute } from "@pq/router";
 
 export function wireInactivityTimeout(getMs: () => number): void {
+  // idle timer handle; null when not scheduled
   let timer: number | null = null;
 
   const reset = (): void => {
