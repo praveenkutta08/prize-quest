@@ -1,0 +1,10 @@
+{
+  "name": "@pq/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared TypeScript base config for the Prize Quest workspace.",
+  "files": ["base.json"],
+  "exports": {
+    "./base.json": "./base.json"
+  }
+}

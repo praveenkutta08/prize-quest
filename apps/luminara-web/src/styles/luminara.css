@@ -1,0 +1,72 @@
+/*
+ * Luminara Twilight tokens — pasted from luminara-web-design-system.md Appendix A.
+ * Twilight only (no [data-theme="daylight"] block — out of scope this session).
+ *
+ * These are the host's OWN semantic variables (--midnight, --amber, …) used by the
+ * Luminara chrome (sidebar, reco cards, sign-in). The embedded Prize Quest reads a
+ * parallel --pq-* set written by @pq/tokens when the 'luminara' tenant activates;
+ * both sets coexist on :root and resolve to the same hex values.
+ */
+:root {
+  /* Twilight (default) — canvas, surface, text */
+  --midnight: #0b0d17;
+  --night: #10131f;
+  --obsidian: #1a1e2e;
+  --slate: #252a3d;
+  --mist: rgba(244, 239, 230, 0.08);
+  --cream: #f4efe6;
+  --cream-dim: rgba(244, 239, 230, 0.62);
+  --cream-mute: rgba(244, 239, 230, 0.38);
+
+  /* Accents */
+  --amber: #e4a853;
+  --amber-soft: #f1c788;
+  --copper: #c8703c;
+  --sage: #8fa88e;
+  --rose: #d88b7a;
+  --indigo: #5b6bb8;
+  --on-accent: #0b0d17;
+  --ink-true: #0b0d17;
+
+  /* Web-specific (§2.2) */
+  --hover-lift: 0 12px 24px -8px rgba(0, 0, 0, 0.45);
+  --focus-ring: 0 0 0 2px var(--midnight), 0 0 0 4px var(--amber);
+  --backdrop: rgba(11, 13, 23, 0.6);
+  --row-zebra: rgba(244, 239, 230, 0.03);
+  --hover-tint: rgba(244, 239, 230, 0.04);
+  --press-tint: rgba(244, 239, 230, 0.08);
+  --glow-amber: rgba(228, 168, 83, 0.35);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 8px 16px -4px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 30px 60px -20px rgba(0, 0, 0, 0.55), 0 18px 36px -18px rgba(0, 0, 0, 0.45);
+
+  /* Geometry */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-instant: 80ms;
+  --dur-fast: 200ms;
+  --dur-base: 300ms;
+  --dur-slow: 500ms;
+  --dur-loop: 8000ms;
+
+  /* Breakpoints (reference only — media queries hardcode the px) */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
+
+  /* Type families */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}

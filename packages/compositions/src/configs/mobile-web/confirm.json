@@ -1,0 +1,9 @@
+{
+  "id": "confirm",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [
+    { "widget": "pq-claim-confirm" },
+    { "widget": "pq-trust-strip" }
+  ]
+}

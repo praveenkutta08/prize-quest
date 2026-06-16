@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prize Quest · Kiosk Arcade demo</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <!-- Force the kiosk-landscape channel before the module (and pq-screen) upgrade so
+         the first composition load resolves to kiosk-landscape/expanded. dev-chrome
+         keeps this in sync as the device switches (portrait + EGM reuse this channel;
+         iVIEW form factors render a Session-27 placeholder instead). -->
+    <script>
+      (function () {
+        if (!/[?&]channel=/.test(location.search)) {
+          var u = new URL(location.href);
+          u.searchParams.set("channel", "kiosk-landscape");
+          history.replaceState({}, "", u);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Dev chrome: Device · Orientation · Scale switchers (hidden in prod builds). -->
+    <div id="dev-chrome" class="switch-bar" role="region" aria-label="Kiosk preview switchers">
+      <div class="switch-group">
+        <span class="switch-label">Device</span>
+        <select id="device-switch" class="switch-select" aria-label="Select device">
+          <option value="kiosk-1920x1080" selected>Kiosk Landscape · 1920×1080</option>
+          <option value="kiosk-1080x1920">Kiosk Portrait · 1080×1920</option>
+          <option value="egm-1920x1080">EGM Main · 1920×1080</option>
+          <option value="iview4-1024x600">iVIEW 4 · 1024×600</option>
+          <option value="iview3-800x480">iVIEW 3 / Bally · 800×480</option>
+        </select>
+      </div>
+      <div class="switch-group">
+        <span class="switch-label">Orientation</span>
+        <select id="orient-switch" class="switch-select" aria-label="Select orientation">
+          <option value="landscape" selected>Landscape</option>
+          <option value="portrait">Portrait</option>
+        </select>
+      </div>
+      <div class="switch-group">
+        <span class="switch-label">Scale</span>
+        <select id="scale-switch" class="switch-select" aria-label="Select preview scale">
+          <option value="0.25">25%</option>
+          <option value="0.4">40%</option>
+          <option value="0.5" selected>50%</option>
+          <option value="0.75">75%</option>
+          <option value="1">100%</option>
+        </select>
+      </div>
+      <div class="switch-group">
+        <span class="switch-label">Tenant</span>
+        <!-- Operator-flavored arcade style demos (Session 34) — generic names, private
+             sales use only. Switching reloads with ?tenant=. arcade-demo is the default. -->
+        <select id="tenant-switch" class="switch-select" aria-label="Select tenant">
+          <option value="resort-style" selected>Resort Rewards · navy + gold (default)</option>
+          <option value="arcade-demo">Arcade Demo</option>
+          <option value="velvet-style">Velvet Reserve · burgundy + brass</option>
+          <option value="emerald-style">Emerald Club · green + brass</option>
+        </select>
+      </div>
+      <span class="switch-bar__dims">
+        Active · <strong id="dims-text">1920 × 1080</strong> px @ <strong id="scale-text">50%</strong>
+      </span>
+    </div>
+
+    <main class="stage">
+      <div class="cabinet">
+        <div class="viewport">
+          <!-- Native-resolution frame, scaled via transform. main.ts mounts
+               <kiosk-attract> / <kiosk-hub> (host chrome) or <pq-screen> here. -->
+          <div class="screen" id="kiosk-screen"></div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

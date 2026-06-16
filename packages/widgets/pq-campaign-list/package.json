@@ -1,0 +1,32 @@
+{
+  "name": "@pq/pq-campaign-list",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Prize Quest <pq-campaign-list> — stack + carousel of campaign cards",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "wtr"
+  },
+  "dependencies": {
+    "@pq/mock-data": "workspace:*",
+    "@pq/store": "workspace:*",
+    "@pq/tokens": "workspace:*",
+    "lit": "^3.3.3",
+    "@pq/pq-campaign-card": "workspace:*",
+    "@pq/pq-list-carousel": "workspace:*",
+    "@pq/pq-promo-hero": "workspace:*"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@web/dev-server-esbuild": "^1.0.5",
+    "@web/test-runner": "^0.20.2",
+    "@web/test-runner-chrome": "^0.18.1"
+  }
+}

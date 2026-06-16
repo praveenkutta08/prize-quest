@@ -1,0 +1,6 @@
+{
+  "id": "pin",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [{ "widget": "pq-pin-pad", "props": { "length": 4 } }]
+}

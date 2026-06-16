@@ -1,0 +1,21 @@
+{
+  "id": "success",
+  "channel": "iview-3",
+  "profile": "compact",
+  "layout": [
+    {
+      "widget": "pq-screen-header",
+      "props": {
+        "title": "Arcade Rewards",
+        "showBack": false
+      }
+    },
+    {
+      "widget": "pq-success",
+      "props": {
+        "ctaLabel": "View Order History",
+        "dismissLabel": "Back to Hub"
+      }
+    }
+  ]
+}

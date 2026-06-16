@@ -1,0 +1,9 @@
+{
+  "id": "voucher",
+  "channel": "ttd",
+  "profile": "compact",
+  "layout": [
+    { "widget": "pq-screen-header", "props": { "title": "Your Voucher", "showBack": true } },
+    { "widget": "pq-voucher" }
+  ]
+}

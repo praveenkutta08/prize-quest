@@ -1,0 +1,20 @@
+{
+  "id": "submit",
+  "channel": "egm",
+  "profile": "expanded",
+  "layout": [
+    {
+      "widget": "pq-screen-header",
+      "props": {
+        "title": "Arcade Rewards",
+        "showBack": true
+      }
+    },
+    {
+      "widget": "pq-claim-summary",
+      "props": {
+        "showTerms": true
+      }
+    }
+  ]
+}

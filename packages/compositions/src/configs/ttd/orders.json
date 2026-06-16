@@ -1,0 +1,9 @@
+{
+  "id": "orders",
+  "channel": "ttd",
+  "profile": "compact",
+  "layout": [
+    { "widget": "pq-screen-header", "props": { "title": "Order History", "showBack": true } },
+    { "widget": "pq-order-history", "props": { "profile": "compact" } }
+  ]
+}

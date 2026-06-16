@@ -1,0 +1,8 @@
+<!-- aria-style.svg · generic text wordmark (NO real trademark). 200x60 cream/gold. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" role="img" aria-label="Aria Concierge">
+  <rect width="200" height="60" fill="#F8F6F0"/>
+  <text x="100" y="33" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif"
+        font-weight="700" font-style="italic" font-size="20" letter-spacing="2" fill="#B8860B">Aria</text>
+  <text x="100" y="48" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif"
+        font-weight="500" font-size="9" letter-spacing="5" fill="#1B2A4E">CONCIERGE</text>
+</svg>

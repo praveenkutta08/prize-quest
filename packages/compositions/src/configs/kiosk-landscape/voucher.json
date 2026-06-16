@@ -1,0 +1,9 @@
+{
+  "id": "voucher",
+  "channel": "kiosk-landscape",
+  "profile": "expanded",
+  "layout": [
+    { "widget": "pq-screen-header", "props": { "title": "Arcade Rewards", "showBack": false } },
+    { "widget": "pq-voucher" }
+  ]
+}

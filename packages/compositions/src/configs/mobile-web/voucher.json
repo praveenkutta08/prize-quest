@@ -1,0 +1,6 @@
+{
+  "id": "voucher",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [{ "widget": "pq-voucher" }]
+}

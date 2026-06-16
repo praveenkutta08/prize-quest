@@ -1,0 +1,181 @@
+/* ========================================
+   ARCADE MODE · token layer
+   Applied when [data-pq-mode="arcade"]
+   ======================================== */
+
+:root[data-pq-mode="arcade"] {
+  /* ---- Background layers ---- */
+  --arc-bg-deep:     #15042E;
+  --arc-bg-base:     #1F0B3E;
+  --arc-bg-mid:      #2A1454;
+  --arc-bg-elev:     #3D1F6E;
+  --arc-bg-glass:    rgba(60, 25, 110, 0.45);
+  --arc-bg-glass-2:  rgba(80, 35, 140, 0.30);
+
+  /* ---- Display + cream ---- */
+  --arc-display:        #FFD93D;
+  --arc-display-bright: #FFEE5C;
+  --arc-display-deep:   #E0B71B;
+  --arc-display-glow:   rgba(255, 217, 61, 0.55);
+
+  --arc-cream:       #F5EFE0;
+  --arc-text:        #FFFFFF;
+  --arc-text-dim:    #D0BFEC;
+  --arc-text-faint:  #8B7AAA;
+  --arc-text-mute:   #5E4E80;
+
+  /* ---- Per-category accents (6 × 4 variants each) ---- */
+  --cat-purple:        #8E47E8;
+  --cat-purple-deep:   #6B2DD0;
+  --cat-purple-bright: #B47BFF;
+  --cat-purple-glow:   rgba(142, 71, 232, 0.55);
+
+  --cat-blue:        #3D8BF5;
+  --cat-blue-deep:   #1F6FE6;
+  --cat-blue-bright: #6FB2FF;
+  --cat-blue-glow:   rgba(61, 139, 245, 0.55);
+
+  --cat-orange:        #FF8C2C;
+  --cat-orange-deep:   #FF6B1A;
+  --cat-orange-bright: #FFB066;
+  --cat-orange-glow:   rgba(255, 140, 44, 0.55);
+
+  --cat-pink:        #FF3FA4;
+  --cat-pink-deep:   #E91E63;
+  --cat-pink-bright: #FF6FB5;
+  --cat-pink-glow:   rgba(255, 63, 164, 0.55);
+
+  --cat-green:        #34D670;
+  --cat-green-deep:   #16A34A;
+  --cat-green-bright: #5BE389;
+  --cat-green-glow:   rgba(52, 214, 112, 0.5);
+
+  --cat-teal:        #2DD4BF;
+  --cat-teal-deep:   #14B8A6;
+  --cat-teal-bright: #5EEAD4;
+  --cat-teal-glow:   rgba(45, 212, 191, 0.45);
+
+  /* ---- Status ---- */
+  --arc-success:     #34D670;
+  --arc-warning:     #FFB627;
+  --arc-danger:      #FF4D6D;
+  --arc-info:        #4A8FE6;
+
+  /* ---- Borders / dividers ---- */
+  --arc-hairline:    rgba(140, 100, 200, 0.22);
+  --arc-hairline-2:  rgba(180, 130, 240, 0.35);
+  --arc-glow-soft:   rgba(255, 217, 61, 0.18);
+
+  /* ---- Fonts ----
+     Display swapped Russo One -> Manrope (Session 32, CEO feedback: more
+     grown-up / professional for the 21-65 demographic). Russo One is a single
+     400-weight face but reads heavy by design; Manrope 800 gives the same
+     headline presence, so widgets pair the family with
+     --arc-font-display-weight (default 800) instead of relying on a default. */
+  --arc-font-display:        'Manrope', 'Helvetica Neue', sans-serif;
+  --arc-font-display-weight: 800;
+  --arc-font-body:           'Inter', system-ui, sans-serif;
+  --arc-font-mono:           'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- Radii ---- */
+  --arc-r-sm:   6px;
+  --arc-r-md:  12px;
+  --arc-r-lg:  20px;
+  --arc-r-xl:  28px;
+  --arc-r-2xl: 36px;
+  --arc-r-pill: 999px;
+
+  /* ---- Form-factor variables (driven by dev chrome switcher) ---- */
+  --device-w: 1920px;
+  --device-h: 1080px;
+  --scale:    0.5;
+
+  /* ---- Semantic --pq-* remap (so widgets reading --pq-* get arcade automatically) ----
+     !important is REQUIRED, exactly like casino-loud.css: applyTokens() writes the premium
+     --pq-* defaults as INLINE styles on <html>, which outrank any stylesheet selector. Only
+     an !important here lets the arcade remap win — without it, arcade-mode widgets reading
+     the semantic --pq-* tokens silently fall back to the premium palette (navy/gold) and the
+     surfaces read as "not arcade" / casino-loud-ish. (The --arc and --cat tokens above
+     need no !important — they're new names with no inline conflict.) */
+  --pq-navy-deep:      var(--arc-bg-deep) !important;
+  --pq-navy-base:      var(--arc-bg-base) !important;
+  --pq-navy-low:       var(--arc-bg-mid) !important;
+  --pq-navy-mid:       var(--arc-bg-elev) !important;
+  --pq-navy-hairline:  var(--arc-hairline) !important;
+  --pq-surface:        var(--arc-bg-base) !important;
+  --pq-surface-elev:   var(--arc-bg-elev) !important;
+  --pq-surface-glass:  var(--arc-bg-glass) !important;
+  --pq-text:           var(--arc-cream) !important;
+  --pq-text-muted:     var(--arc-text-dim) !important;
+  --pq-text-faint:     var(--arc-text-faint) !important;
+  --pq-cream:          var(--arc-cream) !important;
+  --pq-cream-muted:    var(--arc-text-dim) !important;
+  --pq-accent:         var(--arc-display) !important;
+  --pq-accent-bright:  var(--arc-display-bright) !important;
+  --pq-gold:           var(--arc-display) !important;
+  --pq-gold-bright:    var(--arc-display-bright) !important;
+  --pq-gold-deep:      var(--arc-display-deep) !important;
+  --pq-emerald:        var(--cat-green) !important;
+  --pq-emerald-soft:   var(--cat-green-bright) !important;
+  --pq-emerald-dim:    var(--cat-green-deep) !important;
+  --pq-danger:         var(--arc-danger) !important;
+  --pq-danger-soft:    var(--cat-pink-deep) !important;
+  --pq-success:        var(--arc-success) !important;
+  --pq-warning:        var(--arc-warning) !important;
+  --pq-info:           var(--arc-info) !important;
+  --pq-font-display:   var(--arc-font-display) !important;
+  --pq-font-serif:     var(--arc-font-display) !important;
+  --pq-font-body:      var(--arc-font-body) !important;
+  --pq-font-mono:      var(--arc-font-mono) !important;
+  --pq-r-sm:           var(--arc-r-sm) !important;
+  --pq-r-md:           var(--arc-r-md) !important;
+  --pq-r-lg:           var(--arc-r-lg) !important;
+  --pq-r-xl:           var(--arc-r-xl) !important;
+  --pq-r-2xl:          var(--arc-r-2xl) !important;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50%      { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 24px var(--arc-display-glow); }
+  50%      { box-shadow: 0 0 48px var(--arc-display-glow); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes burst-in {
+  0%   { transform: scale(0.3); opacity: 0; }
+  60%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* Compact (TTD) ready-state glow + gentle bob — used by pq-campaign-card
+   ready cards and the ttd-attract member card / ttd-hub Prize Quest tile. */
+@keyframes pulse-glow-pink {
+  0%, 100% { box-shadow: 0 0 6px var(--cat-pink-glow); }
+  50%      { box-shadow: 0 0 14px var(--cat-pink-glow); }
+}
+
+@keyframes float-sm {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

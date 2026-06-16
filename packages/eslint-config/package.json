@@ -1,0 +1,20 @@
+{
+  "name": "@pq/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared ESLint flat config (incl. import-boundary rules) for the Prize Quest workspace.",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^17.6.0",
+    "typescript-eslint": "^8.60.1"
+  },
+  "peerDependencies": {
+    "eslint": ">=9"
+  }
+}

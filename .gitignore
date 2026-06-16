@@ -1,0 +1,41 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+*.tsbuildinfo
+
+# turborepo
+.turbo/
+
+# storybook
+storybook-static/
+
+# vite
+.vite/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# env
+.env
+.env.*
+!.env.example
+
+# editor / os
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# vercel (deployment linking metadata)
+.vercel
+.vercel-ttd
+
+# stray temp files
+_tmp_*

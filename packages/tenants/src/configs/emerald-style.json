@@ -1,0 +1,65 @@
+{
+  "id": "emerald-style",
+  "name": "Emerald Club",
+  "brand": {
+    "logo": { "src": "/logos/emerald-style.svg", "alt": "Emerald Club", "height": 48 },
+    "favicon": "/logos/emerald-style.svg",
+    "productName": "Emerald Club"
+  },
+  "theme": {
+    "tokens": {
+      "--arc-bg-deep": "#0E1F18",
+      "--arc-bg-base": "#1A3327",
+      "--arc-bg-mid": "#2A5340",
+      "--arc-bg-elev": "#356A50",
+      "--arc-bg-glass": "rgba(42, 83, 64, 0.45)",
+      "--arc-bg-glass-2": "rgba(53, 106, 80, 0.30)",
+      "--arc-display": "#B8935C",
+      "--arc-display-bright": "#D4AC78",
+      "--arc-display-deep": "#8E6E3E",
+      "--arc-display-glow": "rgba(184, 147, 92, 0.45)",
+      "--arc-cream": "#F2E8D5",
+      "--arc-text": "#F2E8D5",
+      "--arc-text-dim": "#C5B89C",
+      "--arc-text-faint": "#8A8068",
+      "--arc-text-mute": "#6A6048",
+      "--arc-hairline": "rgba(184, 147, 92, 0.22)",
+      "--arc-hairline-2": "rgba(212, 172, 120, 0.35)",
+      "--arc-glow-soft": "rgba(184, 147, 92, 0.18)",
+      "--arc-font-display": "'Cinzel', Georgia, serif",
+      "--arc-font-display-weight": "700",
+      "--arc-font-body": "'Cardo', Georgia, serif"
+    },
+    "fonts": {
+      "display": "Cinzel",
+      "body": "Cardo",
+      "mono": "JetBrains Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cardo:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap"
+    },
+    "mode": "arcade",
+    "campaignProgressStyle": "segmented",
+    "categoryMap": {
+      "electronics": "purple",
+      "audio": "purple",
+      "outdoor": "blue",
+      "smart-home": "blue",
+      "gift-cards": "orange",
+      "wellness": "pink",
+      "food": "green",
+      "dining": "green",
+      "travel": "teal",
+      "sports": "orange"
+    }
+  },
+  "copy": { "locale": "en-US" },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "vendor": { "type": "konami", "pinLength": 4, "pinShuffle": false },
+  "compliance": { "jurisdiction": "NV", "budgetCapEnforced": true }
+}

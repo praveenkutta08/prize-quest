@@ -1,0 +1,17 @@
+{
+  "id": "address",
+  "channel": "ttd",
+  "profile": "compact",
+  "layout": [
+    {
+      "widget": "pq-screen-header",
+      "props": {
+        "title": "Address",
+        "showBack": true
+      }
+    },
+    {
+      "widget": "pq-address-form"
+    }
+  ]
+}

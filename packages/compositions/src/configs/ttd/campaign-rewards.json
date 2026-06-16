@@ -1,0 +1,9 @@
+{
+  "id": "campaign-rewards",
+  "channel": "ttd",
+  "profile": "compact",
+  "layout": [
+    { "widget": "pq-screen-header", "props": { "showBack": true } },
+    { "widget": "pq-reward-select" }
+  ]
+}

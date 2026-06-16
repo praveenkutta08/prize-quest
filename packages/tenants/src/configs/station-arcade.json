@@ -1,0 +1,51 @@
+{
+  "id": "station-arcade",
+  "name": "Station Arcade",
+  "brand": {
+    "logo": { "src": "/assets/station-arcade/logo.svg", "alt": "Station Arcade", "height": 32 },
+    "favicon": "/assets/station-arcade/favicon.svg",
+    "productName": "Station Arcade Rewards"
+  },
+  "theme": {
+    "tokens": {},
+    "fonts": {
+      "display": "Manrope",
+      "body": "Inter",
+      "mono": "JetBrains Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap"
+    },
+    "mode": "arcade",
+    "categoryMap": {
+      "electronics": "purple",
+      "audio": "purple",
+      "outdoor": "blue",
+      "smart-home": "blue",
+      "gift-cards": "orange",
+      "wellness": "pink",
+      "food": "green",
+      "dining": "green",
+      "travel": "teal",
+      "sports": "orange"
+    }
+  },
+  "copy": {
+    "locale": "en-US"
+  },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "vendor": {
+    "type": "konami",
+    "pinLength": 4,
+    "pinShuffle": true
+  },
+  "compliance": {
+    "jurisdiction": "NV",
+    "budgetCapEnforced": true
+  }
+}

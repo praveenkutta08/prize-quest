@@ -1,0 +1,38 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Welcome" />
+
+# Prize Quest — Patron Module
+
+This is the Storybook dev environment for the **Prize Quest** patron module.
+
+The monorepo is scaffolded but **no widgets exist yet**. As `pq-*` widgets are added
+under `packages/widgets/`, each ships its own `*.stories.ts` and will appear in the
+sidebar under **Widgets**.
+
+## Architecture (locked)
+
+- **Lit 3 + TypeScript** Web Components (Custom Elements + Shadow DOM)
+- Custom element prefix: `pq-`
+- **Vite** + `@vitejs/plugin-legacy` (Chromium 60 floor for EGM cabinets)
+- **pnpm** workspaces monorepo
+- **Nanostores** for shared, tenant-namespaced state
+- Runtime multi-tenancy: `tenantId` resolves tokens + config
+
+## Packages
+
+| Package | Purpose |
+|---|---|
+| `@pq/tokens` | Resolve tenant config → CSS custom properties |
+| `@pq/tenants` | `TenantConfig` schema + tenant config loading |
+| `@pq/playground` | Dev harness (tenant / channel switcher) |
+
+## Build sequence
+
+1. **Scaffold the monorepo** ← _you are here_
+2. Tokens package + tenants package + `applyTokens()`
+3. First widget: `<pq-progress-bar>`
+4. Mock-data package
+5. Core widgets, flow widgets, meta widgets
+
+See `repo-structure.md` for the full plan.

@@ -1,0 +1,6 @@
+{
+  "id": "submit",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [{ "widget": "pq-claim-summary" }]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "arcade-demo",
+  "name": "Arcade Rewards (demo)",
+  "brand": {
+    "logo": { "src": "/assets/arcade-demo/logo.svg", "alt": "Arcade Rewards", "height": 56 },
+    "favicon": "/assets/arcade-demo/favicon.svg",
+    "productName": "Arcade Rewards"
+  },
+  "theme": {
+    "tokens": {},
+    "fonts": {
+      "display": "Manrope",
+      "body": "Inter",
+      "mono": "JetBrains Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap"
+    },
+    "mode": "arcade",
+    "categoryMap": {
+      "electronics": "purple",
+      "audio": "purple",
+      "outdoor": "blue",
+      "smart-home": "blue",
+      "gift-cards": "orange",
+      "wellness": "pink",
+      "food": "green",
+      "dining": "green",
+      "travel": "teal",
+      "sports": "orange"
+    }
+  },
+  "copy": { "locale": "en-US" },
+  "vendor": { "type": "konami", "pinLength": 4, "pinShuffle": false },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "compliance": { "jurisdiction": "NV", "budgetCapEnforced": true }
+}

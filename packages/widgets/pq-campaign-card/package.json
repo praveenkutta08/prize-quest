@@ -1,0 +1,30 @@
+{
+  "name": "@pq/pq-campaign-card",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Prize Quest <pq-campaign-card> — composes pq-progress-bar + pq-status-pill",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "wtr"
+  },
+  "dependencies": {
+    "@pq/mock-data": "workspace:*",
+    "@pq/tokens": "workspace:*",
+    "lit": "^3.3.3",
+    "@pq/pq-progress-bar": "workspace:*",
+    "@pq/pq-status-pill": "workspace:*"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@web/dev-server-esbuild": "^1.0.5",
+    "@web/test-runner": "^0.20.2",
+    "@web/test-runner-chrome": "^0.18.1"
+  }
+}

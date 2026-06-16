@@ -1,0 +1,71 @@
+{
+  "id": "luminara",
+  "name": "Luminara",
+  "brand": {
+    "logo": { "src": "/assets/luminara/logo.svg", "alt": "Luminara", "height": 32 },
+    "favicon": "/assets/luminara/favicon.svg",
+    "productName": "Prize Quest"
+  },
+  "theme": {
+    "tokens": {
+      "--pq-navy-deep": "#0B0D17",
+      "--pq-navy-base": "#10131F",
+      "--pq-navy-low": "#1A1E2E",
+      "--pq-navy-mid": "#252A3D",
+      "--pq-navy-hairline": "#2C3045",
+
+      "--pq-emerald": "#8FA88E",
+      "--pq-emerald-soft": "#6E8A6D",
+      "--pq-emerald-dim": "#4E6A4D",
+
+      "--pq-gold": "#E4A853",
+      "--pq-gold-bright": "#F1C788",
+      "--pq-gold-deep": "#C8703C",
+
+      "--pq-cream": "#F4EFE6",
+      "--pq-cream-muted": "#B0A28A",
+
+      "--pq-text": "#F4EFE6",
+      "--pq-text-muted": "#9B9690",
+      "--pq-text-faint": "#5E5A55",
+
+      "--pq-danger": "#D88B7A",
+      "--pq-danger-soft": "#A74E3E",
+      "--pq-info": "#5B6BB8",
+
+      "--pq-r-sm": "10px",
+      "--pq-r-md": "16px",
+      "--pq-r-lg": "22px",
+      "--pq-r-xl": "28px",
+      "--pq-r-2xl": "32px"
+    },
+    "fonts": {
+      "display": "Bricolage Grotesque",
+      "serif": "Bricolage Grotesque",
+      "body": "Plus Jakarta Sans",
+      "mono": "JetBrains Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    },
+    "mode": "premium"
+  },
+  "copy": {
+    "locale": "en-US"
+  },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "vendor": {
+    "type": "konami",
+    "pinLength": 4,
+    "pinShuffle": false
+  },
+  "compliance": {
+    "jurisdiction": "NV",
+    "budgetCapEnforced": true
+  }
+}

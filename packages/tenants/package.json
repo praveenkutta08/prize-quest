@@ -1,0 +1,21 @@
+{
+  "name": "@pq/tenants",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Prize Quest tenant config loading + active-tenant management",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pq/contracts": "workspace:*",
+    "@pq/tokens": "workspace:*"
+  }
+}

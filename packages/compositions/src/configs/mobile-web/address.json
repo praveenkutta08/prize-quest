@@ -1,0 +1,10 @@
+{
+  "id": "address",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [
+    {
+      "widget": "pq-address-form"
+    }
+  ]
+}

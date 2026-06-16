@@ -1,0 +1,20 @@
+{
+  "id": "home",
+  "channel": "iview-4",
+  "profile": "compact",
+  "layout": [
+    {
+      "widget": "pq-screen-header",
+      "props": {
+        "title": "Arcade Rewards",
+        "showBack": true
+      }
+    },
+    {
+      "widget": "pq-campaign-list",
+      "props": {
+        "heading": "All Campaigns"
+      }
+    }
+  ]
+}

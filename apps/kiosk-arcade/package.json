@@ -1,0 +1,51 @@
+{
+  "name": "@pq/kiosk-arcade",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Prize Quest Kiosk Arcade demo — arcade-mode flow on kiosk/EGM/iView hardware",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pq/compositions": "workspace:*",
+    "@pq/contracts": "workspace:*",
+    "@pq/mock-data": "workspace:*",
+    "@pq/router": "workspace:*",
+    "@pq/store": "workspace:*",
+    "@pq/tenants": "workspace:*",
+    "@pq/tokens": "workspace:*",
+    "lit": "^3.3.3",
+    "@pq/pq-address-block": "workspace:*",
+    "@pq/pq-address-form": "workspace:*",
+    "@pq/pq-campaign-card": "workspace:*",
+    "@pq/pq-campaign-detail": "workspace:*",
+    "@pq/pq-campaign-list": "workspace:*",
+    "@pq/pq-claim-confirm": "workspace:*",
+    "@pq/pq-claim-summary": "workspace:*",
+    "@pq/pq-flow-loading": "workspace:*",
+    "@pq/pq-notifications": "workspace:*",
+    "@pq/pq-offline-banner": "workspace:*",
+    "@pq/pq-order-history": "workspace:*",
+    "@pq/pq-pin-pad": "workspace:*",
+    "@pq/pq-progress-bar": "workspace:*",
+    "@pq/pq-promo-hero": "workspace:*",
+    "@pq/pq-prize-tile": "workspace:*",
+    "@pq/pq-reward-select": "workspace:*",
+    "@pq/pq-screen": "workspace:*",
+    "@pq/pq-screen-header": "workspace:*",
+    "@pq/pq-status-pill": "workspace:*",
+    "@pq/pq-success": "workspace:*",
+    "@pq/pq-tier-progress": "workspace:*",
+    "@pq/pq-trust-strip": "workspace:*",
+    "@pq/pq-voucher": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^8.0.2",
+    "terser": "^5.44.0",
+    "vite": "^8.0.16"
+  }
+}

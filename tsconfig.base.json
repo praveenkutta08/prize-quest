@@ -1,0 +1,4 @@
+{
+  "// note": "Repo-root base now delegates to the shared @pq/tsconfig package. Per-package tsconfigs keep extending this file (../../../tsconfig.base.json), so they inherit the shared options transitively.",
+  "extends": "@pq/tsconfig/base.json"
+}

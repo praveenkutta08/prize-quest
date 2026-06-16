@@ -1,0 +1,35 @@
+{
+  "id": "loading",
+  "channel": "egm",
+  "profile": "expanded",
+  "layout": [
+    {
+      "widget": "pq-screen-header",
+      "props": {
+        "title": "Arcade Rewards",
+        "showBack": false
+      }
+    },
+    {
+      "widget": "pq-flow-loading",
+      "props": {
+        "phases": [
+          {
+            "id": "pin",
+            "label": "PIN",
+            "title": "Validating PIN…",
+            "icon": "lock",
+            "durationMs": 800
+          },
+          {
+            "id": "address",
+            "label": "Address",
+            "title": "Retrieving Address…",
+            "icon": "location",
+            "durationMs": 1200
+          }
+        ]
+      }
+    }
+  ]
+}

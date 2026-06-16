@@ -1,0 +1,6 @@
+{
+  "id": "orders",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [{ "widget": "pq-order-history", "props": { "profile": "standard" } }]
+}

@@ -1,0 +1,99 @@
+/* =========================================================
+   Casino-loud visual mode — global token layer.
+
+   Two jobs, both gated on [data-pq-mode="casino-loud"] (written by applyTokens),
+   so premium tenants (Luminara) are NEVER touched:
+
+   1. Define the --cl-* palette (copied verbatim from
+      prize-quest-ttd-casino-loud.html :root) so widget overrides + this layer
+      can reference it. --cl-* inherits into every widget's shadow DOM.
+
+   2. Remap the semantic --pq-* tokens every widget already reads onto --cl-*
+      equivalents, so the whole UI flips to red/gold/black + Bebas Neue with no
+      per-widget color work. !important is REQUIRED here: applyTokens writes the
+      premium --pq-* values as inline styles on <html>, and only an !important
+      author rule outranks an inline declaration. The rule is mode-scoped, so it
+      simply doesn't match in premium mode.
+   ========================================================= */
+
+:root[data-pq-mode="casino-loud"] {
+  /* --- casino-loud palette (verbatim) --- */
+  --cl-black: #06030a;
+  --cl-noir: #100612;
+  --cl-wine: #1f0815;
+  --cl-wine-elev: #320e20;
+  --cl-burgundy: #4a152e;
+  --cl-hairline: #5c2c3d;
+
+  --cl-gold: #ffb627;
+  --cl-gold-bright: #ffd55c;
+  --cl-gold-deep: #c68a1a;
+  --cl-gold-glow: rgba(255, 182, 39, 0.55);
+
+  --cl-red: #e63946;
+  --cl-red-bright: #ff5b6a;
+  --cl-red-deep: #a8131a;
+  --cl-red-glow: rgba(230, 57, 70, 0.55);
+
+  --cl-cream: #f5f1e8;
+  --cl-text: #ffffff;
+  --cl-text-dim: #c5beb0;
+  --cl-text-faint: #7a7268;
+
+  --cl-cyan: #3dd6f5;
+  --cl-success: #38d27d;
+
+  --cl-font-display: "Bebas Neue", "Impact", sans-serif;
+  --cl-font-body: "Inter", system-ui, sans-serif;
+  --cl-font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --cl-r-sm: 4px;
+  --cl-r-md: 6px;
+  --cl-r-lg: 10px;
+
+  /* --- semantic --pq-* → --cl-* remap (outranks applyTokens' inline styles) --- */
+
+  /* Surfaces: navy ramp → black / wine ramp */
+  --pq-navy-deep: var(--cl-black) !important;
+  --pq-navy-base: var(--cl-wine) !important;
+  --pq-navy-low: var(--cl-wine-elev) !important;
+  --pq-navy-mid: var(--cl-burgundy) !important;
+  --pq-navy-hairline: var(--cl-hairline) !important;
+
+  /* Action/progress: emerald → gold (casino "hot" accent) */
+  --pq-emerald: var(--cl-gold) !important;
+  --pq-emerald-soft: var(--cl-gold-bright) !important;
+  --pq-emerald-dim: var(--cl-gold-deep) !important;
+
+  /* Reward: gold → casino gold */
+  --pq-gold: var(--cl-gold) !important;
+  --pq-gold-bright: var(--cl-gold-bright) !important;
+  --pq-gold-deep: var(--cl-gold-deep) !important;
+
+  /* Text */
+  --pq-text: var(--cl-cream) !important;
+  --pq-text-muted: var(--cl-text-dim) !important;
+  --pq-text-faint: var(--cl-text-faint) !important;
+
+  /* Cream warm neutral */
+  --pq-cream: var(--cl-cream) !important;
+  --pq-cream-muted: var(--cl-text-dim) !important;
+
+  /* Status: danger → red, info → cyan */
+  --pq-danger: var(--cl-red) !important;
+  --pq-danger-soft: var(--cl-red-deep) !important;
+  --pq-info: var(--cl-cyan) !important;
+
+  /* Type: display/serif → Bebas Neue marquee, body → Inter, mono → JetBrains */
+  --pq-font-display: var(--cl-font-display) !important;
+  --pq-font-serif: var(--cl-font-display) !important;
+  --pq-font-body: var(--cl-font-body) !important;
+  --pq-font-mono: var(--cl-font-mono) !important;
+
+  /* Geometry: tighter casino radii */
+  --pq-r-sm: var(--cl-r-sm) !important;
+  --pq-r-md: var(--cl-r-md) !important;
+  --pq-r-lg: var(--cl-r-lg) !important;
+  --pq-r-xl: 12px !important;
+  --pq-r-2xl: 14px !important;
+}

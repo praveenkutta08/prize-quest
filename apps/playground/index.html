@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prize Quest playground</title>
+    <link rel="stylesheet" href="/src/global.css" />
+    <style>
+      /* All visual values flow from the --pq-* custom properties that
+         @pq/tokens writes onto :root, so switching tenants re-themes live. */
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--pq-navy-base);
+        color: var(--pq-text);
+        font-family: var(--pq-font-body);
+        font-size: 14px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        transition:
+          background 250ms var(--pq-ease),
+          color 250ms var(--pq-ease);
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        background: var(--pq-navy-deep);
+        border-bottom: 1px solid var(--pq-navy-hairline);
+      }
+      .topbar__label {
+        font-family: var(--pq-font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--pq-cream-muted);
+      }
+      .topbar select {
+        appearance: none;
+        background: var(--pq-navy-low);
+        color: var(--pq-text);
+        border: 1px solid var(--pq-navy-hairline);
+        border-radius: var(--pq-r-md);
+        padding: 8px 14px;
+        font-family: var(--pq-font-body);
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .topbar select:focus-visible {
+        outline: 2px solid var(--pq-emerald);
+        outline-offset: 1px;
+      }
+      .topbar__spacer {
+        flex: 1;
+      }
+      .topbar__exit {
+        margin-left: 12px;
+        background: transparent;
+        color: var(--pq-cream-muted);
+        border: 1px solid var(--pq-navy-hairline);
+        border-radius: var(--pq-r-md);
+        padding: 7px 12px;
+        font-family: var(--pq-font-mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+      }
+      .topbar__exit:hover {
+        color: var(--pq-text);
+        border-color: var(--pq-cream-muted);
+      }
+      .orders-demo {
+        margin-top: 56px;
+        max-width: 460px;
+      }
+
+      .screen-host {
+        max-width: 880px;
+        padding: 40px 24px 96px;
+      }
+      .demo {
+        max-width: 880px;
+        padding: 48px 24px 96px;
+      }
+      .demo__title {
+        font-family: var(--pq-font-serif);
+        font-size: 48px;
+        font-weight: 500;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        margin: 0 0 16px;
+      }
+      .demo__body {
+        font-family: var(--pq-font-body);
+        font-size: 14px;
+        color: var(--pq-text-muted);
+        max-width: 640px;
+        margin: 0 0 40px;
+      }
+
+      .swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .swatch {
+        width: 200px;
+        height: 120px;
+        border-radius: var(--pq-r-lg);
+        border: 1px solid var(--pq-navy-hairline);
+        display: flex;
+        align-items: flex-end;
+        padding: 12px;
+        font-family: var(--pq-font-mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+      }
+      .swatch--cream {
+        background: var(--pq-cream);
+        color: var(--pq-navy-deep);
+      }
+      .swatch--emerald {
+        background: var(--pq-emerald);
+        color: var(--pq-navy-deep);
+      }
+      .swatch--navy-low {
+        background: var(--pq-navy-low);
+        color: var(--pq-text);
+      }
+
+      .widget-demo {
+        margin-top: 56px;
+        max-width: 420px;
+      }
+
+      .cards-demo {
+        margin-top: 64px;
+        max-width: 460px;
+      }
+      .section-eyebrow {
+        font-family: var(--pq-font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        color: var(--pq-cream-muted);
+        margin: 0 0 16px;
+      }
+      #cards {
+        display: block;
+      }
+      #detail {
+        margin-top: 28px;
+      }
+      .profiles-row {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+      .click-log {
+        margin-top: 20px;
+        font-family: var(--pq-font-mono);
+        font-size: 11px;
+        color: var(--pq-text-faint);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Vendor-dashboard landing (rendered by src/screens/enter.ts). -->
+    <div id="enter-root"></div>
+
+    <!-- The Prize Quest patron app (hidden while on /enter). -->
+    <div id="app" hidden>
+      <pq-offline-banner id="offline" state="offline" style="display:none"></pq-offline-banner>
+
+      <header class="topbar">
+        <span class="topbar__label">Tenant</span>
+        <select id="tenant-switcher" aria-label="Active tenant"></select>
+        <span class="topbar__label">Channel</span>
+        <select id="channel-switcher" aria-label="Active channel"></select>
+        <span class="topbar__spacer"></span>
+        <pq-notifications id="notif"></pq-notifications>
+        <button id="exit-btn" class="topbar__exit" title="Close Prize Quest">Exit ✕</button>
+      </header>
+
+      <main class="screen-host">
+        <pq-screen id="screen" route="/"></pq-screen>
+        <p id="route-log" class="click-log">Route: /</p>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "id": "submit",
+  "channel": "ttd",
+  "profile": "compact",
+  "layout": [
+    { "widget": "pq-screen-header", "props": { "title": "Confirm", "showBack": true } },
+    { "widget": "pq-claim-summary", "props": { "showTerms": true } }
+  ]
+}

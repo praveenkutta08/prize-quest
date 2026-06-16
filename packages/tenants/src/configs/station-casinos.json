@@ -1,0 +1,40 @@
+{
+  "id": "station-casinos",
+  "name": "Station Casinos",
+  "brand": {
+    "logo": { "src": "/assets/station-casinos/logo.svg", "alt": "Station Casinos", "height": 32 },
+    "favicon": "/assets/station-casinos/favicon.svg",
+    "productName": "Prize Quest"
+  },
+  "theme": {
+    "tokens": {},
+    "fonts": {
+      "display": "Bebas Neue",
+      "serif": "Bebas Neue",
+      "body": "Inter",
+      "mono": "JetBrains Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+    },
+    "mode": "casino-loud"
+  },
+  "copy": {
+    "locale": "en-US"
+  },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "vendor": {
+    "type": "konami",
+    "pinLength": 4,
+    "pinShuffle": true
+  },
+  "compliance": {
+    "jurisdiction": "NV",
+    "budgetCapEnforced": true
+  }
+}

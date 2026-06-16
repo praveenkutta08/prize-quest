@@ -1,0 +1,9 @@
+{
+  "id": "success",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [
+    { "widget": "pq-success" },
+    { "widget": "pq-trust-strip" }
+  ]
+}

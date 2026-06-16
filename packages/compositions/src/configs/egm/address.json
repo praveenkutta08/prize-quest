@@ -1,0 +1,17 @@
+{
+  "id": "address",
+  "channel": "egm",
+  "profile": "expanded",
+  "layout": [
+    {
+      "widget": "pq-screen-header",
+      "props": {
+        "title": "Arcade Rewards",
+        "showBack": false
+      }
+    },
+    {
+      "widget": "pq-address-form"
+    }
+  ]
+}

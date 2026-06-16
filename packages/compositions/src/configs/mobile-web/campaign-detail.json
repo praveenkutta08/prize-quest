@@ -1,0 +1,9 @@
+{
+  "id": "campaign-detail",
+  "channel": "mobile-web",
+  "profile": "standard",
+  "layout": [
+    { "widget": "pq-campaign-detail" },
+    { "widget": "pq-trust-strip" }
+  ]
+}

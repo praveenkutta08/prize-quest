@@ -1,0 +1,9 @@
+{
+  "id": "campaign-detail",
+  "channel": "kiosk-landscape",
+  "profile": "expanded",
+  "layout": [
+    { "widget": "pq-screen-header", "props": { "title": "Arcade Rewards", "showBack": false } },
+    { "widget": "pq-campaign-detail", "props": { "profile": "expanded" } }
+  ]
+}

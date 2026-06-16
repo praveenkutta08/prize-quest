@@ -1,0 +1,8 @@
+<!-- emerald-style.svg · generic text wordmark (NO real trademark). 200x60 forest green/brass. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" role="img" aria-label="Emerald Club">
+  <rect width="200" height="60" fill="#1A3327"/>
+  <text x="100" y="33" text-anchor="middle" font-family="Cinzel, Georgia, serif"
+        font-weight="700" font-size="16" letter-spacing="2" fill="#D4AC78">EMERALD</text>
+  <text x="100" y="48" text-anchor="middle" font-family="Cinzel, Georgia, serif"
+        font-weight="500" font-size="9" letter-spacing="6" fill="#F2E8D5">CLUB</text>
+</svg>

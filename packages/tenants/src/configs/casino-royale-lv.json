@@ -1,0 +1,39 @@
+{
+  "id": "casino-royale-lv",
+  "name": "Casino Royale Las Vegas",
+  "brand": {
+    "logo": { "src": "/assets/casino-royale-lv/logo.svg", "alt": "Casino Royale", "height": 34 },
+    "favicon": "/assets/casino-royale-lv/favicon.svg",
+    "productName": "Prize Quest"
+  },
+  "theme": {
+    "tokens": {},
+    "fonts": {
+      "display": "Manrope",
+      "serif": "Cormorant Garamond",
+      "body": "Inter",
+      "mono": "IBM Plex Mono"
+    },
+    "mode": "premium"
+  },
+  "copy": {
+    "locale": "en-US"
+  },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "vendor": {
+    "type": "konami",
+    "pinLength": 4,
+    "pinShuffle": false
+  },
+  "compliance": {
+    "jurisdiction": "NV",
+    "budgetCapEnforced": true
+  }
+}

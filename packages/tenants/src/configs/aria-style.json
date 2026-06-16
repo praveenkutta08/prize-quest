@@ -1,0 +1,69 @@
+{
+  "id": "aria-style",
+  "name": "Aria Concierge",
+  "brand": {
+    "logo": { "src": "/logos/aria-style.svg", "alt": "Aria Concierge", "height": 48 },
+    "favicon": "/logos/aria-style.svg",
+    "productName": "Aria Concierge"
+  },
+  "theme": {
+    "tokens": {
+      "--arc-bg-deep": "#F8F6F0",
+      "--arc-bg-base": "#FFFFFF",
+      "--arc-bg-mid": "#EFEBE0",
+      "--arc-bg-elev": "#FFFFFF",
+      "--arc-bg-glass": "rgba(27, 42, 78, 0.05)",
+      "--arc-bg-glass-2": "rgba(27, 42, 78, 0.03)",
+      "--arc-display": "#B8860B",
+      "--arc-display-bright": "#D9A52A",
+      "--arc-display-deep": "#8A6608",
+      "--arc-display-glow": "rgba(184, 134, 11, 0.25)",
+      "--arc-cream": "#1A1A1A",
+      "--arc-text": "#1A1A1A",
+      "--arc-text-dim": "#5A5A5A",
+      "--arc-text-faint": "#999999",
+      "--arc-text-mute": "#B5B5B5",
+      "--arc-hairline": "rgba(27, 42, 78, 0.18)",
+      "--arc-hairline-2": "rgba(184, 134, 11, 0.42)",
+      "--arc-glow-soft": "rgba(184, 134, 11, 0.14)",
+      "--arc-navy-accent": "#1B2A4E",
+      "--arc-card-base": "rgba(255, 255, 255, 0.92)",
+      "--rwd-card-bg": "linear-gradient(165deg, #FFFFFF, #F2EEE4)",
+      "--arc-on-tint": "#FBF7EF",
+      "--arc-font-display": "'Cormorant Garamond', Georgia, serif",
+      "--arc-font-display-weight": "700",
+      "--arc-font-body": "'Source Sans Pro', system-ui, sans-serif"
+    },
+    "fonts": {
+      "display": "Cormorant Garamond",
+      "body": "Source Sans Pro",
+      "mono": "JetBrains Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Source+Sans+Pro:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+    },
+    "mode": "arcade",
+    "campaignProgressStyle": "shimmer",
+    "categoryMap": {
+      "electronics": "purple",
+      "audio": "purple",
+      "outdoor": "blue",
+      "smart-home": "blue",
+      "gift-cards": "orange",
+      "wellness": "pink",
+      "food": "green",
+      "dining": "green",
+      "travel": "teal",
+      "sports": "orange"
+    }
+  },
+  "copy": { "locale": "en-US" },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": true,
+    "tierProgress": true,
+    "twoColumnDetail": true,
+    "horizontalCarousel": true
+  },
+  "vendor": { "type": "konami", "pinLength": 4, "pinShuffle": false },
+  "compliance": { "jurisdiction": "NV", "budgetCapEnforced": true }
+}

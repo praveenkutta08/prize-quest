@@ -1,0 +1,53 @@
+{
+  "id": "demo-purple",
+  "name": "Neon Nights Casino",
+  "brand": {
+    "logo": { "src": "/assets/demo-purple/logo.svg", "alt": "Neon Nights", "height": 34 },
+    "favicon": "/assets/demo-purple/favicon.svg",
+    "productName": "Prize Rush"
+  },
+  "theme": {
+    "tokens": {
+      "--pq-navy-deep": "#160726",
+      "--pq-navy-base": "#241040",
+      "--pq-navy-low": "#341A5C",
+      "--pq-navy-mid": "#44236F",
+      "--pq-navy-hairline": "#5B3494",
+      "--pq-emerald": "#B14DFF",
+      "--pq-emerald-soft": "#8E3FD4",
+      "--pq-emerald-dim": "#5B2A8A",
+      "--pq-cream": "#E6E1EF",
+      "--pq-cream-muted": "#B7AECB",
+      "--pq-text": "#F3EFFA",
+      "--pq-text-muted": "#C3B6DC"
+    },
+    "fonts": {
+      "display": "Poppins",
+      "serif": "Playfair Display",
+      "body": "Poppins",
+      "mono": "IBM Plex Mono",
+      "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@400;500;600;700&display=swap"
+    },
+    "mode": "casino-loud"
+  },
+  "copy": {
+    "locale": "en-US"
+  },
+  "features": {
+    "voucher": true,
+    "notifications": true,
+    "offlineMode": false,
+    "tierProgress": true,
+    "twoColumnDetail": false,
+    "horizontalCarousel": true
+  },
+  "vendor": {
+    "type": "igt",
+    "pinLength": 6,
+    "pinShuffle": true
+  },
+  "compliance": {
+    "jurisdiction": "NV",
+    "budgetCapEnforced": false
+  }
+}
