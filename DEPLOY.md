@@ -16,8 +16,6 @@ Reference guide for redeploying `apps/kiosk-arcade` and `apps/ttd-synkros` to pr
 Run any app's dev server from the monorepo root:
 
 ```powershell
-# Luminara web
-corepack pnpm --filter @pq/luminara-web dev
 
 # TTD synkros
 corepack pnpm --filter @pq/ttd-synkros dev
