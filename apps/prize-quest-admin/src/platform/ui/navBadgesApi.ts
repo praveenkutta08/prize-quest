@@ -20,7 +20,65 @@ const navBadgesApi = baseApi.injectEndpoints({
       }),
       providesTags: [{ type: "Campaign", id: "LIST" }],
     }),
+    getRulesBadge: build.query<{ activeRules: number }, string>({
+      query: () => ({ url: "/rules", params: { page: 0 } }),
+      transformResponse: (raw: { counts?: { active?: number } }) => ({
+        activeRules: raw?.counts?.active ?? 0,
+      }),
+      providesTags: [{ type: "Rule", id: "LIST" }],
+    }),
+    getRewardsBadge: build.query<{ lowStock: number }, string>({
+      query: () => ({ url: "/rewards", params: { page: 0 } }),
+      transformResponse: (raw: { stats?: { lowStock?: number } }) => ({
+        lowStock: raw?.stats?.lowStock ?? 0,
+      }),
+      providesTags: [{ type: "Reward", id: "LIST" }],
+    }),
+    getPlayersBadge: build.query<{ totalPlayers: number }, string>({
+      query: () => ({ url: "/players", params: { page: 0 } }),
+      transformResponse: (raw: { counts?: { all?: number } }) => ({
+        totalPlayers: raw?.counts?.all ?? 0,
+      }),
+      providesTags: [{ type: "Player", id: "LIST" }],
+    }),
+    getUsersBadge: build.query<{ pending: number }, string>({
+      query: () => ({ url: "/users", params: { page: 0 } }),
+      transformResponse: (raw: { counts?: { pending?: number } }) => ({
+        pending: raw?.counts?.pending ?? 0,
+      }),
+      providesTags: [{ type: "User", id: "LIST" }],
+    }),
+    getFulfillmentBadge: build.query<{ pending: number }, string>({
+      query: () => ({ url: "/fulfillment", params: { page: 0 } }),
+      transformResponse: (raw: { counts?: { pending?: number } }) => ({
+        pending: raw?.counts?.pending ?? 0,
+      }),
+      providesTags: [{ type: "Fulfillment", id: "LIST" }],
+    }),
+    getNotifBadge: build.query<{ unread: number }, void>({
+      query: () => "/notifications",
+      transformResponse: (raw: Array<{ read: boolean }>) => ({
+        unread: Array.isArray(raw) ? raw.filter((n) => !n.read).length : 0,
+      }),
+      providesTags: ["Notification"],
+    }),
+    getTriggersBadge: build.query<{ active: number }, string>({
+      query: () => ({ url: "/triggers-admin", params: { page: 0 } }),
+      transformResponse: (raw: { counts?: { active?: number } }) => ({
+        active: raw?.counts?.active ?? 0,
+      }),
+      providesTags: [{ type: "Trigger", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useGetNavBadgesQuery } = navBadgesApi;
+export const {
+  useGetNavBadgesQuery,
+  useGetRulesBadgeQuery,
+  useGetRewardsBadgeQuery,
+  useGetPlayersBadgeQuery,
+  useGetUsersBadgeQuery,
+  useGetFulfillmentBadgeQuery,
+  useGetNotifBadgeQuery,
+  useGetTriggersBadgeQuery,
+} = navBadgesApi;

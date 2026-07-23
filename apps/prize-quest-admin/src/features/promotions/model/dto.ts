@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { CampaignStatus } from "@/shared/contracts";
+import {
+  CampaignStatus,
+  Condition,
+  ConditionGroup,
+  ConditionOperator,
+  ConditionValue,
+  Conjunction,
+} from "@/shared/contracts";
 
 /**
  * Promotions domain contracts (app-local, Zod-first). One schema is the single
@@ -16,39 +23,10 @@ export type CampaignType = z.infer<typeof CampaignType>;
 /** Reuse the canonical status enum (draft · scheduled · active · paused · ended). */
 export { CampaignStatus };
 
-// ── Eligibility (a flat AND/OR condition group; see condition-catalog.ts) ──────
-
-export const Conjunction = z.enum(["AND", "OR"]);
-export type Conjunction = z.infer<typeof Conjunction>;
-
-export const ConditionOperator = z.enum(["in", "not-in", "eq", "gte", "lte", "between"]);
-export type ConditionOperator = z.infer<typeof ConditionOperator>;
-
-/**
- * A single value editor emits one of: a keyword/string, a number, a list of
- * enum values, or a numeric [min, max] tuple. Kept as a permissive union so the
- * builder can drive any field type without a per-field schema.
- */
-export const ConditionValue = z.union([
-  z.string(),
-  z.number(),
-  z.array(z.string()),
-  z.array(z.number()),
-]);
-export type ConditionValue = z.infer<typeof ConditionValue>;
-
-export const Condition = z.object({
-  field: z.string().min(1, "Pick a field"),
-  operator: ConditionOperator,
-  value: ConditionValue,
-});
-export type Condition = z.infer<typeof Condition>;
-
-export const ConditionGroup = z.object({
-  conjunction: Conjunction,
-  conditions: z.array(Condition),
-});
-export type ConditionGroup = z.infer<typeof ConditionGroup>;
+// ── Eligibility (a flat AND/OR condition group; now shared across features) ────
+// Condition / ConditionGroup / operators live in `@/shared/contracts` so the
+// Rules Engine reuses them. Re-exported here for existing `../model` consumers.
+export { Condition, ConditionGroup, ConditionOperator, ConditionValue, Conjunction };
 
 // ── Earn rules · schedule · compliance · metrics ──────────────────────────────
 

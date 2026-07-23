@@ -9,6 +9,11 @@ packages:
 # Dependencies are still installed explicitly via `pnpm install`.
 verifyDepsBeforeRun: false
 
+# Match the length the existing node_modules was created with (pnpm 9 used 120;
+# pnpm 11 changed the default to 60). Pinning this avoids ERR_PNPM_VIRTUAL_STORE_DIR
+# _MAX_LENGTH_DIFF when adding packages without recreating the whole store.
+virtualStoreDirMaxLength: 120
+
 onlyBuiltDependencies:
   - esbuild
 ignoredBuiltDependencies:
@@ -16,3 +21,5 @@ ignoredBuiltDependencies:
 allowBuilds:
   core-js: false
   esbuild: true
+  msw: false
+  unrs-resolver: false

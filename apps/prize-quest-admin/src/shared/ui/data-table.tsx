@@ -24,6 +24,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Skeleton } from "./skeleton";
 import { EmptyState } from "./empty-state";
 import { Button } from "./button";
+import { Checkbox } from "./checkbox";
 
 export interface DataTablePagination {
   pageIndex: number;
@@ -51,6 +52,11 @@ interface DataTableProps<T> {
   manualSorting?: boolean;
   /** Server-side pagination footer. Omit for no pagination. */
   pagination?: DataTablePagination;
+  /** Opt-in row selection: renders a leading checkbox column (Session 8 bulk actions). */
+  enableRowSelection?: boolean;
+  getRowId?: (row: T) => string;
+  selectedIds?: string[];
+  onSelectedIdsChange?: (ids: string[]) => void;
 }
 
 /**
@@ -72,13 +78,67 @@ export function DataTable<T>({
   onSortingChange,
   manualSorting,
   pagination,
+  enableRowSelection,
+  getRowId,
+  selectedIds,
+  onSelectedIdsChange,
 }: DataTableProps<T>) {
   const [internalSorting, setInternalSorting] = useState<SortingState>([]);
   const controlled = sorting !== undefined;
 
+  const selectionOn = Boolean(enableRowSelection && getRowId && onSelectedIdsChange);
+  const selected = new Set(selectedIds ?? []);
+  const pageIds = selectionOn ? data.map((r) => getRowId!(r)) : [];
+  const allSelected = pageIds.length > 0 && pageIds.every((id) => selected.has(id));
+  const someSelected = pageIds.some((id) => selected.has(id));
+
+  const toggleAll = () => {
+    if (!onSelectedIdsChange) return;
+    if (allSelected) {
+      onSelectedIdsChange((selectedIds ?? []).filter((id) => !pageIds.includes(id)));
+    } else {
+      onSelectedIdsChange(Array.from(new Set([...(selectedIds ?? []), ...pageIds])));
+    }
+  };
+  const toggleRow = (id: string) => {
+    if (!onSelectedIdsChange) return;
+    onSelectedIdsChange(
+      selected.has(id) ? (selectedIds ?? []).filter((x) => x !== id) : [...(selectedIds ?? []), id],
+    );
+  };
+
+  const selectColumn: ColumnDef<T, unknown> = {
+    id: "__select",
+    enableSorting: false,
+    meta: { className: "w-10" },
+    header: () => (
+      <span className="flex items-center">
+        <Checkbox
+          checked={allSelected ? true : someSelected ? "indeterminate" : false}
+          onCheckedChange={toggleAll}
+          aria-label="Select all rows"
+        />
+      </span>
+    ),
+    cell: ({ row }) => {
+      const id = getRowId!(row.original);
+      return (
+        <span className="flex items-center" onClick={(e) => e.stopPropagation()}>
+          <Checkbox
+            checked={selected.has(id)}
+            onCheckedChange={() => toggleRow(id)}
+            aria-label="Select row"
+          />
+        </span>
+      );
+    },
+  };
+
+  const effectiveColumns = selectionOn ? [selectColumn, ...columns] : columns;
+
   const table = useReactTable({
     data,
-    columns,
+    columns: effectiveColumns,
     state: { sorting: controlled ? sorting : internalSorting },
     onSortingChange: controlled ? onSortingChange : setInternalSorting,
     manualSorting: controlled ? manualSorting : false,

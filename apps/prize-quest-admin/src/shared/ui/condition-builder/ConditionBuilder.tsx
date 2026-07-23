@@ -19,6 +19,12 @@ export interface ConditionBuilderProps {
   /** Per-row error message, aligned by index. */
   errors?: Array<string | undefined>;
   disabled?: boolean;
+  /**
+   * Display-only preview (Session 5 Segments): disables every editor AND hides
+   * the add/remove affordances and the connector toggle, so a saved criteria
+   * `ConditionGroup` renders as read-only rows. `onChange` is never called.
+   */
+  readOnly?: boolean;
   className?: string;
   /** Copy for the empty state (no rows yet). */
   emptyHint?: string;
@@ -37,10 +43,12 @@ export function ConditionBuilder({
   onChange,
   errors,
   disabled,
+  readOnly,
   className,
   emptyHint = "No conditions yet — every eligible player qualifies.",
 }: ConditionBuilderProps) {
   const rows = value.conditions;
+  const locked = disabled || readOnly;
 
   const setRows = (conditions: ConditionRowValue[]) => onChange({ ...value, conditions });
 
@@ -94,14 +102,15 @@ export function ConditionBuilder({
                     index={index}
                     conjunction={value.conjunction}
                     onToggle={toggleConjunction}
-                    disabled={disabled}
+                    disabled={locked}
+                    readOnly={readOnly}
                   />
 
                   {/* Field */}
                   <Select
                     value={row.field}
                     onValueChange={(v) => changeField(index, v)}
-                    disabled={disabled}
+                    disabled={locked}
                   >
                     <SelectTrigger className="h-9 w-[168px] shrink-0 font-mono text-xs">
                       <SelectValue placeholder="Field" />
@@ -119,7 +128,7 @@ export function ConditionBuilder({
                   <Select
                     value={row.operator}
                     onValueChange={(v) => changeOperator(index, v)}
-                    disabled={disabled || !field}
+                    disabled={locked || !field}
                   >
                     <SelectTrigger className="h-9 w-[112px] shrink-0 text-xs">
                       <SelectValue placeholder="Op" />
@@ -140,22 +149,24 @@ export function ConditionBuilder({
                       operator={row.operator}
                       value={row.value}
                       onChange={(v) => updateRow(index, { value: v })}
-                      disabled={disabled}
+                      disabled={locked}
                       invalid={Boolean(error)}
                     />
                   </div>
 
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="mt-0 size-9 shrink-0 text-text-tertiary hover:text-danger"
-                    onClick={() => removeRow(index)}
-                    disabled={disabled}
-                    aria-label={`Remove condition ${index + 1}`}
-                  >
-                    <Trash2 />
-                  </Button>
+                  {readOnly ? null : (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="mt-0 size-9 shrink-0 text-text-tertiary hover:text-danger"
+                      onClick={() => removeRow(index)}
+                      disabled={disabled}
+                      aria-label={`Remove condition ${index + 1}`}
+                    >
+                      <Trash2 />
+                    </Button>
+                  )}
                 </div>
                 {error ? (
                   <p className="pl-[70px] text-2xs text-danger" role="alert">
@@ -168,17 +179,19 @@ export function ConditionBuilder({
         </div>
       )}
 
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={addRow}
-        disabled={disabled}
-        className="border-dashed"
-      >
-        <Plus />
-        Add condition
-      </Button>
+      {readOnly ? null : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={addRow}
+          disabled={disabled}
+          className="border-dashed"
+        >
+          <Plus />
+          Add condition
+        </Button>
+      )}
     </div>
   );
 }
@@ -188,16 +201,25 @@ function Connector({
   conjunction,
   onToggle,
   disabled,
+  readOnly,
 }: {
   index: number;
   conjunction: "AND" | "OR";
   onToggle: () => void;
   disabled?: boolean;
+  readOnly?: boolean;
 }) {
   if (index === 0) {
     return (
       <span className="flex h-9 w-[52px] shrink-0 items-center justify-center rounded-md bg-surface-1 font-mono text-2xs uppercase tracking-wide text-text-tertiary">
         where
+      </span>
+    );
+  }
+  if (readOnly) {
+    return (
+      <span className="flex h-9 w-[52px] shrink-0 items-center justify-center rounded-md border border-brand/30 bg-brand-subtle font-mono text-2xs font-semibold uppercase tracking-wide text-brand-bright">
+        {conjunction}
       </span>
     );
   }

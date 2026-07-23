@@ -33,3 +33,8 @@ export const casinoRoyaleContext = loadTenant(
 export const TENANTS: Record<string, TenantContext> = {
   "casino-royale": casinoRoyaleContext,
 };
+
+/** Fresh clones so the mutable DB never aliases the parsed seed (Settings edits it). */
+export function seedTenants(): Record<string, TenantContext> {
+  return { "casino-royale": structuredClone(casinoRoyaleContext) };
+}

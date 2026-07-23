@@ -22,6 +22,10 @@ export const Permission = z.enum([
   "audit.export",
   "users.manage",
   "settings.manage",
+  "players.adjust",
+  "fulfillment.manage",
+  "notifications.manage",
+  "triggers.manage",
 ]);
 export type Permission = z.infer<typeof Permission>;
 

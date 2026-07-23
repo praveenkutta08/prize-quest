@@ -9,6 +9,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "rule.create",
     "logs.view",
     "catalog.sync",
+    "notifications.manage",
   ],
   approver: [
     "campaign.view",
@@ -19,7 +20,17 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "rule.toggle",
     "logs.view",
   ],
-  operations: ["campaign.view", "rule.view", "rule.toggle", "logs.view", "catalog.sync"],
+  operations: [
+    "campaign.view",
+    "rule.view",
+    "rule.toggle",
+    "logs.view",
+    "catalog.sync",
+    "players.adjust",
+    "fulfillment.manage",
+    "notifications.manage",
+    "triggers.manage",
+  ],
   auditor: ["campaign.view", "rule.view", "logs.view", "logs.export", "audit.export"],
   admin: [
     "campaign.view",
@@ -34,6 +45,10 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "audit.export",
     "users.manage",
     "settings.manage",
+    "players.adjust",
+    "fulfillment.manage",
+    "notifications.manage",
+    "triggers.manage",
   ],
 };
 
@@ -53,6 +68,22 @@ export const OPERATORS: OperatorUser[] = [
     initials: "MR",
     role: "approver",
     title: "VP Marketing",
+  },
+  {
+    id: "u-alex-rivera",
+    name: "Alex Rivera",
+    email: "alex.rivera@casinoroyale.com",
+    initials: "AR",
+    role: "admin",
+    title: "Console Administrator",
+  },
+  {
+    id: "u-sam-patel",
+    name: "Sam Patel",
+    email: "sam.patel@casinoroyale.com",
+    initials: "SP",
+    role: "operations",
+    title: "Operations Lead",
   },
 ];
 

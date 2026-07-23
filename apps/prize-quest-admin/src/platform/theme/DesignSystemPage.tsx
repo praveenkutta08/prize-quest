@@ -60,6 +60,7 @@ import {
 import { cn } from "@/shared/lib/cn";
 import { tokenToHex } from "./applyTenantTheme";
 import { ShowcaseSessionTwo } from "./ShowcaseSessionTwo";
+import { ShowcaseSessionThree } from "./ShowcaseSessionThree";
 import { MarkGlyph } from "@/platform/ui/BootSplash";
 
 interface Swatch {
@@ -159,6 +160,7 @@ const NAV = [
   ["elevation", "Elevation & motion"],
   ["components", "Components"],
   ["session-two", "Promotions kit"],
+  ["session-three", "Automation kit"],
 ] as const;
 
 export function DesignSystemPage() {
@@ -587,6 +589,16 @@ export function DesignSystemPage() {
           description="DataTable, ConditionBuilder, and SummaryPanel — built generic in Session 2 and reused by the Session 3 Rules Engine with zero changes beyond props."
         >
           <ShowcaseSessionTwo />
+        </Section>
+
+        {/* Session 3 · Automation kit — the new rule/log components */}
+        <Section
+          id="session-three"
+          eyebrow="07 · Automation kit"
+          title="Rules Engine components"
+          description="Toggle, CronField, EventSelector, ActionConfig, and the virtualized LogStream — Session 3's new pieces, reusing the same trio (DataTable · ConditionBuilder · SummaryPanel) for the rest."
+        >
+          <ShowcaseSessionThree />
         </Section>
 
         <footer className="border-t border-hairline pt-8 text-xs text-text-tertiary">

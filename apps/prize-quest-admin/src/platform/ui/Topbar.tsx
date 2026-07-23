@@ -17,11 +17,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/ui";
+import { useGetNotifBadgeQuery } from "./navBadgesApi";
 
 export function Topbar({ onOpenCommand }: { onOpenCommand: () => void }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((s) => s.auth.session?.user);
+  const notifBadge = useGetNotifBadgeQuery();
+  const unread = notifBadge.data?.unread ?? 0;
 
   const signOut = () => {
     dispatch(clearSession());
@@ -48,9 +51,19 @@ export function Topbar({ onOpenCommand }: { onOpenCommand: () => void }) {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={unread > 0 ? `Notifications (${unread} unread)` : "Notifications"}
+              className="relative"
+              onClick={() => navigate("/notifications")}
+            >
               <Bell />
-              <span className="absolute right-2 top-2 size-1.5 rounded-full bg-brand" />
+              {unread > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex min-w-[16px] items-center justify-center rounded-full bg-brand px-1 text-[9px] font-semibold tabular-nums text-brand-foreground">
+                  {unread}
+                </span>
+              ) : null}
             </Button>
           </TooltipTrigger>
           <TooltipContent>Notifications</TooltipContent>
