@@ -132,7 +132,7 @@ export function DeliveryLogPage() {
               </div>
               <ToolbarSpacer />
               <Select value={channel} onValueChange={setChannel}>
-                <SelectTrigger className="h-9 w-[150px] text-xs">
+                <SelectTrigger className="h-9 w-[150px] text-xs" aria-label="Filter by channel">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

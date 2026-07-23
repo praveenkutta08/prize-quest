@@ -2,6 +2,7 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
+import { useFieldLabelId } from "./field-label-context";
 
 export const Select = SelectPrimitive.Root;
 export const SelectGroup = SelectPrimitive.Group;
@@ -10,25 +11,33 @@ export const SelectValue = SelectPrimitive.Value;
 export const SelectTrigger = React.forwardRef<
   React.ComponentRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-surface-sunken px-3 py-2 text-sm",
-      "text-text-primary data-[placeholder]:text-text-tertiary",
-      "transition-colors duration-fast ease-out hover:border-hairline-strong",
-      "focus:outline-none focus:border-brand focus:ring-2 focus:ring-ring/40",
-      "disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate",
-      className,
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="size-4 shrink-0 text-text-tertiary" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-));
+>(({ className, children, ...props }, ref) => {
+  // Inherit the enclosing Field's <label> as the accessible name when the caller
+  // hasn't supplied one — the trigger is a <button>, so `htmlFor` can't reach it.
+  const fieldLabelId = useFieldLabelId();
+  const ariaLabelledBy =
+    props["aria-labelledby"] ?? (props["aria-label"] ? undefined : (fieldLabelId ?? undefined));
+  return (
+    <SelectPrimitive.Trigger
+      ref={ref}
+      aria-labelledby={ariaLabelledBy}
+      className={cn(
+        "flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-surface-sunken px-3 py-2 text-sm",
+        "text-text-primary data-[placeholder]:text-text-tertiary",
+        "transition-colors duration-fast ease-out hover:border-hairline-strong",
+        "focus:outline-none focus:border-brand focus:ring-2 focus:ring-ring/40",
+        "disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className="size-4 shrink-0 text-text-tertiary" />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
+});
 SelectTrigger.displayName = "SelectTrigger";
 
 export const SelectContent = React.forwardRef<

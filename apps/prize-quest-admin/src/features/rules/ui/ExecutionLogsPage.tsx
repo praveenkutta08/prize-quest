@@ -204,7 +204,7 @@ export function ExecutionLogsPage() {
           </div>
           <ToolbarSpacer />
           <Select value={range} onValueChange={(v) => patch({ range: v })}>
-            <SelectTrigger className="h-9 w-[150px] text-xs">
+            <SelectTrigger className="h-9 w-[150px] text-xs" aria-label="Filter by time range">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -216,7 +216,7 @@ export function ExecutionLogsPage() {
             </SelectContent>
           </Select>
           <Select value={ruleId} onValueChange={(v) => patch({ ruleId: v })}>
-            <SelectTrigger className="h-9 w-[180px] text-xs">
+            <SelectTrigger className="h-9 w-[180px] text-xs" aria-label="Filter by rule">
               <SelectValue placeholder="All rules" />
             </SelectTrigger>
             <SelectContent>

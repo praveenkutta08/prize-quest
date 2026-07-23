@@ -496,7 +496,7 @@ export function DesignSystemPage() {
                 </DropdownMenu>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" aria-label="Gauge example">
                       <Gauge />
                     </Button>
                   </TooltipTrigger>

@@ -179,7 +179,7 @@ export function UsersListPage() {
                 <StatusTabs tabs={tabs} value={url.status} onChange={url.setStatus} />
                 <ToolbarSpacer />
                 <Select value={role} onValueChange={setRole}>
-                  <SelectTrigger className="h-9 w-[170px] text-xs">
+                  <SelectTrigger className="h-9 w-[170px] text-xs" aria-label="Filter by role">
                     <SelectValue placeholder="All roles" />
                   </SelectTrigger>
                   <SelectContent>

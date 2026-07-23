@@ -23,9 +23,11 @@ export function DetailHero({
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 space-y-3">
           {pills ? <div className="flex flex-wrap items-center gap-2">{pills}</div> : null}
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary">
+          {/* h2, not h1: every DetailHero page also renders a PageHeader that owns
+              the page's single h1, so the hero is the first section under it. */}
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-text-primary">
             {title}
-          </h1>
+          </h2>
           {subtitle ? <p className="max-w-2xl text-sm text-text-secondary">{subtitle}</p> : null}
         </div>
         {actions ? <div className="flex shrink-0 flex-wrap gap-2">{actions}</div> : null}
@@ -53,16 +55,24 @@ export function DetailCard({
   action,
   children,
   className,
+  headingLevel: Heading = "h2",
 }: {
   title: ReactNode;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  /**
+   * Heading element for the card title. Defaults to `h2` — a card is normally a
+   * top-level section directly under the page `h1`. Pass `h3` when the card is
+   * nested inside a section that already owns an `h2`, so the document heading
+   * order never skips a level (WCAG 1.3.1 / heading-order).
+   */
+  headingLevel?: "h2" | "h3";
 }) {
   return (
     <section className={cn("rounded-xl border border-hairline bg-surface-1 p-5", className)}>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h3 className="font-display text-sm font-semibold text-text-primary">{title}</h3>
+        <Heading className="font-display text-sm font-semibold text-text-primary">{title}</Heading>
         {action}
       </div>
       {children}

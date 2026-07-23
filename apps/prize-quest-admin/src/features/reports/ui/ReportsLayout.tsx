@@ -139,7 +139,7 @@ export function ReportsLayout() {
           />
           <span className="ml-2 text-2xs uppercase tracking-wide text-text-tertiary">Segment</span>
           <Select value={segment} onValueChange={(v) => patch({ segment: v })}>
-            <SelectTrigger className="h-8 w-[150px] text-xs">
+            <SelectTrigger className="h-8 w-[150px] text-xs" aria-label="Filter by segment">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -74,13 +74,15 @@ export function Topbar({ onOpenCommand }: { onOpenCommand: () => void }) {
             <button
               type="button"
               className="flex items-center gap-2 rounded-full border border-hairline bg-surface-1 py-1 pl-1 pr-2.5 transition-colors hover:border-hairline-strong"
-              aria-label="Profile menu"
             >
-              <Avatar className="size-7">
+              {/* Avatar is decorative (it just repeats the initials of the name),
+                  so hide it from AT and let the visible name be the accessible
+                  name — avoids a WCAG 2.5.3 label-in-name mismatch. */}
+              <Avatar className="size-7" aria-hidden="true">
                 <AvatarFallback>{user?.initials ?? "PQ"}</AvatarFallback>
               </Avatar>
-              <span className="hidden text-xs font-medium text-text-secondary sm:block">
-                {user?.name.split(" ")[0]}
+              <span className="text-xs font-medium text-text-secondary">
+                {user?.name.split(" ")[0] ?? "Account"}
               </span>
             </button>
           </DropdownMenuTrigger>

@@ -185,7 +185,7 @@ export function PlayersListPage() {
                 />
                 <ToolbarSpacer />
                 <Select value={tier} onValueChange={(v) => setParam("tier", v)}>
-                  <SelectTrigger className="h-9 w-[140px] text-xs">
+                  <SelectTrigger className="h-9 w-[140px] text-xs" aria-label="Filter by tier">
                     <SelectValue placeholder="All tiers" />
                   </SelectTrigger>
                   <SelectContent>
@@ -200,7 +200,7 @@ export function PlayersListPage() {
                   </SelectContent>
                 </Select>
                 <Select value={status} onValueChange={(v) => setParam("statusFilter", v)}>
-                  <SelectTrigger className="h-9 w-[150px] text-xs">
+                  <SelectTrigger className="h-9 w-[150px] text-xs" aria-label="Filter by status">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

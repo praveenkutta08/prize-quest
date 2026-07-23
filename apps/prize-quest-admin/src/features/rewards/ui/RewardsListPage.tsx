@@ -148,7 +148,7 @@ export function RewardsListPage() {
       <StatusTabs tabs={tabs} value={url.status} onChange={url.setStatus} />
       <ToolbarSpacer />
       <Select value={category} onValueChange={(v) => setParam("category", v)}>
-        <SelectTrigger className="h-9 w-[170px] text-xs">
+        <SelectTrigger className="h-9 w-[170px] text-xs" aria-label="Filter by category">
           <SelectValue placeholder="All categories" />
         </SelectTrigger>
         <SelectContent>

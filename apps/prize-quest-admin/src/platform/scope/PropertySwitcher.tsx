@@ -35,7 +35,8 @@ export function PropertySwitcher() {
         <Button
           variant="secondary"
           className="h-9 gap-2 pl-2.5 pr-2 text-left font-normal"
-          aria-label="Switch property"
+          // No aria-label: the visible "Property / <name> / <code>" content is the
+          // accessible name, so it can't violate WCAG 2.5.3 (label-in-name).
         >
           <span className="flex size-6 items-center justify-center rounded-md bg-brand-subtle text-brand-bright">
             {isAll ? <Layers className="size-3.5" /> : <Building2 className="size-3.5" />}

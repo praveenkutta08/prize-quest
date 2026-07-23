@@ -1,12 +1,18 @@
 import * as React from "react";
 import { cn } from "@/shared/lib/cn";
+import { useFieldLabelId } from "./field-label-context";
 
 /** Multi-line field, styled to match `Input` (same border/focus/invalid tokens). */
 export const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
   ({ className, ...props }, ref) => {
+    // Adopt the enclosing Field's context label when the caller gave no name.
+    const fieldLabelId = useFieldLabelId();
+    const ariaLabelledBy =
+      props["aria-labelledby"] ?? (props["aria-label"] ? undefined : (fieldLabelId ?? undefined));
     return (
       <textarea
         ref={ref}
+        aria-labelledby={ariaLabelledBy}
         className={cn(
           "flex min-h-[92px] w-full rounded-md border border-input bg-surface-sunken px-3 py-2 text-sm",
           "text-text-primary placeholder:text-text-tertiary",

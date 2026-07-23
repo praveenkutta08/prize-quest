@@ -1,6 +1,7 @@
-import { forwardRef, type ReactNode } from "react";
+import { forwardRef, useId, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
+import { FieldLabelContext } from "./field-label-context";
 
 /**
  * Authoring layout (plan §8 `FormWizardLayout`, prototype `.form-grid`):
@@ -55,7 +56,7 @@ export const FormSection = forwardRef<
           {complete ? <Check className="size-3.5" /> : step}
         </span>
         <div>
-          <h3 className="font-display text-sm font-semibold text-text-primary">{title}</h3>
+          <h2 className="font-display text-sm font-semibold text-text-primary">{title}</h2>
           {subtitle ? <p className="text-2xs text-text-tertiary">{subtitle}</p> : null}
         </div>
       </div>
@@ -86,14 +87,25 @@ export function Field({
   error?: ReactNode;
   children: ReactNode;
 }) {
+  // A stable id so non-native controls (Radix Select, etc.) can point their
+  // `aria-labelledby` at this label via FieldLabelContext. Native inputs keep
+  // using `htmlFor`; when it's set, that association wins and we skip the context.
+  const generatedId = useId();
+  const labelId = `${generatedId}-label`;
   return (
     <div className="space-y-1.5">
       {label ? (
-        <label htmlFor={htmlFor} className="text-xs uppercase tracking-wide text-text-secondary">
+        <label
+          id={labelId}
+          htmlFor={htmlFor}
+          className="text-xs uppercase tracking-wide text-text-secondary"
+        >
           {label}
         </label>
       ) : null}
-      {children}
+      <FieldLabelContext.Provider value={Boolean(label) && !htmlFor ? labelId : null}>
+        {children}
+      </FieldLabelContext.Provider>
       {error ? (
         <p className="text-2xs text-danger" role="alert">
           {error}

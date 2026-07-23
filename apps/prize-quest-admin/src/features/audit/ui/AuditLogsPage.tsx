@@ -184,7 +184,7 @@ export function AuditLogsPage() {
       <div className="rounded-xl border border-hairline bg-surface-1 p-4">
         <Toolbar className="mb-3">
           <Select value={actor} onValueChange={(v) => patch({ actor: v })}>
-            <SelectTrigger className="h-9 w-[150px] text-xs">
+            <SelectTrigger className="h-9 w-[150px] text-xs" aria-label="Filter by actor">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -196,7 +196,7 @@ export function AuditLogsPage() {
             </SelectContent>
           </Select>
           <Select value={action} onValueChange={(v) => patch({ action: v })}>
-            <SelectTrigger className="h-9 w-[140px] text-xs">
+            <SelectTrigger className="h-9 w-[140px] text-xs" aria-label="Filter by action">
               <SelectValue placeholder="All actions" />
             </SelectTrigger>
             <SelectContent>
@@ -208,7 +208,7 @@ export function AuditLogsPage() {
             </SelectContent>
           </Select>
           <Select value={target} onValueChange={(v) => patch({ target: v })}>
-            <SelectTrigger className="h-9 w-[140px] text-xs">
+            <SelectTrigger className="h-9 w-[140px] text-xs" aria-label="Filter by target">
               <SelectValue placeholder="All targets" />
             </SelectTrigger>
             <SelectContent>

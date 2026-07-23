@@ -52,7 +52,7 @@
   /* ---- Text ramp ------------------------------------------------------- */
   --text-primary: 232 237 242; /* #E8EDF2 */
   --text-secondary: 169 180 192; /* #A9B4C0 */
-  --text-tertiary: 122 135 148; /* #7A8794 */
+  --text-tertiary: 134 143 156; /* #868F9C — nudged from #7A8794 to clear WCAG AA (4.5:1) for small muted text on dark nav/surfaces */
   --text-disabled: 78 88 102; /* #4E5866 */
   --foreground: 232 237 242;
 
@@ -74,14 +74,17 @@
   --warning-soft: 36 30 18; /* #241E12 */
 
   --danger: 230 121 107; /* #E6796B coral-red */
-  --danger-foreground: 250 250 250;
+  /* Text on a solid --danger fill (the destructive button). White gives only
+     2.75:1 on this soft coral; a deep-danger tone lands ~6:1 (WCAG AA). The
+     token stays light for `text-danger` on dark surfaces — different token. */
+  --danger-foreground: 42 23 20; /* #2A1714 deep danger */
   --danger-soft: 42 23 20; /* #2A1714 */
 
   --info: 127 176 216; /* #7FB0D8 steel-blue — scheduled/forthcoming */
   --info-foreground: 8 14 20;
   --info-soft: 20 32 43; /* #14202B */
 
-  --draft: 124 135 148; /* #7C8794 neutral */
+  --draft: 130 139 152; /* #828B98 neutral — nudged from #7C8794 to clear WCAG AA (4.5:1) on --draft-soft */
   --draft-foreground: 232 237 242;
   --draft-soft: 27 32 40; /* #1B2028 */
 

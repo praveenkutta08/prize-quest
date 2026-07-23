@@ -26,6 +26,12 @@ import { EmptyState } from "./empty-state";
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
 
+/** "actions" → "Actions", "__select" → "Select" — a readable sr-only header label. */
+function humanizeColumnId(id: string): string {
+  const cleaned = id.replace(/^__/, "").replace(/[-_]+/g, " ").trim();
+  return cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1) : "Column";
+}
+
 export interface DataTablePagination {
   pageIndex: number;
   pageSize: number;
@@ -161,6 +167,13 @@ export function DataTable<T>({
                 {hg.headers.map((header) => {
                   const canSort = header.column.getCanSort();
                   const sorted = header.column.getIsSorted();
+                  // Display columns (row actions, etc.) often render no header text,
+                  // which makes axe treat that column's cells as header-less. Give
+                  // such a header an sr-only label from its id so every <td> stays
+                  // associated with a named <th> (WCAG 1.3.1 / td-has-header).
+                  const headerDef = header.column.columnDef.header;
+                  const emptyHeader =
+                    !header.isPlaceholder && (headerDef === "" || headerDef == null);
                   return (
                     <TableHead
                       key={header.id}
@@ -173,7 +186,9 @@ export function DataTable<T>({
                             : undefined
                       }
                     >
-                      {header.isPlaceholder ? null : canSort ? (
+                      {header.isPlaceholder ? null : emptyHeader ? (
+                        <span className="sr-only">{humanizeColumnId(header.column.id)}</span>
+                      ) : canSort ? (
                         <button
                           type="button"
                           onClick={header.column.getToggleSortingHandler()}

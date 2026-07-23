@@ -153,7 +153,7 @@ export function DashboardPage() {
           <Card className="xl:col-span-2">
             <CardHeader>
               <div>
-                <CardTitle>Claims</CardTitle>
+                <CardTitle as="h2">Claims</CardTitle>
                 <p className="text-xs text-text-tertiary">Daily redemption volume · last 7 days</p>
               </div>
               <button
@@ -179,7 +179,7 @@ export function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Quick actions</CardTitle>
+              <CardTitle as="h2">Quick actions</CardTitle>
             </CardHeader>
             <CardContent>
               <QuickActions actions={quickActions} />
@@ -194,7 +194,7 @@ export function DashboardPage() {
           <Card className="overflow-hidden xl:col-span-2">
             <CardHeader>
               <div>
-                <CardTitle>Top performing campaigns</CardTitle>
+                <CardTitle as="h2">Top performing campaigns</CardTitle>
                 <p className="text-xs text-text-tertiary">By redemption rate · last 7 days</p>
               </div>
             </CardHeader>
@@ -225,7 +225,7 @@ export function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Recent activity</CardTitle>
+              <CardTitle as="h2">Recent activity</CardTitle>
             </CardHeader>
             <CardContent>
               {activity.isError ? (
