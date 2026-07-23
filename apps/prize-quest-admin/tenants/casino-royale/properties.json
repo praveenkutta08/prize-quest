@@ -1,0 +1,23 @@
+[
+  {
+    "id": "cr-lv",
+    "name": "Casino Royale Las Vegas",
+    "code": "LV",
+    "timezone": "America/Los_Angeles",
+    "jurisdiction": "NV"
+  },
+  {
+    "id": "cr-reno",
+    "name": "Casino Royale Reno",
+    "code": "RNO",
+    "timezone": "America/Los_Angeles",
+    "jurisdiction": "NV"
+  },
+  {
+    "id": "cr-tahoe",
+    "name": "Casino Royale Tahoe",
+    "code": "TAH",
+    "timezone": "America/Los_Angeles",
+    "jurisdiction": "NV"
+  }
+]

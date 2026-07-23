@@ -1,0 +1,47 @@
+{
+  "tenant": {
+    "id": "casino-royale",
+    "name": "Casino Royale",
+    "brand": {
+      "productName": "Prize Quest",
+      "operatorName": "Casino Royale",
+      "initials": "CR",
+      "tagline": "Player engagement platform"
+    },
+    "compliance": {
+      "jurisdiction": "NV",
+      "jurisdictionLabel": "Nevada Gaming Control Board",
+      "budgetCapEnforced": true
+    },
+    "vendor": { "type": "konami" },
+    "features": {
+      "reports": false,
+      "rewardsCatalog": false,
+      "players": false,
+      "triggers": false,
+      "fulfillment": false,
+      "auditLogs": false
+    }
+  },
+  "modules": [
+    { "key": "dashboard", "enabled": true },
+    { "key": "promotions", "enabled": true },
+    { "key": "rules", "enabled": true },
+    { "key": "reports", "enabled": false },
+    { "key": "rewards", "enabled": false },
+    { "key": "players", "enabled": false },
+    { "key": "triggers", "enabled": false },
+    { "key": "fulfillment", "enabled": false },
+    { "key": "audit", "enabled": false },
+    { "key": "notifications", "enabled": false },
+    { "key": "settings", "enabled": false },
+    { "key": "users", "enabled": false }
+  ],
+  "roles": [
+    { "key": "marketing-manager", "label": "Marketing Manager" },
+    { "key": "approver", "label": "Approver (VP)" },
+    { "key": "operations", "label": "Operations" },
+    { "key": "auditor", "label": "Auditor / Compliance" },
+    { "key": "admin", "label": "Admin" }
+  ]
+}

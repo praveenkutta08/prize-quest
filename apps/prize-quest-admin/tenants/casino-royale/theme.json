@@ -1,0 +1,4 @@
+{
+  "$comment": "Casino Royale ships canonical Nocturne. To re-skin this client, add token channels below (space-separated RGB) — they override the base tokens at runtime, no code change. e.g. \"--brand\": \"212 175 122\" for a champagne accent.",
+  "tokenOverrides": {}
+}

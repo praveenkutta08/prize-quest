@@ -3,6 +3,12 @@ packages:
   - "packages/widgets/*"
   - "apps/*"
 
+# Skip pnpm's pre-run "are deps up to date" check. Without this, pnpm 11 (pinned via
+# the packageManager field) tries to purge a node_modules built by a different pnpm
+# version and aborts non-interactive git hooks (GitHub Desktop / CI), failing commits.
+# Dependencies are still installed explicitly via `pnpm install`.
+verifyDepsBeforeRun: false
+
 onlyBuiltDependencies:
   - esbuild
 ignoredBuiltDependencies:

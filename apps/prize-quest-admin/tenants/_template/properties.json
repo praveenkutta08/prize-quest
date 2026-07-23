@@ -1,0 +1,9 @@
+[
+  {
+    "id": "example-main",
+    "name": "Example Resort & Casino",
+    "code": "MAIN",
+    "timezone": "America/Chicago",
+    "jurisdiction": "NV"
+  }
+]

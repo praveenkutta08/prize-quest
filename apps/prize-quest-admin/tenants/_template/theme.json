@@ -1,0 +1,17 @@
+{
+  "$comment": "Runtime theme overrides applied over the base Nocturne tokens. Keys are token names; values are space-separated RGB channels (so opacity utilities keep working). Omit a token to inherit the base. Example below re-skins the accent to champagne-brass and warms the ground.",
+  "tokenOverrides": {
+    "--brand": "212 175 122",
+    "--brand-bright": "232 205 162",
+    "--brand-strong": "190 150 96",
+    "--ring": "212 175 122",
+    "--primary": "212 175 122",
+    "--background": "18 15 12"
+  },
+  "fonts": {
+    "$comment": "Optional CSS font-family overrides once the tenant's faces are loaded.",
+    "display": "Bricolage Grotesque Variable",
+    "body": "Hanken Grotesk Variable",
+    "mono": "JetBrains Mono Variable"
+  }
+}

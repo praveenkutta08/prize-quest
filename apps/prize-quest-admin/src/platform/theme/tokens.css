@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  ============================================================================
+  PRIZE QUEST · OPERATOR CONSOLE — DESIGN SYSTEM TOKENS
+  Aesthetic direction: "NOCTURNE" (control room) — the base theme.
+  ----------------------------------------------------------------------------
+  WHY THIS DIRECTION. This is a casino marketing-operations console: it handles
+  money, liability, and compliance, and professionals live in it all day. So the
+  surface is a cool near-black command centre — crisp, high-contrast, and calm
+  under load — deliberately NOT the prototype's navy + emerald + gold.
+
+  THE MOVES.
+   • Ground: a chosen cool neutral with a faint blue-grey bias (never pure grey),
+     laddered into a five-step surface ramp for depth without noise.
+   • Accent: a single restrained ICE-STEEL (--brand). Reserved strictly for
+     primary / active / focus / brand — it never competes with data.
+   • Money runs warm: liability and warnings carry a controlled AMBER so the
+     thing that is actually about money keeps a little heat.
+   • Semantics (success/warning/danger/info) are separate from the accent and
+     used with discipline — colour encodes state, not decoration.
+
+  TYPE. Distinctive on purpose (never Inter/Roboto/system):
+   • Display  — Bricolage Grotesque (engineered-editorial character)
+   • UI text  — Hanken Grotesk (highly legible workhorse)
+   • Mono     — JetBrains Mono, tabular figures for IDs / metrics / currency / cron
+
+  MULTI-TENANT. Every value below is a *base default*. Colours are authored as
+  space-separated RGB channels so (a) Tailwind opacity utilities work and
+  (b) a client/tenant can re-skin the whole console at runtime by overriding
+  these channels (see applyTenantTheme.ts) — with zero component changes,
+  because no component ever hardcodes a colour. Tokens are the one source of truth.
+  ============================================================================
+*/
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Surface ramp (cool neutral, blue-grey bias) --------------------- */
+  --background: 10 12 15; /* #0A0C0F  canvas */
+  --surface-sunken: 7 9 12; /* #07090C  wells, insets */
+  --surface-1: 18 21 26; /* #12151A  cards */
+  --surface-2: 26 31 38; /* #1A1F26  raised / hover */
+  --surface-3: 35 42 51; /* #232A33  overlays / active */
+
+  /* ---- Hairlines / borders -------------------------------------------- */
+  --border: 37 45 54; /* #252D36 */
+  --input: 47 57 68; /* #2F3944  stronger edge for fields */
+
+  /* ---- Text ramp ------------------------------------------------------- */
+  --text-primary: 232 237 242; /* #E8EDF2 */
+  --text-secondary: 169 180 192; /* #A9B4C0 */
+  --text-tertiary: 122 135 148; /* #7A8794 */
+  --text-disabled: 78 88 102; /* #4E5866 */
+  --foreground: 232 237 242;
+
+  /* ---- Brand accent — ICE-STEEL (primary/active/focus/brand ONLY) ------ */
+  --brand: 143 199 232; /* #8FC7E8 */
+  --brand-bright: 188 221 246; /* #BCDDF6  hover */
+  --brand-strong: 111 179 222; /* #6FB3DE  active */
+  --brand-subtle: 24 34 44; /* #18222C  tinted chip ground */
+  --brand-foreground: 8 12 18; /* ink on brand fill */
+  --ring: 143 199 232;
+
+  /* ---- Semantic signals (distinct from brand) -------------------------- */
+  --success: 99 200 166; /* #63C8A6 jade */
+  --success-foreground: 8 18 15;
+  --success-soft: 18 33 28; /* #12211C */
+
+  --warning: 228 179 86; /* #E4B356 amber — also money emphasis */
+  --warning-foreground: 26 18 6;
+  --warning-soft: 36 30 18; /* #241E12 */
+
+  --danger: 230 121 107; /* #E6796B coral-red */
+  --danger-foreground: 250 250 250;
+  --danger-soft: 42 23 20; /* #2A1714 */
+
+  --info: 127 176 216; /* #7FB0D8 steel-blue — scheduled/forthcoming */
+  --info-foreground: 8 14 20;
+  --info-soft: 20 32 43; /* #14202B */
+
+  --draft: 124 135 148; /* #7C8794 neutral */
+  --draft-foreground: 232 237 242;
+  --draft-soft: 27 32 40; /* #1B2028 */
+
+  /* ---- shadcn semantic aliases → mapped onto the system --------------- */
+  --primary: 143 199 232;
+  --primary-foreground: 8 12 18;
+  --secondary: 26 31 38;
+  --secondary-foreground: 169 180 192;
+  --muted: 26 31 38;
+  --muted-foreground: 122 135 148;
+  --accent: 35 42 51; /* shadcn "accent" = subtle hover surface */
+  --accent-foreground: 232 237 242;
+  --card: 18 21 26;
+  --card-foreground: 232 237 242;
+  --popover: 26 31 38;
+  --popover-foreground: 232 237 242;
+
+  /* ---- Radius scale ---------------------------------------------------- */
+  --radius-sm: 0.375rem; /* 6  */
+  --radius-md: 0.625rem; /* 10 */
+  --radius-lg: 0.875rem; /* 14 */
+  --radius-xl: 1.125rem; /* 18 */
+  --radius-2xl: 1.5rem; /* 24 */
+  --radius: var(--radius-md);
+
+  /* ---- Elevation (dark-tuned) ----------------------------------------- */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 14px 34px -10px rgb(0 0 0 / 0.62);
+  --shadow-xl: 0 28px 64px -22px rgb(0 0 0 / 0.72);
+  --glow-brand: 0 0 0 1px rgb(143 199 232 / 0.16), 0 10px 34px -10px rgb(143 199 232 / 0.28);
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-swift: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 360ms;
+
+  /* ---- Z-index scale --------------------------------------------------- */
+  --z-sticky: 20;
+  --z-dropdown: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    font-family: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  /* Money, IDs and metrics line up in columns. */
+  .tnum,
+  th,
+  td {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background: rgb(var(--brand) / 0.28);
+    color: rgb(var(--text-primary));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* Quiet, on-brand scrollbars for dense data zones. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--surface-3)) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: rgb(var(--surface-3));
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--input));
+    background-clip: content-box;
+  }
+}
+
+@layer utilities {
+  /* Editorial display gradient for brand moments. */
+  .text-gradient-brand {
+    background: linear-gradient(100deg, rgb(var(--text-primary)), rgb(var(--brand-bright)) 120%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Atmospheric radial mesh — Login and other brand surfaces. */
+  .atmos-mesh {
+    background-image:
+      radial-gradient(120% 120% at 85% -10%, rgb(var(--brand) / 0.16), transparent 55%),
+      radial-gradient(90% 100% at -10% 110%, rgb(var(--brand) / 0.08), transparent 60%),
+      radial-gradient(60% 80% at 50% 120%, rgb(var(--info) / 0.06), transparent 60%);
+  }
+
+  /* Fine grain to kill banding on large dark fills. */
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .hairline-grid {
+    background-image:
+      linear-gradient(rgb(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
