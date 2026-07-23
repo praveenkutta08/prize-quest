@@ -1,2 +1,3 @@
-// Promotions feature — built in Session 2. Placeholder route ships in Part B.
-export {};
+export * from "./model";
+export * from "./api";
+export * from "./ui";

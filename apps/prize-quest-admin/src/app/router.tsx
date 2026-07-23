@@ -1,9 +1,10 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { Megaphone, ScrollText, Zap } from "lucide-react";
+import { ScrollText, Zap } from "lucide-react";
 import { LoginPage, RequireAuth } from "@/platform/auth";
 import { AppShell, NotFound, PlaceholderPage } from "@/platform/ui";
 import { DesignSystemPage } from "@/platform/theme";
 import { DashboardPage } from "@/features/dashboard";
+import { PromotionsListPage, PromotionDetailPage, PromotionFormPage } from "@/features/promotions";
 
 /**
  * Routes. Public: /login and /design-system. Everything else renders inside
@@ -21,36 +22,10 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="/dashboard" replace /> },
           { path: "/dashboard", element: <DashboardPage /> },
-          {
-            path: "/promotions",
-            element: (
-              <PlaceholderPage
-                crumbs={[{ label: "Operator" }, { label: "Promotions" }]}
-                title="Promotions"
-                subtitle="Manage and monitor Prize Quest campaigns across properties."
-                icon={Megaphone}
-                session="Session 2"
-                description="The promotions list, detail, and the create/edit flow with the condition builder land in the next session — all on this design system."
-              />
-            ),
-          },
-          {
-            path: "/promotions/new",
-            element: (
-              <PlaceholderPage
-                crumbs={[
-                  { label: "Operator" },
-                  { label: "Promotions", href: "/promotions" },
-                  { label: "New campaign" },
-                ]}
-                title="Create campaign"
-                subtitle="Compose eligibility, earn rules, prizes, and compliance."
-                icon={Megaphone}
-                session="Session 2"
-                description="The campaign builder with live rule pseudocode and reach preview is coming in the next session."
-              />
-            ),
-          },
+          { path: "/promotions", element: <PromotionsListPage /> },
+          { path: "/promotions/new", element: <PromotionFormPage /> },
+          { path: "/promotions/:id", element: <PromotionDetailPage /> },
+          { path: "/promotions/:id/edit", element: <PromotionFormPage /> },
           {
             path: "/rules",
             element: (

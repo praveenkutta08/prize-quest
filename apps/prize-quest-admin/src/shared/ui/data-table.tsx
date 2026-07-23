@@ -5,10 +5,11 @@ import {
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
+  type OnChangeFn,
   type RowData,
   type SortingState,
 } from "@tanstack/react-table";
-import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronsUpDown, ChevronUp } from "lucide-react";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -18,9 +19,18 @@ declare module "@tanstack/react-table" {
   }
 }
 import { cn } from "@/shared/lib/cn";
+import { count } from "@/shared/lib/format";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 import { Skeleton } from "./skeleton";
 import { EmptyState } from "./empty-state";
+import { Button } from "./button";
+
+export interface DataTablePagination {
+  pageIndex: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (pageIndex: number) => void;
+}
 
 interface DataTableProps<T> {
   columns: ColumnDef<T, unknown>[];
@@ -29,116 +39,191 @@ interface DataTableProps<T> {
   skeletonRows?: number;
   empty?: ReactNode;
   onRowClick?: (row: T) => void;
+  /** Rendered above the table (status tabs · search · segmented control). */
+  toolbar?: ReactNode;
+  /**
+   * Controlled sorting. When provided with `manualSorting`, the table reflects
+   * the state and reports changes but does not sort client-side (the server
+   * returns pre-sorted rows). Omit for internal client-side sorting.
+   */
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  manualSorting?: boolean;
+  /** Server-side pagination footer. Omit for no pagination. */
+  pagination?: DataTablePagination;
 }
 
 /**
- * TanStack-powered table: sortable headers, custom cells, and designed
- * loading/empty states. Filtering + pagination arrive in Session 2.
+ * The reusable table workhorse (plan §8). TanStack core with sortable headers,
+ * custom cell renderers, a toolbar slot, server-ready pagination, and designed
+ * loading/empty/error slots. URL-synced state is supplied by the caller (see
+ * `useTableUrlState`) so the table stays presentational and reusable — the
+ * Session 3 rules list and logs reuse it unchanged.
  */
 export function DataTable<T>({
   columns,
   data,
   loading,
-  skeletonRows = 5,
+  skeletonRows = 6,
   empty,
   onRowClick,
+  toolbar,
+  sorting,
+  onSortingChange,
+  manualSorting,
+  pagination,
 }: DataTableProps<T>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [internalSorting, setInternalSorting] = useState<SortingState>([]);
+  const controlled = sorting !== undefined;
+
   const table = useReactTable({
     data,
     columns,
-    state: { sorting },
-    onSortingChange: setSorting,
+    state: { sorting: controlled ? sorting : internalSorting },
+    onSortingChange: controlled ? onSortingChange : setInternalSorting,
+    manualSorting: controlled ? manualSorting : false,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: manualSorting ? undefined : getSortedRowModel(),
   });
 
-  if (loading) {
-    return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {columns.map((_col, i) => (
-              <TableHead key={i}>
-                <Skeleton className="h-3 w-16" />
-              </TableHead>
+  return (
+    <div className="flex flex-col">
+      {toolbar}
+      {loading ? (
+        <SkeletonTable columns={columns} rows={skeletonRows} />
+      ) : !data.length ? (
+        <div className="py-2">{empty ?? <EmptyState compact title="Nothing here yet" />}</div>
+      ) : (
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id}>
+                {hg.headers.map((header) => {
+                  const canSort = header.column.getCanSort();
+                  const sorted = header.column.getIsSorted();
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className={cn(header.column.columnDef.meta?.className)}
+                      aria-sort={
+                        sorted === "asc"
+                          ? "ascending"
+                          : sorted === "desc"
+                            ? "descending"
+                            : undefined
+                      }
+                    >
+                      {header.isPlaceholder ? null : canSort ? (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          className="inline-flex items-center gap-1.5 transition-colors hover:text-text-secondary focus-visible:text-text-primary focus-visible:outline-none"
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {sorted === "asc" ? (
+                            <ChevronUp className="size-3.5" />
+                          ) : sorted === "desc" ? (
+                            <ChevronDown className="size-3.5" />
+                          ) : (
+                            <ChevronsUpDown className="size-3.5 opacity-40" />
+                          )}
+                        </button>
+                      ) : (
+                        flexRender(header.column.columnDef.header, header.getContext())
+                      )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {Array.from({ length: skeletonRows }).map((_, r) => (
-            <TableRow key={r}>
-              {columns.map((_col, c) => (
-                <TableCell key={c}>
-                  <Skeleton className="h-4 w-full max-w-[120px]" />
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    );
-  }
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                className={cn(onRowClick && "cursor-pointer")}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id} className={cn(cell.column.columnDef.meta?.className)}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
 
-  if (!data.length) {
-    return <>{empty ?? <EmptyState compact title="Nothing here yet" />}</>;
-  }
+      {pagination && !loading ? <PaginationBar pagination={pagination} rows={data.length} /> : null}
+    </div>
+  );
+}
 
+function SkeletonTable<T>({ columns, rows }: { columns: ColumnDef<T, unknown>[]; rows: number }) {
   return (
     <Table>
       <TableHeader>
-        {table.getHeaderGroups().map((hg) => (
-          <TableRow key={hg.id}>
-            {hg.headers.map((header) => {
-              const canSort = header.column.getCanSort();
-              const sorted = header.column.getIsSorted();
-              return (
-                <TableHead
-                  key={header.id}
-                  className={cn(header.column.columnDef.meta?.className)}
-                  aria-sort={
-                    sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : undefined
-                  }
-                >
-                  {header.isPlaceholder ? null : canSort ? (
-                    <button
-                      type="button"
-                      onClick={header.column.getToggleSortingHandler()}
-                      className="inline-flex items-center gap-1.5 transition-colors hover:text-text-secondary focus-visible:outline-none focus-visible:text-text-primary"
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {sorted === "asc" ? (
-                        <ChevronUp className="size-3.5" />
-                      ) : sorted === "desc" ? (
-                        <ChevronDown className="size-3.5" />
-                      ) : (
-                        <ChevronsUpDown className="size-3.5 opacity-40" />
-                      )}
-                    </button>
-                  ) : (
-                    flexRender(header.column.columnDef.header, header.getContext())
-                  )}
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        ))}
+        <TableRow>
+          {columns.map((_c, i) => (
+            <TableHead key={i}>
+              <Skeleton className="h-3 w-16" />
+            </TableHead>
+          ))}
+        </TableRow>
       </TableHeader>
       <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-            className={cn(onRowClick && "cursor-pointer")}
-          >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className={cn(cell.column.columnDef.meta?.className)}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        {Array.from({ length: rows }).map((_, r) => (
+          <TableRow key={r}>
+            {columns.map((_c, c) => (
+              <TableCell key={c}>
+                <Skeleton className="h-4 w-full max-w-[120px]" />
               </TableCell>
             ))}
           </TableRow>
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+function PaginationBar({ pagination, rows }: { pagination: DataTablePagination; rows: number }) {
+  const { pageIndex, pageSize, total, onPageChange } = pagination;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const from = total === 0 ? 0 : pageIndex * pageSize + 1;
+  const to = pageIndex * pageSize + rows;
+  return (
+    <div className="flex items-center justify-between border-t border-hairline px-1 pt-3 text-xs text-text-tertiary">
+      <span className="tabular-nums">
+        {count(from)}–{count(to)} of {count(total)}
+      </span>
+      <div className="flex items-center gap-1.5">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(pageIndex - 1)}
+          disabled={pageIndex <= 0}
+          aria-label="Previous page"
+        >
+          <ChevronLeft />
+          Prev
+        </Button>
+        <span className="px-1.5 tabular-nums">
+          {pageIndex + 1} / {pageCount}
+        </span>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(pageIndex + 1)}
+          disabled={pageIndex + 1 >= pageCount}
+          aria-label="Next page"
+        >
+          Next
+          <ChevronRight />
+        </Button>
+      </div>
+    </div>
   );
 }

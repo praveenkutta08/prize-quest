@@ -59,6 +59,7 @@ import {
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/cn";
 import { tokenToHex } from "./applyTenantTheme";
+import { ShowcaseSessionTwo } from "./ShowcaseSessionTwo";
 import { MarkGlyph } from "@/platform/ui/BootSplash";
 
 interface Swatch {
@@ -157,6 +158,7 @@ const NAV = [
   ["type", "Typography"],
   ["elevation", "Elevation & motion"],
   ["components", "Components"],
+  ["session-two", "Promotions kit"],
 ] as const;
 
 export function DesignSystemPage() {
@@ -575,6 +577,16 @@ export function DesignSystemPage() {
               </Table>
             </CardContent>
           </Card>
+        </Section>
+
+        {/* Session 2 · Promotions kit — the reused trio */}
+        <Section
+          id="session-two"
+          eyebrow="06 · Promotions kit"
+          title="The reused trio, on the system"
+          description="DataTable, ConditionBuilder, and SummaryPanel — built generic in Session 2 and reused by the Session 3 Rules Engine with zero changes beyond props."
+        >
+          <ShowcaseSessionTwo />
         </Section>
 
         <footer className="border-t border-hairline pt-8 text-xs text-text-tertiary">

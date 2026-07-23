@@ -1,4 +1,9 @@
-import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  retry,
+  type FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
 
 /**
  * Swap-ready data layer. Every hook talks to real REST paths under `/api`; in
@@ -23,8 +28,18 @@ const rawBaseQuery = fetchBaseQuery({
   },
 });
 
-// Ride over the mock backend's injected 5% failures.
-const baseQueryWithRetry = retry(rawBaseQuery, { maxRetries: 5 });
+// Ride over the mock backend's injected failures (503s) and genuine network
+// blips — but never retry client errors. A 401 on /auth/session is the normal
+// "not signed in" signal, and retrying it would hang the resume splash for
+// seconds and flood the console before we finally redirect to /login. So we
+// only retry transient failures: network/parse errors (non-numeric status) and
+// 5xx. Any 4xx fails fast so the caller can react immediately.
+const baseQueryWithRetry = retry(rawBaseQuery, {
+  retryCondition: (error, _args, { attempt }) => {
+    const status = (error as FetchBaseQueryError).status;
+    return attempt <= 5 && (typeof status !== "number" || status >= 500);
+  },
+});
 
 export const baseApi = createApi({
   reducerPath: "api",
