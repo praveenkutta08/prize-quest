@@ -112,7 +112,10 @@ export function ConditionBuilder({
                     onValueChange={(v) => changeField(index, v)}
                     disabled={locked}
                   >
-                    <SelectTrigger className="h-9 w-[168px] shrink-0 font-mono text-xs">
+                    <SelectTrigger
+                      className="h-9 w-[168px] shrink-0 font-mono text-xs"
+                      aria-label={`Condition ${index + 1} field`}
+                    >
                       <SelectValue placeholder="Field" />
                     </SelectTrigger>
                     <SelectContent>
@@ -130,7 +133,10 @@ export function ConditionBuilder({
                     onValueChange={(v) => changeOperator(index, v)}
                     disabled={locked || !field}
                   >
-                    <SelectTrigger className="h-9 w-[112px] shrink-0 text-xs">
+                    <SelectTrigger
+                      className="h-9 w-[112px] shrink-0 text-xs"
+                      aria-label={`Condition ${index + 1} operator`}
+                    >
                       <SelectValue placeholder="Op" />
                     </SelectTrigger>
                     <SelectContent>
@@ -293,7 +299,10 @@ function ValueEditor({
   if (editor === "keyword") {
     return (
       <Select value={String(value ?? "")} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className={cn("h-9 text-xs", invalid && "border-danger")}>
+        <SelectTrigger
+          className={cn("h-9 text-xs", invalid && "border-danger")}
+          aria-label={`${field.label} value`}
+        >
           <SelectValue placeholder="Value" />
         </SelectTrigger>
         <SelectContent>

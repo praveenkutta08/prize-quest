@@ -27,7 +27,7 @@ export function EventSelector({
   return (
     <div className="space-y-2">
       <Select value={value ?? ""} onValueChange={onChange}>
-        <SelectTrigger aria-invalid={Boolean(error)}>
+        <SelectTrigger aria-invalid={Boolean(error)} aria-label="Trigger event">
           <SelectValue placeholder="Choose an event…" />
         </SelectTrigger>
         <SelectContent>

@@ -61,6 +61,7 @@ import { cn } from "@/shared/lib/cn";
 import { tokenToHex } from "./applyTenantTheme";
 import { ShowcaseSessionTwo } from "./ShowcaseSessionTwo";
 import { ShowcaseSessionThree } from "./ShowcaseSessionThree";
+import { ShowcaseCatalog } from "./ShowcaseCatalog";
 import { MarkGlyph } from "@/platform/ui/BootSplash";
 
 interface Swatch {
@@ -159,6 +160,7 @@ const NAV = [
   ["type", "Typography"],
   ["elevation", "Elevation & motion"],
   ["components", "Components"],
+  ["catalog", "Catalog"],
   ["session-two", "Promotions kit"],
   ["session-three", "Automation kit"],
 ] as const;
@@ -422,7 +424,7 @@ export function DesignSystemPage() {
                 <div className="grid gap-1.5">
                   <Label>Activity source</Label>
                   <Select defaultValue="slot">
-                    <SelectTrigger>
+                    <SelectTrigger aria-label="Activity source">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -581,10 +583,20 @@ export function DesignSystemPage() {
           </Card>
         </Section>
 
+        {/* Component catalog — Sessions 4–9 building blocks + scaffolding */}
+        <Section
+          id="catalog"
+          eyebrow="06 · Component catalog"
+          title="Building blocks, Sessions 4–9"
+          description="The reusable pieces every surface is assembled from — metrics, charts, rewards, activity, and the page / detail / form scaffolding. Rendered live from the same @/shared/ui the product imports."
+        >
+          <ShowcaseCatalog />
+        </Section>
+
         {/* Session 2 · Promotions kit — the reused trio */}
         <Section
           id="session-two"
-          eyebrow="06 · Promotions kit"
+          eyebrow="07 · Promotions kit"
           title="The reused trio, on the system"
           description="DataTable, ConditionBuilder, and SummaryPanel — built generic in Session 2 and reused by the Session 3 Rules Engine with zero changes beyond props."
         >
@@ -594,7 +606,7 @@ export function DesignSystemPage() {
         {/* Session 3 · Automation kit — the new rule/log components */}
         <Section
           id="session-three"
-          eyebrow="07 · Automation kit"
+          eyebrow="08 · Automation kit"
           title="Rules Engine components"
           description="Toggle, CronField, EventSelector, ActionConfig, and the virtualized LogStream — Session 3's new pieces, reusing the same trio (DataTable · ConditionBuilder · SummaryPanel) for the rest."
         >

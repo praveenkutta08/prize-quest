@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
+import { FieldLabelContext } from "./field-label-context";
 import { Input } from "./input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 
@@ -185,10 +186,15 @@ function Labeled({
   error?: string;
   children: ReactNode;
 }) {
+  // Publish the label id so the wrapped control (a Radix Select here) adopts it
+  // as its accessible name via FieldLabelContext — same mechanism as `Field`.
+  const labelId = `${useId()}-label`;
   return (
     <div className="space-y-1.5">
-      <label className="text-xs uppercase tracking-wide text-text-secondary">{label}</label>
-      {children}
+      <label id={labelId} className="text-xs uppercase tracking-wide text-text-secondary">
+        {label}
+      </label>
+      <FieldLabelContext.Provider value={labelId}>{children}</FieldLabelContext.Provider>
       {error ? (
         <p className="text-2xs text-danger" role="alert">
           {error}

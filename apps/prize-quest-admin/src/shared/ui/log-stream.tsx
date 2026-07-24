@@ -119,6 +119,7 @@ function LogRow({ row, onClick }: { row: LogStreamRow; onClick?: (id: string) =>
   const content = (
     <>
       <span
+        role="img"
         className={cn("size-2 shrink-0 rounded-full", SEV_DOT[row.severity])}
         aria-label={row.severity}
       />
