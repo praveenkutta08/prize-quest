@@ -3,6 +3,17 @@ packages:
   - "packages/widgets/*"
   - "apps/*"
 
+# Skip pnpm's pre-run "are deps up to date" check. Without this, pnpm 11 (pinned via
+# the packageManager field) tries to purge a node_modules built by a different pnpm
+# version and aborts non-interactive git hooks (GitHub Desktop / CI), failing commits.
+# Dependencies are still installed explicitly via `pnpm install`.
+verifyDepsBeforeRun: false
+
+# Match the length the existing node_modules was created with (pnpm 9 used 120;
+# pnpm 11 changed the default to 60). Pinning this avoids ERR_PNPM_VIRTUAL_STORE_DIR
+# _MAX_LENGTH_DIFF when adding packages without recreating the whole store.
+virtualStoreDirMaxLength: 120
+
 onlyBuiltDependencies:
   - esbuild
 ignoredBuiltDependencies:
@@ -10,3 +21,5 @@ ignoredBuiltDependencies:
 allowBuilds:
   core-js: false
   esbuild: true
+  msw: false
+  unrs-resolver: false

@@ -1,0 +1,20 @@
+import * as React from "react";
+import { cn } from "@/shared/lib/cn";
+
+/**
+ * On-brand loading placeholder — a subtle shimmer sweep over a raised surface.
+ * Loading states use skeletons, never spinners.
+ */
+export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-md bg-surface-2",
+        "after:absolute after:inset-0 after:-translate-x-full after:animate-shimmer",
+        "after:bg-gradient-to-r after:from-transparent after:via-white/[0.05] after:to-transparent",
+        className,
+      )}
+      {...props}
+    />
+  );
+}

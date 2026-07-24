@@ -1,0 +1,48 @@
+{
+  "$comment": "Onboarding scaffold for a new operator/tenant. Copy this folder to tenants/<your-tenant-id>/ and fill in. brand + compliance + vendor + features mirror the player-side TenantConfig; modules[] control which sidebar sections appear; roles[] is the RBAC catalog.",
+  "tenant": {
+    "id": "example-operator",
+    "name": "Example Operator",
+    "brand": {
+      "productName": "Prize Quest",
+      "operatorName": "Example Operator",
+      "initials": "EO",
+      "tagline": "Player engagement platform"
+    },
+    "compliance": {
+      "jurisdiction": "NV",
+      "jurisdictionLabel": "State Gaming Authority",
+      "budgetCapEnforced": true
+    },
+    "vendor": { "type": "igt" },
+    "features": {
+      "reports": false,
+      "rewardsCatalog": false,
+      "players": false,
+      "triggers": false,
+      "fulfillment": false,
+      "auditLogs": false
+    }
+  },
+  "modules": [
+    { "key": "dashboard", "enabled": true },
+    { "key": "promotions", "enabled": true },
+    { "key": "rules", "enabled": true },
+    { "key": "reports", "enabled": false },
+    { "key": "rewards", "enabled": false },
+    { "key": "players", "enabled": false },
+    { "key": "triggers", "enabled": false },
+    { "key": "fulfillment", "enabled": false },
+    { "key": "audit", "enabled": false },
+    { "key": "notifications", "enabled": false },
+    { "key": "settings", "enabled": false },
+    { "key": "users", "enabled": false }
+  ],
+  "roles": [
+    { "key": "marketing-manager", "label": "Marketing Manager" },
+    { "key": "approver", "label": "Approver (VP)" },
+    { "key": "operations", "label": "Operations" },
+    { "key": "auditor", "label": "Auditor / Compliance" },
+    { "key": "admin", "label": "Admin" }
+  ]
+}

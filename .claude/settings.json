@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)",
+      "Bash(pnpm --filter @pq/admin exec msw init public --save)",
+      "Bash(pnpm --filter @pq/admin exec tsc --version)",
+      "Bash(pnpm --filter @pq/admin typecheck)",
+      "Bash(pnpm --filter @pq/admin lint)",
+      "Bash(pnpm --filter @pq/admin build)",
+      "Bash(pnpm --filter @pq/admin dev)",
+      "Bash(pnpm config *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5177/)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p['lint-staged']||p.config?.['lint-staged']||'\\(none in package.json\\)',null,2\\)\\)\")",
+      "Bash(corepack --version)",
+      "Bash(cd 'c:\\\\Users\\\\prave\\\\Documents\\\\HH\\\\prize-quest' && rm -f .npmrc && echo \"removed .npmrc\")",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests"
+    ],
+    "additionalDirectories": ["c:\\Users\\prave\\Documents\\HH\\prize-quest"]
+  }
+}

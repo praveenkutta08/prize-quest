@@ -1,0 +1,112 @@
+import { useNavigate } from "react-router-dom";
+import { Bell, LogOut, Search, Settings, UserRound } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { clearSession } from "@/platform/auth";
+import { PropertySwitcher } from "@/platform/scope";
+import {
+  Avatar,
+  AvatarFallback,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/ui";
+import { useGetNotifBadgeQuery } from "./navBadgesApi";
+
+export function Topbar({ onOpenCommand }: { onOpenCommand: () => void }) {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const user = useAppSelector((s) => s.auth.session?.user);
+  const notifBadge = useGetNotifBadgeQuery();
+  const unread = notifBadge.data?.unread ?? 0;
+
+  const signOut = () => {
+    dispatch(clearSession());
+    navigate("/login", { replace: true });
+  };
+
+  return (
+    <header className="sticky top-0 z-[--z-sticky] flex h-16 items-center gap-3 border-b border-hairline bg-background/85 px-6 backdrop-blur">
+      {/* Search → command palette */}
+      <button
+        type="button"
+        onClick={onOpenCommand}
+        className="group flex h-9 w-full max-w-md items-center gap-2.5 rounded-md border border-hairline bg-surface-sunken px-3 text-sm text-text-tertiary transition-colors hover:border-hairline-strong"
+      >
+        <Search className="size-4" />
+        <span className="flex-1 text-left">Search campaigns, players, prizes…</span>
+        <kbd className="rounded border border-hairline bg-surface-2 px-1.5 py-0.5 font-mono text-2xs text-text-tertiary">
+          ⌘K
+        </kbd>
+      </button>
+
+      <div className="ml-auto flex items-center gap-2.5">
+        <PropertySwitcher />
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={unread > 0 ? `Notifications (${unread} unread)` : "Notifications"}
+              className="relative"
+              onClick={() => navigate("/notifications")}
+            >
+              <Bell />
+              {unread > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex min-w-[16px] items-center justify-center rounded-full bg-brand px-1 text-[9px] font-semibold tabular-nums text-brand-foreground">
+                  {unread}
+                </span>
+              ) : null}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Notifications</TooltipContent>
+        </Tooltip>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-full border border-hairline bg-surface-1 py-1 pl-1 pr-2.5 transition-colors hover:border-hairline-strong"
+            >
+              {/* Avatar is decorative (it just repeats the initials of the name),
+                  so hide it from AT and let the visible name be the accessible
+                  name — avoids a WCAG 2.5.3 label-in-name mismatch. */}
+              <Avatar className="size-7" aria-hidden="true">
+                <AvatarFallback>{user?.initials ?? "PQ"}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs font-medium text-text-secondary">
+                {user?.name.split(" ")[0] ?? "Account"}
+              </span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-text-primary">{user?.name}</span>
+                <span className="text-2xs font-normal text-text-tertiary">{user?.email}</span>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <UserRound /> Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings /> Preferences
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={signOut} className="text-danger">
+              <LogOut /> Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  );
+}
