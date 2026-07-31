@@ -593,30 +593,83 @@ export const styles = css`
      .ord-filter--active have no markup to target — left unstyled (no render
      change per constraints). Filter pills exist only in the expanded chrome
      (.filter-pill, already arcade-styled above). */
+  /* FULL-HEIGHT product-well card (customer ask): one order per page, laid out like
+     the prize-selection card — lit square art well left, details right, status badge
+     top-right. Fixed heights match the promotions/prize cards so the frame never
+     scrolls and the dots always show (164px Konami · 168px iVIEW). */
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card,
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card * {
+    box-sizing: border-box;
+  }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card {
     position: relative;
-    /* One full-width card per page → lay it out horizontally: art · details · badge. */
-    flex-direction: row;
-    align-items: center;
+    height: 164px;
+    display: grid;
+    grid-template-columns: 118px 1fr;
     gap: 12px;
-    border-radius: var(--arc-r-sm, var(--pq-r-md, 6px));
+    align-items: center;
+    padding: 11px 13px;
+    border-radius: 9px;
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     background: linear-gradient(
-      160deg,
-      var(--arc-surface-1, rgba(60, 25, 110, 0.55)),
-      var(--arc-surface-2, rgba(30, 10, 60, 0.75))
+      150deg,
+      var(--arc-bg-elev, rgba(60, 25, 110, 0.55)),
+      var(--arc-bg-deep, rgba(30, 10, 60, 0.75))
     );
+    box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__thumb {
-    width: 44px;
-    height: 44px;
+    width: 118px;
+    height: 118px;
     flex: 0 0 auto;
+    align-self: center;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 22px var(--arc-glow-soft, rgba(255, 217, 61, 0.16));
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__thumb svg {
+    width: 46px;
+    height: 46px;
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__main {
+    align-self: center;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    /* Clear the absolutely-positioned status badge in the top-right corner. */
+    padding-right: 86px;
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__badge {
-    align-self: center;
+    position: absolute;
+    top: 12px;
+    right: 13px;
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__name {
-    font-size: 14px;
+    font-size: 19px;
+    line-height: 1.05;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* iVIEW (640×240): same layout, a touch more of everything. */
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .ord-card {
+    height: 168px;
+    grid-template-columns: 128px 1fr;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .ord-card__thumb {
+    width: 128px;
+    height: 128px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .ord-card__thumb svg {
+    width: 54px;
+    height: 54px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .ord-card__name {
+    font-size: 22px;
   }
   /* 2px category accent strip — no per-order category data in compact, so we
      read an optional --cat-tint var (falls back to the arcade purple accent). */
@@ -637,9 +690,15 @@ export const styles = css`
     color: var(--arc-cream, var(--pq-text, #f5efe0));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__thumb {
-    background: var(--cat-tint-glow, rgba(142, 71, 232, 0.18));
-    color: var(--cat-tint-bright, var(--cat-purple-bright, #b47bff));
-    border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
+    background:
+      radial-gradient(
+        ellipse at 50% 30%,
+        var(--arc-glow-soft, rgba(255, 217, 61, 0.16)),
+        transparent 65%
+      ),
+      rgba(255, 255, 255, 0.045);
+    color: var(--arc-display, var(--cat-tint-bright, #ffd93d));
+    border: 1px solid var(--arc-hairline, rgba(180, 130, 240, 0.25));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__conf {
     color: var(--arc-text-dim, var(--pq-text-muted, #d0bfec));

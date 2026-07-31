@@ -1,8 +1,24 @@
 import { LitElement, html, type TemplateResult } from "lit";
 import { styles } from "./styles";
 
-const chevronLeft = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>`;
-const chevronRight = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>`;
+const chevronLeft = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.8"
+  aria-hidden="true"
+>
+  <polyline points="15 18 9 12 15 6" />
+</svg>`;
+const chevronRight = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.8"
+  aria-hidden="true"
+>
+  <polyline points="9 18 15 12 9 6" />
+</svg>`;
 
 const SWIPE_THRESHOLD = 40;
 
@@ -20,13 +36,17 @@ export class PqListCarousel extends LitElement {
 
   static override properties = {
     itemsPerPage: { type: Number, attribute: "items-per-page" },
+    loop: { type: Boolean },
     _page: { state: true },
     _pageCount: { state: true },
   };
 
   declare itemsPerPage: number;
-  private declare _page: number;
-  private declare _pageCount: number;
+  /** Continuous wrap-around paging: next from the last page returns to the first
+   *  (and prev from the first jumps to the last). Arrows never disable. */
+  declare loop: boolean;
+  declare private _page: number;
+  declare private _pageCount: number;
 
   #resize?: ResizeObserver;
   #viewportWidth = 0;
@@ -35,6 +55,7 @@ export class PqListCarousel extends LitElement {
   constructor() {
     super();
     this.itemsPerPage = 1;
+    this.loop = false;
     this._page = 0;
     this._pageCount = 1;
   }
@@ -97,7 +118,9 @@ export class PqListCarousel extends LitElement {
   }
 
   #go(page: number): void {
-    const next = Math.max(0, Math.min(this._pageCount - 1, page));
+    // Loop mode wraps modulo the page count; clamp mode pins to the ends.
+    const n = this._pageCount;
+    const next = this.loop ? ((page % n) + n) % n : Math.max(0, Math.min(n - 1, page));
     if (next !== this._page) this._page = next;
   }
 
@@ -141,8 +164,8 @@ export class PqListCarousel extends LitElement {
   };
 
   override render(): TemplateResult {
-    const atStart = this._page <= 0;
-    const atEnd = this._page >= this._pageCount - 1;
+    const atStart = !this.loop && this._page <= 0;
+    const atEnd = !this.loop && this._page >= this._pageCount - 1;
     const dots = Array.from({ length: this._pageCount });
     return html`
       <button
@@ -168,14 +191,9 @@ export class PqListCarousel extends LitElement {
           <slot @slotchange=${this.#onSlotChange}></slot>
         </div>
       </div>
-      <div
-        class="dots"
-        role="status"
-        aria-label="Page ${this._page + 1} of ${this._pageCount}"
-      >
+      <div class="dots" role="status" aria-label="Page ${this._page + 1} of ${this._pageCount}">
         ${dots.map(
-          (_, i) =>
-            html`<span class="dot ${i === this._page ? "dot--active" : ""}"></span>`,
+          (_, i) => html`<span class="dot ${i === this._page ? "dot--active" : ""}"></span>`,
         )}
       </div>
     `;

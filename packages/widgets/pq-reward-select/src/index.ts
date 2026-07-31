@@ -175,10 +175,13 @@ export class PqRewardSelect extends LitElement {
         <p class="empty">No campaign selected.</p>
       </div>`;
     }
+    // A not-yet-eligible campaign shows its prizes as a PREVIEW: cards at full
+    // strength, Collect replaced by a disabled "Locked" (customer decision).
+    const locked = c.status !== "eligible";
     return html`
       <div class="rwd-body" @pq-prize-select=${this.#onPick}>
         ${rewards.length
-          ? html`<pq-list-carousel .itemsPerPage=${1} aria-label="Available rewards">
+          ? html`<pq-list-carousel loop .itemsPerPage=${1} aria-label="Available rewards">
               ${rewards.map(
                 (p) =>
                   html`<pq-reward-card
@@ -190,6 +193,7 @@ export class PqRewardSelect extends LitElement {
                     art-emoji=${emojiFor(p)}
                     prize-id=${p.id}
                     ?disabled=${p.inStock === false}
+                    ?locked=${locked}
                   ></pq-reward-card>`,
               )}
             </pq-list-carousel>`

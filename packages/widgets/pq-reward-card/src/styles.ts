@@ -175,6 +175,11 @@ export const styles = css`
     cursor: default;
     opacity: 0.55;
   }
+  /* LOCKED preview: the prize stays at full strength — the patron should want it —
+     only the action reads unavailable. Overrides the generic disabled dimming. */
+  :host([locked]) .rwd-wide[disabled] {
+    opacity: 1;
+  }
   .wide-art {
     position: relative;
     aspect-ratio: 1;

@@ -32,6 +32,7 @@ export class PqRewardCard extends LitElement {
     sub: { type: String },
     cta: { type: String },
     layout: { type: String, reflect: true },
+    locked: { type: Boolean, reflect: true },
     artUrl: { type: String, attribute: "art-url" },
     artEmoji: { type: String, attribute: "art-emoji" },
     rarity: { type: String, reflect: true },
@@ -47,6 +48,12 @@ export class PqRewardCard extends LitElement {
   declare cta: string;
   /** `tile` = original 3-up card · `wide` = full-width product well. */
   declare layout: "tile" | "wide";
+  /**
+   * Campaign not yet eligible: the prize renders at full strength as a PREVIEW, but the
+   * action is a disabled "Locked" and selection is inert. Distinct from `disabled`
+   * (out of stock) — a locked prize is available, the patron just hasn't earned it yet.
+   */
+  declare locked: boolean;
   declare artUrl: string;
   declare artEmoji: string;
   declare rarity: PrizeRarity;
@@ -60,6 +67,7 @@ export class PqRewardCard extends LitElement {
     this.sub = "";
     this.cta = "Collect";
     this.layout = "tile";
+    this.locked = false;
     this.artUrl = "";
     this.artEmoji = "🎁";
     this.rarity = "common";
@@ -68,7 +76,7 @@ export class PqRewardCard extends LitElement {
   }
 
   #select = (): void => {
-    if (this.disabled || !this.prizeId) return;
+    if (this.disabled || this.locked || !this.prizeId) return;
     this.dispatchEvent(
       new CustomEvent("pq-prize-select", {
         detail: { id: this.prizeId },
@@ -91,14 +99,16 @@ export class PqRewardCard extends LitElement {
   /** Full-width product well — art left, copy right, explicit action button. */
   private renderWide(): TemplateResult {
     const out = this.disabled;
+    const inert = out || this.locked;
+    const ctaLabel = this.locked ? "Locked" : out ? "Out of stock" : this.cta;
     return html`
-      <button class="rwd-wide" type="button" ?disabled=${out} @click=${this.#select}>
+      <button class="rwd-wide" type="button" ?disabled=${inert} @click=${this.#select}>
         <div class="wide-art">${this.renderArt()}</div>
         <div class="wide-body">
           ${this.name ? html`<h4 class="wide-name">${this.name}</h4>` : nothing}
           ${this.sub ? html`<p class="wide-sub">${this.sub}</p>` : nothing}
           <div class="wide-row">
-            <span class="wide-cta">${out ? "Out of stock" : this.cta} ${out ? nothing : "→"}</span>
+            <span class="wide-cta">${ctaLabel} ${inert ? nothing : "→"}</span>
             <span class="wide-stock">${out ? "Unavailable" : "In stock"}</span>
           </div>
         </div>

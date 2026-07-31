@@ -130,7 +130,9 @@ interface StatusPresentation {
   clickable: boolean;
 }
 
-/** How each campaign status presents: pill and interactivity. */
+/** How each campaign status presents: pill and interactivity. Every status is
+ *  clickable now — a locked promotion opens its prize list as a preview (with
+ *  Collect disabled there), rather than being a dead card. */
 const STATUS: Record<CampaignStatus, StatusPresentation> = {
   eligible: {
     pill: "eligible",
@@ -163,15 +165,15 @@ const STATUS: Record<CampaignStatus, StatusPresentation> = {
     chipKind: "locked",
     ready: false,
     dimmed: true,
-    clickable: false,
+    clickable: true,
   },
   locked: {
     pill: "locked",
     chip: "Locked",
     chipKind: "locked",
     ready: false,
-    dimmed: true,
-    clickable: false,
+    dimmed: false,
+    clickable: true,
   },
 };
 
@@ -333,13 +335,9 @@ export class PqCampaignCard extends LitElement {
     const steps = (c.steps ?? []).slice(0, 3);
     const prizesNote =
       c.prizesNote ?? (count > 0 ? `${count} prize${count === 1 ? "" : "s"} to choose from.` : "");
-    const cta = pres.ready
-      ? "Collect"
-      : c.status === "claimed"
-        ? "View prize"
-        : c.status === "in-progress"
-          ? "View details"
-          : pres.chip;
+    // Binary CTA (customer): a promotion is either collectible or it isn't. No
+    // "View details" middle state — tapping a locked card previews its prizes.
+    const cta = pres.ready ? "Collect" : "Locked";
     return html`
       <div
         class="cmpd"
@@ -352,7 +350,7 @@ export class PqCampaignCard extends LitElement {
           ${this.renderSplitName(c.name)}
           <span class="promo__chip">${giftGlyph} ${count} ${count === 1 ? "Prize" : "Prizes"}</span>
           <span class="promo__ctawrap">
-            <span class="promo__cta ${pres.clickable ? "" : "promo__cta--off"}">
+            <span class="promo__cta ${pres.ready ? "" : "promo__cta--off"}">
               <span class="promo__cta-badge">${giftGlyph}</span>
               <span class="promo__cta-label">${cta}</span>
             </span>

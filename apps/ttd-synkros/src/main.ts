@@ -297,13 +297,12 @@ function bindReset(): void {
 function bindFlow(): void {
   const detailId = (e: Event) => (e as CustomEvent<{ id: string }>).detail.id;
 
-  // Ready ("eligible") campaigns jump straight to the reward picker — the interstitial
-  // detail screen (progress bar + "Pick your prize" CTA) is redundant once a campaign is
-  // complete. Non-ready campaigns still open the detail (progress / locked prizes).
+  // EVERY campaign opens the reward picker — eligible ones to collect, locked ones as
+  // a preview (the picker disables Collect when the campaign isn't eligible). The
+  // interstitial detail screen is no longer routed to from the list.
   const openCampaign = (id: string): void => {
     void selectCampaign(id);
-    const eligible = store.$campaigns.get()?.find((c) => c.id === id)?.status === "eligible";
-    navigate(withChannel(eligible ? `/campaign/${id}/rewards` : `/campaign/${id}`));
+    navigate(withChannel(`/campaign/${id}/rewards`));
   };
   document.addEventListener("pq-card-click", (e) => openCampaign(detailId(e)));
   // Trailing "Order History" card in the campaign carousel (pq-campaign-list) — the
