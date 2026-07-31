@@ -6,7 +6,6 @@
     {
       "widget": "pq-screen-header",
       "props": {
-        "title": "Arcade Rewards",
         "showBack": false
       }
     },

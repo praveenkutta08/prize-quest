@@ -2,9 +2,13 @@
   "id": "casino-royale-lv",
   "name": "Casino Royale Las Vegas",
   "brand": {
-    "logo": { "src": "/assets/casino-royale-lv/logo.svg", "alt": "Casino Royale", "height": 34 },
+    "logo": {
+      "src": "/assets/casino-royale-lv/logo.svg",
+      "alt": "Casino Royale",
+      "height": 34
+    },
     "favicon": "/assets/casino-royale-lv/favicon.svg",
-    "productName": "Prize Quest"
+    "productName": "Royale Rewards"
   },
   "theme": {
     "tokens": {},

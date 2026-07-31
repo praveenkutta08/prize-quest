@@ -3,13 +3,86 @@ import type { Address } from "@pq/mock-data";
 import { bindAtom, $address } from "@pq/store";
 import { styles } from "./styles";
 
-const pinIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" /><circle cx="12" cy="9" r="2.5" /></svg>`;
-const checkIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>`;
-const phoneIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.6 2Z" /></svg>`;
-const mailIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 6 10 7 10-7" /></svg>`;
-const chevronIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>`;
-const arrowIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>`;
-const lockIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>`;
+const pinIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
+  <path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" />
+  <circle cx="12" cy="9" r="2.5" />
+</svg>`;
+const checkIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
+  <polyline points="20 6 9 17 4 12" />
+</svg>`;
+const phoneIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
+  <path
+    d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.6 2Z"
+  />
+</svg>`;
+const mailIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
+  <rect x="2" y="4" width="20" height="16" rx="2" />
+  <path d="m2 6 10 7 10-7" />
+</svg>`;
+const chevronIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
+  <polyline points="9 18 15 12 9 6" />
+</svg>`;
+const arrowIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
+  <line x1="5" y1="12" x2="19" y2="12" />
+  <polyline points="12 5 19 12 12 19" />
+</svg>`;
+const infoIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.4"
+  aria-hidden="true"
+>
+  <circle cx="12" cy="12" r="10" />
+  <line x1="12" y1="11" x2="12" y2="16" />
+  <circle cx="12" cy="7.5" r="1" fill="currentColor" stroke="none" />
+</svg>`;
+const lockIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
+  <rect x="3" y="11" width="18" height="11" rx="2" />
+  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+</svg>`;
 
 /** "What happens next" fulfillment steps shown beside the verified address (expanded). */
 const NEXT_STEPS = [
@@ -22,9 +95,14 @@ const NEXT_STEPS = [
  * `<pq-address-block>` — read-only shipping address with an optional "Verified" badge.
  * The "Visit Player Services" link fires `pq-address-edit` (editing happens off-widget).
  *
- * Props: `address` (Address), `verified` (boolean), `profile`
- * (`"compact" | "standard" | "expanded"`). `compact` and `standard` render the
+ * Props: `address` (Address), `verified` (boolean), `allowEdit` (boolean, default true),
+ * `profile` (`"compact" | "standard" | "expanded"`). `compact` and `standard` render the
  * identical premium card; `expanded` renders the kiosk/arcade big-screen card.
+ *
+ * `allowEdit: false` hides every edit affordance (and the copy that points at Player
+ * Services), leaving a pure confirm step. The TTD / iVIEW compositions set it: the
+ * address on those surfaces is whatever the CMS holds, full stop — the compact layout
+ * instead tells the patron to see the cage, which is the only place it can be changed.
  */
 export class PqAddressBlock extends LitElement {
   static override styles = styles;
@@ -33,6 +111,7 @@ export class PqAddressBlock extends LitElement {
     address: { attribute: false },
     verified: { type: Boolean, reflect: true },
     showConfirm: { type: Boolean },
+    allowEdit: { type: Boolean },
     profile: { type: String, reflect: true },
   };
 
@@ -40,6 +119,8 @@ export class PqAddressBlock extends LitElement {
   declare verified: boolean;
   /** When set (claim flow), render a "Confirm & continue" CTA firing `pq-address-confirm`. */
   declare showConfirm: boolean;
+  /** When false, no edit affordance is rendered at all — confirm-only. */
+  declare allowEdit: boolean;
   /** Channel layout. `compact`/`standard` share one card; `expanded` is kiosk. */
   declare profile: "compact" | "standard" | "expanded";
 
@@ -47,6 +128,7 @@ export class PqAddressBlock extends LitElement {
     super();
     this.verified = false;
     this.showConfirm = false;
+    this.allowEdit = true;
     this.profile = "standard";
     // Store wins when loaded; the `address` prop is the Storybook/test fallback.
     bindAtom(this, $address, "address");
@@ -71,7 +153,6 @@ export class PqAddressBlock extends LitElement {
     const street = a.line2 ? `${a.line1}, ${a.line2}` : a.line1;
     return html`
       <div class="wrap-compact">
-        ${this.verified ? html`<div class="cm-check">${checkIcon}</div>` : nothing}
         <div class="card cm-card">
           <div class="header">
             <span class="source">${pinIcon} Ships to</span>
@@ -81,9 +162,14 @@ export class PqAddressBlock extends LitElement {
           <p class="line">${street}</p>
           <p class="line">${a.city}, ${a.state} ${a.zip}</p>
         </div>
+        <p class="cm-note">
+          ${infoIcon}<span>If the address is incorrect, please contact cage.</span>
+        </p>
         ${this.showConfirm
           ? html`<div class="cm-actions">
-              <button class="cm-edit" @click=${this.handleEdit}>Edit · ask staff</button>
+              ${this.allowEdit
+                ? html`<button class="cm-edit" @click=${this.handleEdit}>Edit · ask staff</button>`
+                : nothing}
               <button class="cm-go" @click=${this.handleConfirm}>Continue ${arrowIcon}</button>
             </div>`
           : nothing}
@@ -99,9 +185,7 @@ export class PqAddressBlock extends LitElement {
       <div class="card">
         <div class="header">
           <span class="source">${pinIcon} Ships to</span>
-          ${this.verified
-            ? html`<span class="verified">${checkIcon} Verified</span>`
-            : nothing}
+          ${this.verified ? html`<span class="verified">${checkIcon} Verified</span>` : nothing}
         </div>
         <h3 class="name">${a.name}</h3>
         <p class="line">${a.line1}</p>
@@ -113,10 +197,14 @@ export class PqAddressBlock extends LitElement {
               ${a.email ? html`<span>${mailIcon} ${a.email}</span>` : nothing}
             </div>`
           : nothing}
-        <div class="edit">
-          <p>Wrong address? Updating requires Player Services and releases your inventory hold.</p>
-          <button @click=${this.handleEdit}>Visit Player Services ${chevronIcon}</button>
-        </div>
+        ${this.allowEdit
+          ? html`<div class="edit">
+              <p>
+                Wrong address? Updating requires Player Services and releases your inventory hold.
+              </p>
+              <button @click=${this.handleEdit}>Visit Player Services ${chevronIcon}</button>
+            </div>`
+          : nothing}
         ${this.showConfirm
           ? html`<button
               class="confirm"
@@ -176,13 +264,14 @@ export class PqAddressBlock extends LitElement {
           <div class="next-panel">
             <h3 class="next-panel__title">What happens next</h3>
             ${NEXT_STEPS.map(
-              (s, i) => html`<div class="next-step">
-                <span class="next-step__num">${i + 1}</span>
-                <div>
-                  <p class="next-step__name">${s.title}</p>
-                  <p class="next-step__sub">${s.sub}</p>
-                </div>
-              </div>`,
+              (s, i) =>
+                html`<div class="next-step">
+                  <span class="next-step__num">${i + 1}</span>
+                  <div>
+                    <p class="next-step__name">${s.title}</p>
+                    <p class="next-step__sub">${s.sub}</p>
+                  </div>
+                </div>`,
             )}
             <div class="trust-line">${lockIcon} Insured · tracked · updates by email + text</div>
           </div>
@@ -193,9 +282,11 @@ export class PqAddressBlock extends LitElement {
                 Continue ${arrowIcon}
               </button>`
             : nothing}
-          <button class="ghost-btn" @click=${this.handleEdit}>
-            Edit address · ask staff ${chevronIcon}
-          </button>
+          ${this.allowEdit
+            ? html`<button class="ghost-btn" @click=${this.handleEdit}>
+                Edit address · ask staff ${chevronIcon}
+              </button>`
+            : nothing}
         </div>
       </div>
     `;

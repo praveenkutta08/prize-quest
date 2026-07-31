@@ -113,7 +113,7 @@ export const styles = css`
 
   .track--arc {
     height: 18px;
-    background: var(--arc-track-bg, rgba(15, 4, 46, 0.7));
+    background: var(--arc-track-bg, var(--arc-surface-0, rgba(15, 4, 46, 0.7)));
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     border-radius: var(--arc-r-pill, 999px);
   }
@@ -229,7 +229,7 @@ export const styles = css`
     /* Thick rounded pill matching the campaign-card shimmer bar (one progress-bar
        design everywhere). */
     height: 12px;
-    background: rgba(15, 4, 46, 0.7);
+    background: var(--arc-surface-0, rgba(15, 4, 46, 0.7));
     border-radius: 999px;
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
   }

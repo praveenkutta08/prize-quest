@@ -280,7 +280,11 @@ export const styles = css`
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
   :host-context([data-pq-mode="arcade"]) .loader__glow {
-    background: radial-gradient(circle, var(--arc-display-glow, rgba(255, 217, 61, 0.55)) 0%, transparent 68%);
+    background: radial-gradient(
+      circle,
+      var(--arc-display-glow, rgba(255, 217, 61, 0.55)) 0%,
+      transparent 68%
+    );
   }
   :host-context([data-pq-mode="arcade"]) .pill--done .pill__mark {
     background: var(--arc-success, #34d670);
@@ -517,7 +521,7 @@ export const styles = css`
     padding: 16px 32px;
     border: 1px solid var(--arc-hairline-2, var(--pq-hairline, rgba(140, 100, 200, 0.35)));
     border-radius: var(--arc-r-pill, var(--pq-r-pill, 999px));
-    background: var(--arc-pill-bg, rgba(60, 25, 110, 0.4));
+    background: var(--arc-pill-bg, var(--arc-surface-1, rgba(60, 25, 110, 0.4)));
   }
   .load-wrap--expanded .stepper__connector {
     width: 28px;
@@ -591,10 +595,14 @@ export const styles = css`
     width: 96px;
     height: 96px;
   }
-  :host-context([data-formfactor^="iview"]) .load-wrap:not(.load-wrap--expanded) .load-spinner__ring {
+  :host-context([data-formfactor^="iview"])
+    .load-wrap:not(.load-wrap--expanded)
+    .load-spinner__ring {
     border-width: 6px;
   }
-  :host-context([data-formfactor^="iview"]) .load-wrap:not(.load-wrap--expanded) .load-spinner__icon {
+  :host-context([data-formfactor^="iview"])
+    .load-wrap:not(.load-wrap--expanded)
+    .load-spinner__icon {
     width: 32px;
     height: 32px;
   }

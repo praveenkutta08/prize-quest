@@ -6,14 +6,14 @@
     {
       "widget": "pq-screen-header",
       "props": {
-        "title": "Arcade Rewards",
         "showBack": true
       }
     },
     {
       "widget": "pq-campaign-list",
       "props": {
-        "heading": "All Campaigns"
+        "heading": "All Campaigns",
+        "ordersCard": true
       }
     }
   ]

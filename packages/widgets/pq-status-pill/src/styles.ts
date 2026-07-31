@@ -139,7 +139,7 @@ export const styles = css`
     letter-spacing: 0.18em;
     border-color: var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     background-image: none;
-    background-color: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background-color: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     box-shadow: none;
   }
 
@@ -206,7 +206,7 @@ export const styles = css`
     letter-spacing: 0.14em;
     border-color: var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     background-image: none;
-    background-color: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background-color: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
   }
 
   /* ===== iVIEW (1024x600 + 800x480) — scale compact up for touch ===== */

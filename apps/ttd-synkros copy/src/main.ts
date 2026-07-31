@@ -1,10 +1,9 @@
-// @pq/ttd-synkros — TTD / iVIEW demo entry.
+// @pq/ttd-synkros — SYNKROS TTD demo entry.
 //
-// Boots the Tier Rewards Promotions experience inside a fixed device frame.
-// Flow: /attract (insert card) → /hub (3-tile menu) → / (campaign list) and the full
-// claim flow. The 'tier-rewards' tenant (mode: arcade) is the default, and the channel
-// is pinned by the form-factor switcher — 'ttd' (compact) for the Konami/stretched TTD
-// panels, 'iview-4' for the L&W iView 1024×600.
+// Boots into the casino-loud Prize Quest experience inside a fixed device frame.
+// Flow: /attract (insert card) → /hub (3-tile menu) → / (Prize Quest campaign list)
+// and the full claim flow. The 'station-casinos' tenant (mode: casino-loud) is set on
+// boot, and the channel is pinned to 'ttd' (→ compact profile) via the URL param.
 //
 // #screen is a mount point: host chrome (<ttd-attract>/<ttd-hub>) for the attract/hub
 // routes, or <pq-screen> (the server-driven Prize Quest flow) for everything else.
@@ -14,6 +13,7 @@ import { setActiveTenant, getActiveTenant } from "@pq/tenants";
 import { navigate, onRouteChange, getCurrentRoute } from "@pq/router";
 import * as store from "@pq/store";
 import { arcadePlayer, arcadeAddress, getPatronShippingAddress } from "@pq/mock-data";
+import type { AddressData } from "@pq/contracts";
 
 // Host-app chrome (NOT @pq widgets) — the attract + hub screens.
 import "./components/ttd-attract";
@@ -57,34 +57,10 @@ import "@pq/pq-screen-header";
 import "@pq/pq-flow-loading";
 import "@pq/pq-screen";
 
-// Production default: a fresh deploy with no override loads Tier Rewards (black +
-// gold + chrome). Every other tenant — including the retired casino-loud one, which no
-// longer appears in the dev-chrome switcher — is opt-in via ?tenant=, the vendor global,
-// or (for the ones still listed) the tenant dropdown.
-const DEFAULT_TENANT = "tier-rewards";
-
-/**
- * VENDOR CHROME — fixed across every tenant.
- *
- * The attract screen and the hub belong to the CASINO: they carry the operator's name
- * and their own programme name. The Tier Rewards widget starts at the hub's hero tile,
- * and from that tap onward every screen is ours — so the product name and logo below
- * are constants, not tenant config. They are published on `<html data-pq-product-*>`
- * (the same contract as data-pq-mode) so chrome widgets can read them without importing
- * anything app- or tenant-specific.
- */
-const PRODUCT = {
-  name: "Tier Rewards Promotions",
-  logo: "/logos/tier-rewards.png",
-  alt: "Tier Rewards",
-} as const;
-
-function publishProductIdentity(): void {
-  const root = document.documentElement;
-  root.dataset.pqProductName = PRODUCT.name;
-  root.dataset.pqProductLogo = PRODUCT.logo;
-  root.dataset.pqProductAlt = PRODUCT.alt;
-}
+// Production default: a fresh deploy with no override loads the arcade theme.
+// Casino-loud (station-casinos) is now opt-in via ?tenant=, vendor global, or the
+// dev-chrome tenant switcher.
+const DEFAULT_TENANT = "resort-style";
 const TENANT_KEY = "pq.ttd.tenant";
 const IS_PROD = import.meta.env.VITE_PROD_BUILD === "true";
 const IDLE_MS = 60000;
@@ -160,8 +136,6 @@ function mountForRoute(path: string): void {
 
 // --- Boot ------------------------------------------------------------------
 async function boot(): Promise<void> {
-  // Before the tenant resolves — chrome widgets read these on first render.
-  publishProductIdentity();
   const tenant = resolveTenant();
   // Activates the tenant's mode tokens (arcade or casino-loud) + injects its fonts.
   await setActiveTenant(tenant);
@@ -197,27 +171,6 @@ function bindIdleTimeout(): void {
 }
 
 // --- Task FF — form-factor switcher ----------------------------------------
-// The form factor selects both the frame size and the COMPOSITION CHANNEL. Both panels
-// in the fleet are TTD-class — the Konami SYNKROS at 480×234 and the L&W iView at
-// 640×240 — so both run the dense `ttd` screens; the iView is simply 160px wider. The
-// map is kept (rather than hardcoding "ttd") because a future panel may warrant its own
-// channel, and switching channel is the one case that needs a reload: compositions and
-// the density profile resolve once, at mount.
-const FF_CHANNEL: Record<string, string> = {
-  "480x234": "ttd",
-  "640x240": "ttd",
-};
-const FF_DEFAULT = "480x234";
-
-/** Read the persisted form factor (dev chrome only; harmless in private browsing). */
-function storedFormFactor(): string | null {
-  try {
-    return localStorage.getItem("pq.ttd.ff");
-  } catch {
-    return null;
-  }
-}
-
 function bindFormFactor(): void {
   const select = document.getElementById("ff-switch") as HTMLSelectElement | null;
   const dims = document.getElementById("ff-bar-dims");
@@ -237,27 +190,21 @@ function bindFormFactor(): void {
     }
   }
 
-  // Reconcile the stored choice against the channel actually pinned in the URL — an
-  // explicit ?channel= (sales deep link) wins over whatever was last picked here.
-  const urlChannel = new URLSearchParams(location.search).get("channel");
-  let active = storedFormFactor() ?? FF_DEFAULT;
-  if (urlChannel && FF_CHANNEL[active] !== urlChannel) {
-    const match = Object.keys(FF_CHANNEL).find((ff) => FF_CHANNEL[ff] === urlChannel);
-    active = match ?? FF_DEFAULT;
+  // Restore last choice on boot (default to 480x234).
+  const stored = (() => {
+    try {
+      return localStorage.getItem("pq.ttd.ff");
+    } catch {
+      return null;
+    }
+  })();
+  if (stored) {
+    select.value = stored;
+    applyFormFactor(stored);
   }
-  select.value = active;
-  applyFormFactor(active);
 
   select.addEventListener("change", (e) => {
-    const value = (e.target as HTMLSelectElement).value;
-    applyFormFactor(value);
-    const next = FF_CHANNEL[value] ?? "ttd";
-    const current = new URLSearchParams(location.search).get("channel") ?? "ttd";
-    // Same-channel change (Konami ↔ stretched TTD) is a live resize — no reload needed.
-    if (next === current) return;
-    const url = new URL(location.href);
-    url.searchParams.set("channel", next);
-    location.assign(url.href);
+    applyFormFactor((e.target as HTMLSelectElement).value);
   });
 }
 
@@ -306,9 +253,6 @@ function bindFlow(): void {
     navigate(withChannel(eligible ? `/campaign/${id}/rewards` : `/campaign/${id}`));
   };
   document.addEventListener("pq-card-click", (e) => openCampaign(detailId(e)));
-  // Trailing "Order History" card in the campaign carousel (pq-campaign-list) — the
-  // widget stays routing-free and just announces intent.
-  document.addEventListener("pq-view-orders", () => navigate(withChannel("/orders")));
   document.addEventListener("pq-hero-cta", (e) => openCampaign(detailId(e)));
   // Eligible compact detail → open the dedicated reward-selection screen.
   document.addEventListener("pq-view-rewards", (e) => {
@@ -331,18 +275,16 @@ function bindFlow(): void {
     // the editable address form when it does (see below). Both modes use this flow now.
     navigate(withChannel("/loading"));
   });
-  // Loader finished both phases → seed the shipping address from the patron's CMS record
-  // (once) and show the read-only address-verified screen (Screen 07).
+  // Loader finished both phases → seed the form from the patron's CMS address (once) and
+  // show the editable address form (Screen 07).
   document.addEventListener("pq-flow-loading-done", () => {
     if (getCurrentRoute().path !== "/loading") return;
     if (!$shippingAddress.get()) setShippingAddress(getPatronShippingAddress());
     navigate(withChannel("/address"));
   });
-  // The address is no longer editable on the TTD — the composition renders the read-only
-  // <pq-address-block> (allowEdit: false), which fires `pq-address-confirm`. The address
-  // shown is the one already seeded from CMS above, so there is nothing to persist here.
-  document.addEventListener("pq-address-confirm", () => {
-    if (!$shippingAddress.get()) setShippingAddress(getPatronShippingAddress());
+  // Editable address form OK → persist what the patron entered, advance to final confirm.
+  document.addEventListener("pq-address-submit", (e) => {
+    setShippingAddress((e as CustomEvent<AddressData>).detail);
     navigate(withChannel("/submit"));
   });
   document.addEventListener("pq-claim-submit", () => {

@@ -6,7 +6,6 @@
     {
       "widget": "pq-screen-header",
       "props": {
-        "title": "Arcade Rewards",
         "showBack": false
       }
     },
@@ -17,14 +16,14 @@
           {
             "id": "pin",
             "label": "PIN",
-            "title": "Validating PIN…",
+            "title": "Validating PIN\u2026",
             "icon": "lock",
             "durationMs": 800
           },
           {
             "id": "address",
             "label": "Address",
-            "title": "Retrieving Address…",
+            "title": "Retrieving Address\u2026",
             "icon": "location",
             "durationMs": 1200
           }

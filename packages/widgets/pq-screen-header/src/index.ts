@@ -3,7 +3,13 @@ import type { Campaign, Player } from "@pq/mock-data";
 import { bindAtom, $activeCampaign, $player } from "@pq/store";
 import { styles } from "./styles";
 
-const backIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+const backIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
   <polyline points="15 18 9 12 15 6" />
 </svg>`;
 
@@ -11,11 +17,18 @@ const backIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 export type ScreenHeaderProfile = "compact" | "standard" | "expanded";
 
 /**
- * `<pq-screen-header>` — the casino screen chrome bar (back chevron · brand/title ·
- * points balance) shown on top of each Prize Quest screen on dense surfaces (TTD).
+ * `<pq-screen-header>` — the screen chrome bar (back chevron · brand/title · tenant
+ * logo) shown on top of each screen on dense surfaces (TTD / iVIEW).
  *
  * Title precedence: explicit `title` prop → active campaign name (`$activeCampaign`) →
- * `brand`. Points come from `$player.points` (the `points` prop is the test fallback).
+ * `brand` (which defaults to the active tenant's product name).
+ *
+ * The right slot carries the ACTIVE TENANT'S LOGO. It used to show the patron's points
+ * balance; points were removed from the patron-facing chrome so the brand owns that
+ * corner on every tenant. The logo source comes from `<html data-pq-brand-logo>` (written
+ * by applyTokens); if the asset fails to load the slot falls back to a text wordmark, so
+ * a tenant with no logo file on disk still reads correctly.
+ *
  * The back button fires a composed `pq-back` event; the host decides what back means.
  *
  * Premium surfaces don't list this widget, so it never appears outside casino channels.
@@ -32,10 +45,16 @@ export class PqScreenHeader extends LitElement {
     profile: { type: String, reflect: true },
     _campaign: { state: true },
     _player: { state: true },
+    _logoBroken: { state: true },
   };
 
   // NB: `title` overrides HTMLElement.title, so it must stay a plain `string`.
   declare title: string;
+  /**
+   * @deprecated No-op. The points balance was removed from the patron-facing chrome —
+   * the right slot now carries the tenant logo. Kept so existing compositions that
+   * still pass `points` keep type-checking.
+   */
   declare points?: number;
   declare showBack: boolean;
   /**
@@ -52,17 +71,22 @@ export class PqScreenHeader extends LitElement {
    * switches to the big kiosk arc-header.
    */
   declare profile: ScreenHeaderProfile;
-  private declare _campaign: Campaign | null;
-  private declare _player: Player | null;
+  declare private _campaign: Campaign | null;
+  declare private _player: Player | null;
+  /** Set when the tenant logo 404s — falls the right slot back to a text wordmark. */
+  declare private _logoBroken: boolean;
 
   constructor() {
     super();
     this.title = "";
     this.showBack = false;
-    this.brand = "Prize Quest";
+    // Tenant-driven, with the product name as the floor. applyTokens has already run by
+    // the time any screen mounts, so this resolves to e.g. "Tier Rewards Promotions".
+    this.brand = document.documentElement.dataset.pqBrandName ?? "Tier Rewards Promotions";
     this.profile = "standard";
     this._campaign = null;
     this._player = null;
+    this._logoBroken = false;
     bindAtom(this, $activeCampaign, "_campaign");
     bindAtom(this, $player, "_player");
   }
@@ -71,9 +95,33 @@ export class PqScreenHeader extends LitElement {
     return this.title || this._campaign?.name || this.brand;
   }
 
-  private get displayPoints(): number | undefined {
-    return this._player?.points ?? this.points;
+  /** The vendor logo src (tenant logo as a fallback), or null once an asset failed. */
+  private get brandLogo(): string | null {
+    if (this._logoBroken) return null;
+    const d = document.documentElement.dataset;
+    return d.pqProductLogo || d.pqBrandLogo || null;
   }
+
+  private get brandAlt(): string {
+    const d = document.documentElement.dataset;
+    return d.pqProductAlt || d.pqBrandAlt || this.brand;
+  }
+
+  /** Render the vendor logo, degrading to a text wordmark when there is no asset. */
+  private renderBrandmark(): TemplateResult {
+    const src = this.brandLogo;
+    if (!src) return html`<span class="wordmark">${this.brand}</span>`;
+    return html`<img
+      class="brandmark"
+      src=${src}
+      alt=${this.brandAlt}
+      @error=${this.onLogoError}
+    />`;
+  }
+
+  private onLogoError = (): void => {
+    this._logoBroken = true;
+  };
 
   override render(): TemplateResult {
     // `compact` and `standard` are intentionally identical to the original
@@ -85,7 +133,6 @@ export class PqScreenHeader extends LitElement {
 
   /** Original `.bar` chrome (back chevron · brand · points) — compact + standard. */
   private renderStandard(): TemplateResult {
-    const pts = this.displayPoints;
     return html`
       <div class="bar">
         <div class="left">
@@ -96,11 +143,7 @@ export class PqScreenHeader extends LitElement {
             : html`<span class="spacer"></span>`}
         </div>
         <span class="brand">${this.displayTitle}</span>
-        <div class="right">
-          ${pts != null
-            ? html`<span class="pts">${pts.toLocaleString()} pts</span>`
-            : html`<span class="spacer"></span>`}
-        </div>
+        <div class="right">${this.renderBrandmark()}</div>
       </div>
     `;
   }
@@ -116,13 +159,12 @@ export class PqScreenHeader extends LitElement {
     const player = this._player;
     const memberName = player?.name ?? "Guest";
     const memberId = player?.id;
-    const pts = this.displayPoints;
     const tier = player?.tier ?? "Member";
 
     return html`
       <header class="arc-header">
         <div class="arc-brand">
-          <div class="arc-logo">${this.brand.charAt(0) || "P"}</div>
+          <div class="arc-logo">${this.brand.charAt(0) || "T"}</div>
           <div>
             <div class="arc-brand__name">${this.displayTitle}</div>
             <div class="arc-brand__sub">
@@ -138,10 +180,7 @@ export class PqScreenHeader extends LitElement {
               <div class="arc-tier-pill__name">${tier}</div>
             </div>
           </div>
-          <div class="arc-points">
-            <div class="arc-points__label">Reward Points</div>
-            <div class="arc-points__val">${pts != null ? pts.toLocaleString() : "—"}</div>
-          </div>
+          <div class="arc-brandmark">${this.renderBrandmark()}</div>
           <div class="arc-time">
             <div class="arc-time__big">2:48 PM</div>
             <div class="arc-time__sub">Sun · Jun 7</div>

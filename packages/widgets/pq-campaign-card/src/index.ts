@@ -13,10 +13,9 @@ function catTintStyle(category: string | undefined): string {
 }
 import { styles } from "./styles";
 import type { CardProfile } from "./types";
-// Register the composed child widgets.
-import "@pq/pq-progress-bar";
+// Register the composed child widgets. Progress is no longer part of the patron-facing
+// card on any surface, so <pq-progress-bar> is deliberately NOT composed here.
 import "@pq/pq-status-pill";
-import type { ProgressBarVariant } from "@pq/pq-progress-bar";
 import type { StatusPillVariant } from "@pq/pq-status-pill";
 
 /** Trophy used on the arcade hero panel (swap for operator artwork in prod). */
@@ -41,14 +40,13 @@ function countdownLabel(expiresAt: string | undefined): string {
   return "Ends soon";
 }
 
-/** 5-segment states from a 0–100 percentage (done / current / upcoming). */
-function segmentStates(pct: number): ("done" | "current" | "")[] {
-  const p = Math.max(0, Math.min(100, pct));
-  return Array.from({ length: 5 }, (_, i) => {
-    if ((i + 1) * 20 <= p) return "done";
-    if (i * 20 < p && p < (i + 1) * 20) return "current";
-    return "";
-  });
+/** Title-case a category slug for the fact rail, e.g. "smart-home" → "Smart Home". */
+function categoryLabel(category: string | undefined): string {
+  if (!category) return "";
+  return category
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
 
 interface StatusPresentation {
@@ -58,27 +56,74 @@ interface StatusPresentation {
   chip: string;
   /** Status-chip background token kind: success / info / danger. */
   chipKind: "ready" | "active" | "locked";
-  progress: ProgressBarVariant;
   ready: boolean;
   dimmed: boolean;
   clickable: boolean;
 }
 
-/** How each campaign status presents: pill, progress fill, and interactivity. */
+/** How each campaign status presents: pill and interactivity. */
 const STATUS: Record<CampaignStatus, StatusPresentation> = {
-  eligible: { pill: "eligible", pillLabel: "Ready", chip: "Ready", chipKind: "ready", progress: "complete", ready: true, dimmed: false, clickable: true },
-  "in-progress": { pill: "in-progress", chip: "In Progress", chipKind: "active", progress: "default", ready: false, dimmed: false, clickable: true },
-  claimed: { pill: "claimed", chip: "Claimed", chipKind: "active", progress: "default", ready: false, dimmed: false, clickable: true },
-  expired: { pill: "expired", chip: "Expired", chipKind: "locked", progress: "default", ready: false, dimmed: true, clickable: false },
-  locked: { pill: "locked", chip: "Locked", chipKind: "locked", progress: "default", ready: false, dimmed: true, clickable: false },
+  eligible: {
+    pill: "eligible",
+    pillLabel: "Ready",
+    chip: "Ready",
+    chipKind: "ready",
+    ready: true,
+    dimmed: false,
+    clickable: true,
+  },
+  "in-progress": {
+    pill: "in-progress",
+    chip: "In Progress",
+    chipKind: "active",
+    ready: false,
+    dimmed: false,
+    clickable: true,
+  },
+  claimed: {
+    pill: "claimed",
+    chip: "Claimed",
+    chipKind: "active",
+    ready: false,
+    dimmed: false,
+    clickable: true,
+  },
+  expired: {
+    pill: "expired",
+    chip: "Expired",
+    chipKind: "locked",
+    ready: false,
+    dimmed: true,
+    clickable: false,
+  },
+  locked: {
+    pill: "locked",
+    chip: "Locked",
+    chipKind: "locked",
+    ready: false,
+    dimmed: true,
+    clickable: false,
+  },
 };
 
-const trophyIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+const trophyIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  aria-hidden="true"
+>
   <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z" />
   <path d="M6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3M9 15h6M12 13v2M8 20h8" />
 </svg>`;
 
-const chevronIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+const chevronIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
   <polyline points="9 18 15 12 9 6" />
 </svg>`;
 
@@ -132,17 +177,11 @@ export class PqCampaignCard extends LitElement {
   }
 
   private renderStandard(c: Campaign): TemplateResult {
-    const pres = STATUS[c.status];
     return html`
       <div class="card" @click=${this.handleActivate} @keydown=${this.handleKeydown}>
         <div class="body">
           <h3 class="title">${c.name}</h3>
           <p class="meta">${c.meta}</p>
-          <pq-progress-bar
-            .value=${c.progress}
-            .max=${c.goal}
-            .variant=${pres.progress}
-          ></pq-progress-bar>
         </div>
         <span class="arrow">${chevronIcon}</span>
       </div>
@@ -163,9 +202,7 @@ export class PqCampaignCard extends LitElement {
         <div class="img">
           <span class="img-glow"></span>
           <span class="icon">${trophyIcon}</span>
-          ${c.frequency
-            ? html`<span class="chip chip--freq">${c.frequency}</span>`
-            : nothing}
+          ${c.frequency ? html`<span class="chip chip--freq">${c.frequency}</span>` : nothing}
           <pq-status-pill
             class="chip chip--status"
             profile="expanded"
@@ -178,13 +215,6 @@ export class PqCampaignCard extends LitElement {
             <h3 class="title">${c.name}</h3>
             <p class="sub">${c.description ?? c.meta}</p>
           </div>
-          <pq-progress-bar
-            profile="expanded"
-            label="Progress"
-            .value=${c.progress}
-            .max=${c.goal}
-            .variant=${pres.progress}
-          ></pq-progress-bar>
           <button class="cta" type="button" tabindex="-1">
             ${pres.ready ? "Claim Reward" : "View Campaign"}
           </button>
@@ -201,19 +231,14 @@ export class PqCampaignCard extends LitElement {
       return this.renderCompactArcade(c);
     }
     const pres = STATUS[c.status];
-    const width = Math.max(0, Math.min(100, c.pct));
     // The CTA is a visual affordance; clicks bubble to the card's @click handler.
     return html`
       <div class="card" @click=${this.handleActivate} @keydown=${this.handleKeydown}>
         <div class="row">
           <h3 class="title">${c.name}</h3>
-          <span class="pill">${pres.ready ? "Ready" : `${c.pct}%`}</span>
+          <span class="pill">${pres.chip}</span>
         </div>
         <p class="meta">${c.meta}</p>
-        <div class="bar">
-          <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
-          <span class="bar-pct">${c.pct}%</span>
-        </div>
         <button class="cta" type="button" tabindex="-1">${pres.ready ? "Claim →" : "View"}</button>
       </div>
     `;
@@ -238,17 +263,14 @@ export class PqCampaignCard extends LitElement {
         </div>
         <div class="cmpd__main">
           <div class="cmpd__head">
-            <div class="cmpd__chips">
-              ${c.frequency
-                ? html`<span class="cmpd__cat">${c.frequency}</span>`
-                : nothing}
-            </div>
+            <div class="cmpd__chips"></div>
             <span class="cmpd__pill cmpd__pill--${pres.chipKind}"
               >${pres.pillLabel ?? pres.chip}</span
             >
           </div>
-          <h3 class="cmpd__name">${c.name}</h3>
-          ${this.renderProgressBlock(c)}
+          <h3 class="cmpd__name cmpd__name--marquee">${c.name}</h3>
+          <div class="cmpd__rule"></div>
+          ${this.renderFacts(c)}
           <p class="cmpd__desc">${c.description ?? c.meta}</p>
         </div>
         <div class="cmpd__foot">
@@ -258,50 +280,24 @@ export class PqCampaignCard extends LitElement {
     `;
   }
 
-  /** Progress block — segmented (default) or shimmer per `<html data-pq-progress-style>`. */
-  private renderProgressBlock(c: Campaign): TemplateResult {
-    return document.documentElement.dataset.pqProgressStyle === "shimmer"
-      ? this.renderShimmer(c)
-      : this.renderSegmented(c);
-  }
-
-  private renderSegmented(c: Campaign): TemplateResult {
-    const remain = Math.max(0, c.goal - c.progress);
+  /**
+   * Fact rail — the short, glanceable line that took the progress block's place.
+   * Prize count leads (highlighted), then the prize category and the campaign cadence.
+   * Cadence moved here from the head chip so nothing is stated twice on the card:
+   * the head now carries only the status pill, and the countdown stays in the footer.
+   */
+  private renderFacts(c: Campaign): TemplateResult {
+    const count = c.prizeIds.length;
+    const category = categoryLabel(c.category);
     return html`
-      <div class="cmpd__progblock cmpd__progblock--segmented">
-        <div class="cmpd__progblock-row">
-          <span class="cmpd__progblock-label">Wager Progress</span>
-          <span class="cmpd__progblock-val"
-            ><strong>${money(c.progress)}</strong> / ${money(c.goal)}</span
-          >
-          <span class="cmpd__progblock-remain"
-            >${remain > 0 ? `${money(remain)} to go` : "Complete"}</span
-          >
-        </div>
-        <div class="cmpd__progblock-segs">
-          ${segmentStates(c.pct).map(
-            (s) =>
-              html`<div class="cmpd__seg ${s ? `cmpd__seg--${s}` : ""}"></div>`,
-          )}
-        </div>
-      </div>
-    `;
-  }
-
-  private renderShimmer(c: Campaign): TemplateResult {
-    const width = Math.max(0, Math.min(100, c.pct));
-    return html`
-      <div class="cmpd__progblock cmpd__progblock--shimmer">
-        <div class="cmpd__progblock-row">
-          <span class="cmpd__progblock-label">Wager Progress</span>
-          <span class="cmpd__progblock-val"
-            ><strong>${money(c.progress)}</strong> / ${money(c.goal)}</span
-          >
-          <span class="cmpd__shim-pct">${c.pct}%</span>
-        </div>
-        <div class="cmpd__shim-bar">
-          <div class="cmpd__shim-fill" style="width:${width}%"></div>
-        </div>
+      <div class="cmpd__facts">
+        ${count > 0
+          ? html`<span class="cmpd__fact cmpd__fact--hi"
+              >${count} ${count === 1 ? "Prize" : "Prizes"}</span
+            >`
+          : nothing}
+        ${category ? html`<span class="cmpd__fact">${category}</span>` : nothing}
+        ${c.frequency ? html`<span class="cmpd__fact">${c.frequency}</span>` : nothing}
       </div>
     `;
   }

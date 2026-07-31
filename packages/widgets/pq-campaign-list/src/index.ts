@@ -7,8 +7,24 @@ import "@pq/pq-campaign-card";
 import "@pq/pq-promo-hero";
 import "@pq/pq-list-carousel";
 
-const chevronLeft = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>`;
-const chevronRight = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>`;
+const chevronLeft = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
+  <polyline points="15 18 9 12 15 6" />
+</svg>`;
+const chevronRight = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
+  <polyline points="9 18 15 12 9 6" />
+</svg>`;
 
 /** Expanded campaign-list filter pills (Section 01 chrome). `all` shows everything. */
 const LIST_FILTERS = [
@@ -38,6 +54,7 @@ export class PqCampaignList extends LitElement {
     loading: { type: Boolean, reflect: true },
     featuredId: { type: String },
     heading: { type: String },
+    ordersCard: { type: Boolean, attribute: "orders-card" },
     _player: { state: true },
     _filter: { state: true },
   };
@@ -50,13 +67,20 @@ export class PqCampaignList extends LitElement {
   declare loading: boolean;
   declare featuredId?: string;
   declare heading?: string;
+  /**
+   * Append a trailing "Order History" card to the compact carousel. Off by default;
+   * the TTD / iVIEW home compositions opt in so the screen is never empty for a patron
+   * with no live promotions.
+   */
+  declare ordersCard: boolean;
   /** Drives the expanded greeting headline ("Good afternoon, {firstName}"). */
-  private declare _player: Player | null;
+  declare private _player: Player | null;
   /** Active filter pill (expanded grid only). */
-  private declare _filter: ListFilter;
+  declare private _filter: ListFilter;
 
   constructor() {
     super();
+    this.ordersCard = false;
     this.campaigns = [];
     this.profile = "standard";
     this.loading = false;
@@ -78,9 +102,7 @@ export class PqCampaignList extends LitElement {
     const featured = this.featuredId
       ? this.campaigns.find((c) => c.id === this.featuredId)
       : undefined;
-    const rest = featured
-      ? this.campaigns.filter((c) => c.id !== featured.id)
-      : this.campaigns;
+    const rest = featured ? this.campaigns.filter((c) => c.id !== featured.id) : this.campaigns;
 
     if (!featured && rest.length === 0) {
       return html`<div class="empty"><p>No campaigns available right now.</p></div>`;
@@ -109,19 +131,16 @@ export class PqCampaignList extends LitElement {
   private renderStack(campaigns: Campaign[]): TemplateResult {
     // Arcade compact gets the Session 33 paged carousel of hero cards (one per
     // page). Casino-loud / premium compact + standard keep the vertical stack.
-    if (
-      this.profile === "compact" &&
-      document.documentElement.dataset.pqMode === "arcade"
-    ) {
+    if (this.profile === "compact" && document.documentElement.dataset.pqMode === "arcade") {
       return html`<pq-list-carousel
         class="carousel"
         .itemsPerPage=${1}
         aria-label=${this.heading ?? "Your campaigns"}
       >
         ${campaigns.map(
-          (c) =>
-            html`<pq-campaign-card .campaign=${c} profile="compact"></pq-campaign-card>`,
+          (c) => html`<pq-campaign-card .campaign=${c} profile="compact"></pq-campaign-card>`,
         )}
+        ${this.ordersCard ? this.renderOrdersCard() : nothing}
       </pq-list-carousel>`;
     }
     return html`<div class="stack">
@@ -131,13 +150,54 @@ export class PqCampaignList extends LitElement {
     </div>`;
   }
 
+  /**
+   * The always-last card in the compact carousel: a ghost "Order History" card.
+   *
+   * It exists so the screen is never empty — a patron with no live promotions would
+   * otherwise land on a blank carousel. It is deliberately styled as a UTILITY card
+   * (dashed border, hollow surface, no prize pool / countdown / status pill) so it
+   * never reads as something you can win. Firing `pq-view-orders` keeps the widget
+   * free of routing knowledge; the host app decides what it means.
+   */
+  private renderOrdersCard(): TemplateResult {
+    return html`
+      <button
+        class="orders-card"
+        type="button"
+        @click=${() =>
+          this.dispatchEvent(new CustomEvent("pq-view-orders", { bubbles: true, composed: true }))}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+          />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
+        </svg>
+        <span class="orders-card__name">Order History</span>
+        <span class="orders-card__sub">Past prizes · tracking · receipts</span>
+        <span class="orders-card__go">View orders →</span>
+      </button>
+    `;
+  }
+
   private renderCarousel(campaigns: Campaign[]): TemplateResult {
     return html`
       <div class="rail-head">
         <h3 class="rail-title">${this.heading ?? "Campaigns"}</h3>
         <div class="rail-controls">
-          <button class="rail-ctl" aria-label="Previous" @click=${() => this.scrollRail(-1)}>${chevronLeft}</button>
-          <button class="rail-ctl" aria-label="Next" @click=${() => this.scrollRail(1)}>${chevronRight}</button>
+          <button class="rail-ctl" aria-label="Previous" @click=${() => this.scrollRail(-1)}>
+            ${chevronLeft}
+          </button>
+          <button class="rail-ctl" aria-label="Next" @click=${() => this.scrollRail(1)}>
+            ${chevronRight}
+          </button>
         </div>
       </div>
       <div class="rail">
@@ -188,7 +248,9 @@ export class PqCampaignList extends LitElement {
     const firstName = this._player?.name?.split(" ")[0] ?? "there";
 
     return html`
-      <button class="cl-back" type="button" @click=${this.goBack}>${chevronLeft}<span>Back to hub</span></button>
+      <button class="cl-back" type="button" @click=${this.goBack}>
+        ${chevronLeft}<span>Back to hub</span>
+      </button>
       <div class="greeting">
         <div class="greeting__intro">
           <span class="greeting__eyebrow">Welcome back</span>
@@ -217,13 +279,14 @@ export class PqCampaignList extends LitElement {
       <div class="filter-row">
         <span class="filter-label">Filter</span>
         ${LIST_FILTERS.map(
-          (f) => html`<button
-            class="filter-pill ${this._filter === f.key ? "filter-pill--active" : ""}"
-            type="button"
-            @click=${() => this.setFilter(f.key)}
-          >
-            ${f.label}
-          </button>`,
+          (f) =>
+            html`<button
+              class="filter-pill ${this._filter === f.key ? "filter-pill--active" : ""}"
+              type="button"
+              @click=${() => this.setFilter(f.key)}
+            >
+              ${f.label}
+            </button>`,
         )}
         <span class="cl-showing">Showing ${filtered.length} of ${campaigns.length}</span>
       </div>
@@ -240,16 +303,22 @@ export class PqCampaignList extends LitElement {
     const skeletons = [0, 1, 2];
     if (this.effectiveVariant === "carousel") {
       return html`<div class="rail">
-        ${skeletons.map(() => html`<pq-campaign-card profile="expanded" .loading=${true}></pq-campaign-card>`)}
+        ${skeletons.map(
+          () => html`<pq-campaign-card profile="expanded" .loading=${true}></pq-campaign-card>`,
+        )}
       </div>`;
     }
     if (this.effectiveVariant === "grid") {
       return html`<div class="grid">
-        ${skeletons.map(() => html`<pq-campaign-card profile="expanded" .loading=${true}></pq-campaign-card>`)}
+        ${skeletons.map(
+          () => html`<pq-campaign-card profile="expanded" .loading=${true}></pq-campaign-card>`,
+        )}
       </div>`;
     }
     return html`<div class="stack">
-      ${skeletons.map(() => html`<pq-campaign-card profile="standard" .loading=${true}></pq-campaign-card>`)}
+      ${skeletons.map(
+        () => html`<pq-campaign-card profile="standard" .loading=${true}></pq-campaign-card>`,
+      )}
     </div>`;
   }
 

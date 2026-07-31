@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prize Quest · SYNKROS TTD demo (with hub)</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <!-- Force the TTD channel before the module (and pq-screen) upgrade, so the very
+         first composition load resolves to ttd/compact rather than the viewport
+         default. The whole app is TTD-only; detectChannel() reads this param. -->
+    <script>
+      (function () {
+        if (!/[?&]channel=/.test(location.search)) {
+          var u = new URL(location.href);
+          u.searchParams.set("channel", "ttd");
+          history.replaceState({}, "", u);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Form-factor switcher (native <select>, demo chrome — not a widget). -->
+    <div class="ff-bar" role="region" aria-label="TTD form-factor switcher">
+      <span class="ff-bar__label">Form factor</span>
+      <select id="ff-switch" class="ff-bar__select" aria-label="Select TTD form factor">
+        <option value="480x234" selected>Konami SYNKROS TTD</option>
+        <option value="640x240">Generic stretched TTD</option>
+      </select>
+      <span class="ff-bar__dims">Active · <strong id="ff-bar-dims">480 × 234</strong> px</span>
+      <span class="ff-bar__label">Tenant</span>
+      <!-- Station Arcade / Casinos are the built-in TTD tenants; the *-style entries are
+           generic operator-flavored arcade STYLE DEMOS (Session 34, private sales only). -->
+      <select id="tenant-switch" class="ff-bar__select" aria-label="Select tenant">
+        <option value="resort-style" selected>Resort Rewards · navy + gold (default)</option>
+        <option value="station-arcade">Station Arcade · arcade</option>
+        <option value="station-casinos">Station Casinos · casino-loud</option>
+        <option value="velvet-style">Velvet Reserve · burgundy + brass</option>
+        <option value="emerald-style">Emerald Club · green + brass</option>
+      </select>
+      <span class="ff-bar__spacer"></span>
+      <button id="ff-reset" class="ff-bar__reset" type="button" title="Return to campaign list">
+        ↺ Reset demo
+      </button>
+    </div>
+
+    <main class="stage">
+      <div class="cabinet">
+        <div class="screen">
+          <!-- Mount point: main.ts swaps in <ttd-attract> / <ttd-hub> (host chrome)
+               or <pq-screen> (the Prize Quest flow) depending on the route. -->
+          <div id="screen"></div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

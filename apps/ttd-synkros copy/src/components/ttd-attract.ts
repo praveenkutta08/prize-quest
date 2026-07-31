@@ -149,19 +149,9 @@ export class TtdAttract extends LitElement {
       overflow: hidden;
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
-      /* Tenant-driven — hardcoded arcade purple made Tier Rewards (black + gold) glow
-         violet at the corners. */
       background:
-        radial-gradient(
-          ellipse at 20% 0%,
-          var(--arc-bg-glass, rgba(142, 71, 232, 0.3)),
-          transparent 55%
-        ),
-        radial-gradient(
-          ellipse at 80% 100%,
-          var(--arc-glow-soft, rgba(255, 63, 164, 0.18)),
-          transparent 60%
-        ),
+        radial-gradient(ellipse at 20% 0%, rgba(142, 71, 232, 0.3), transparent 55%),
+        radial-gradient(ellipse at 80% 100%, rgba(255, 63, 164, 0.18), transparent 60%),
         linear-gradient(
           160deg,
           var(--arc-bg-deep, #15042e) 0%,
@@ -290,7 +280,7 @@ export class TtdAttract extends LitElement {
     .attract-tease {
       flex: 0 0 auto;
       border-top: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
-      background: linear-gradient(180deg, transparent, var(--arc-bg-glass-2, rgba(15, 4, 46, 0.6)));
+      background: linear-gradient(180deg, transparent, rgba(15, 4, 46, 0.6));
       padding: 5px 10px;
       font-family: var(--arc-font-mono, monospace);
       font-size: 8px;
@@ -391,12 +381,7 @@ export class TtdAttract extends LitElement {
 
   /** Arcade attract (Station Arcade) — mirrors prize-quest-ttd-arcade.html Pre-A. */
   private renderArcade(): TemplateResult {
-    // Pre-session marquee — entirely CASINO chrome. The corner carries the operator's
-    // name and the headline their own loyalty-programme name. Nothing about Tier Rewards
-    // appears until the patron taps into our widget from the hub.
-    const tenant = getActiveTenant();
-    const brand = tenant?.name ?? "Casino";
-    const headline = tenant?.brand.productName ?? brand;
+    const brand = getActiveTenant()?.name ?? "Station Arcade";
     const now = new Date();
     const time = now
       .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
@@ -412,7 +397,7 @@ export class TtdAttract extends LitElement {
         <div class="attract-time"><strong>${time}</strong>${date}</div>
         <div class="attract-hero">
           <span class="attract-eyebrow">Welcome to</span>
-          <h1 class="attract-headline">${headline}</h1>
+          <h1 class="attract-headline">Arcade Rewards</h1>
           <div class="attract-card">
             <div class="attract-card__chip"></div>
             <div class="attract-card__name">Platinum</div>

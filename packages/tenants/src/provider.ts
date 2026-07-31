@@ -23,6 +23,8 @@ const loaders: Record<string, () => Promise<unknown>> = {
   "station-casinos": () => import("./configs/station-casinos.json"),
   "station-arcade": () => import("./configs/station-arcade.json"),
   "arcade-demo": () => import("./configs/arcade-demo.json"),
+  // Tier Rewards — the production default tenant (black + gold + chrome, brand-owned).
+  "tier-rewards": () => import("./configs/tier-rewards.json"),
   // Session 34 — operator-flavored arcade style demos (generic names; see caveat above).
   "resort-style": () => import("./configs/resort-style.json"),
   "velvet-style": () => import("./configs/velvet-style.json"),

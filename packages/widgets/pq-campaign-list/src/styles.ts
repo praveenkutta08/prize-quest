@@ -113,7 +113,11 @@ export const styles = css`
     text-align: center;
     border: 1px solid var(--pq-navy-hairline, #2a4f7a);
     border-radius: var(--pq-r-2xl, 20px);
-    background: linear-gradient(180deg, var(--pq-navy-low, #143352) 0%, var(--pq-navy-base, #102a43) 100%);
+    background: linear-gradient(
+      180deg,
+      var(--pq-navy-low, #143352) 0%,
+      var(--pq-navy-base, #102a43) 100%
+    );
   }
   .empty p {
     margin: 0;
@@ -158,8 +162,8 @@ export const styles = css`
   /* ====================== EXPANDED CHROME (reference Screen 01) ======================
      Back-to-hub · greeting (welcome + quick stats) · filter pills above the grid.
      Premium-safe var(--arc-*, <fallback>) colors; the arcade host supplies the
-     neon --arc-*/--cat-* tokens. */
-  .cl-back {
+     neon --arc-*/
+  --cat-* tokens. */ .cl-back {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -215,7 +219,11 @@ export const styles = css`
     color: var(--arc-cream, var(--pq-text, #f1f5f9));
   }
   .greeting__name {
-    background: linear-gradient(135deg, var(--arc-display-bright, #ffee5c), var(--cat-pink, #ff3fa4));
+    background: linear-gradient(
+      135deg,
+      var(--arc-display-bright, #ffee5c),
+      var(--cat-pink, #ff3fa4)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -302,7 +310,7 @@ export const styles = css`
     letter-spacing: 0.06em;
     text-transform: uppercase;
     cursor: pointer;
-    background: rgba(60, 25, 110, 0.5);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.5));
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     color: var(--arc-text-dim, var(--pq-text-muted, #94a3b8));
     transition: border-color 200ms var(--pq-ease, ease);
@@ -360,5 +368,81 @@ export const styles = css`
      expanded-only. */
   :host-context([data-formfactor^="iview"]):host([profile="compact"]) .stack {
     gap: 14px;
+  }
+
+  /* ═══════════ Trailing "Order History" ghost card (compact carousel) ═══════════
+     Deliberately the OPPOSITE of a campaign card: dashed border, hollow surface, no
+     tint rail, no prize pool, no countdown. It must never read as something the
+     patron can win — it is the exit to /orders, and the reason the screen is never
+     blank when there are no live promotions. */
+  .orders-card {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    border: 1.5px dashed var(--arc-hairline-2, rgba(255, 217, 61, 0.35));
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+  }
+  .orders-card svg {
+    width: 30px;
+    height: 30px;
+    color: var(--arc-display, #ffd93d);
+    opacity: 0.9;
+  }
+  .orders-card__name {
+    font-family: var(--arc-font-display, "Manrope", sans-serif);
+    font-weight: var(--arc-font-display-weight, 900);
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--arc-cream, #f5efe0);
+  }
+  .orders-card__sub {
+    font-family: var(--arc-font-body, "Inter", sans-serif);
+    font-size: 9.5px;
+    color: var(--arc-text-faint, #8b7aaa);
+  }
+  .orders-card__go {
+    margin-top: 5px;
+    padding: 5px 15px;
+    border: 1px solid var(--arc-display, #ffd93d);
+    border-radius: 5px;
+    font-family: var(--arc-font-display, "Manrope", sans-serif);
+    font-weight: var(--arc-font-display-weight, 800);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--arc-display, #ffd93d);
+  }
+  /* iVIEW (1024×600) — scaled for the bigger panel. */
+  :host-context([data-formfactor^="iview"]) .orders-card {
+    min-height: 400px;
+    gap: 12px;
+  }
+  :host-context([data-formfactor^="iview"]) .orders-card svg {
+    width: 64px;
+    height: 64px;
+  }
+  :host-context([data-formfactor^="iview"]) .orders-card__name {
+    font-size: 32px;
+  }
+  :host-context([data-formfactor^="iview"]) .orders-card__sub {
+    font-size: 16px;
+  }
+  :host-context([data-formfactor^="iview"]) .orders-card__go {
+    font-size: 17px;
+    padding: 11px 28px;
+    border-radius: 8px;
   }
 `;

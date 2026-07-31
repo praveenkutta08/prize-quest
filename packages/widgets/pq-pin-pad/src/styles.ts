@@ -46,9 +46,18 @@ export const styles = css`
     }
   }
   @keyframes pq-shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20%,
+    60% {
+      transform: translateX(-6px);
+    }
+    40%,
+    80% {
+      transform: translateX(6px);
+    }
   }
 
   .keys {
@@ -62,13 +71,19 @@ export const styles = css`
     height: 52px;
     border: 1px solid var(--pq-navy-hairline, #2a4f7a);
     border-radius: var(--pq-r-md, 8px);
-    background: linear-gradient(180deg, var(--pq-navy-low, #143352) 0%, var(--pq-navy-base, #102a43) 100%);
+    background: linear-gradient(
+      180deg,
+      var(--pq-navy-low, #143352) 0%,
+      var(--pq-navy-base, #102a43) 100%
+    );
     color: var(--pq-text, #f1f5f9);
     font-family: var(--pq-font-display, sans-serif);
     font-size: 22px;
     font-weight: 700;
     cursor: pointer;
-    transition: background 120ms var(--pq-ease, ease), transform 120ms var(--pq-ease, ease);
+    transition:
+      background 120ms var(--pq-ease, ease),
+      transform 120ms var(--pq-ease, ease);
   }
   .key:hover {
     background: var(--pq-navy-mid, #1b3756);
@@ -199,14 +214,14 @@ export const styles = css`
     color: var(--arc-cream, #fef3e2);
     font-family: var(--pq-font-display, sans-serif);
     box-shadow:
-      0 4px 0 rgba(15, 4, 46, 0.9),
+      0 4px 0 var(--arc-surface-0, rgba(15, 4, 46, 0.9)),
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
       0 0 0 1px rgba(255, 217, 61, 0.08);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="expanded"]) .key:hover {
     background: var(--arc-bg-elev, #4a2580);
     box-shadow:
-      0 4px 0 rgba(15, 4, 46, 0.9),
+      0 4px 0 var(--arc-surface-0, rgba(15, 4, 46, 0.9)),
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 0 0 1px rgba(255, 217, 61, 0.25),
       0 0 18px var(--arc-glow-soft, rgba(255, 217, 61, 0.35));
@@ -224,7 +239,7 @@ export const styles = css`
     :host-context([data-pq-mode="arcade"]):host([profile="expanded"]) .key:active {
       transform: translateY(2px);
       box-shadow:
-        0 2px 0 rgba(15, 4, 46, 0.9),
+        0 2px 0 var(--arc-surface-0, rgba(15, 4, 46, 0.9)),
         inset 0 1px 0 rgba(255, 255, 255, 0.18);
     }
   }
@@ -304,13 +319,13 @@ export const styles = css`
     color: var(--arc-cream, #fef3e2);
     font-family: var(--pq-font-display, sans-serif);
     box-shadow:
-      0 1px 0 rgba(15, 4, 46, 0.9),
+      0 1px 0 var(--arc-surface-0, rgba(15, 4, 46, 0.9)),
       inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .key:hover {
     background: var(--arc-bg-elev, #4a2580);
     box-shadow:
-      0 1px 0 rgba(15, 4, 46, 0.9),
+      0 1px 0 var(--arc-surface-0, rgba(15, 4, 46, 0.9)),
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 0 12px var(--arc-glow-soft, rgba(255, 217, 61, 0.35));
   }

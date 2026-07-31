@@ -23,9 +23,23 @@ export const styles = css`
      COMPACT PROFILE — TTD arcade 480x234 (ref Screen 07)
      CSS below copied VERBATIM from prize-quest-ttd-arcade.html lines 979-1025.
      ========================================================= */
-  .addr-form { display: flex; flex-direction: column; gap: 5px; flex: 1; min-height: 0; }
-  .addr-form-row { display: flex; gap: 5px; }
-  .addr-form-field { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .addr-form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-height: 0;
+  }
+  .addr-form-row {
+    display: flex;
+    gap: 5px;
+  }
+  .addr-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
   .addr-form-label {
     font-family: var(--arc-font-mono);
     font-size: 7px;
@@ -38,14 +52,16 @@ export const styles = css`
     width: 100%;
     height: 20px;
     padding: 0 6px;
-    background: rgba(15, 4, 46, 0.6);
+    background: var(--arc-surface-0, rgba(15, 4, 46, 0.6));
     border: 1px solid var(--arc-hairline-2);
     border-radius: 3px;
     color: var(--arc-cream);
     font-family: var(--arc-font-body);
     font-size: 10px;
     outline: none;
-    transition: border-color 120ms ease, box-shadow 120ms ease;
+    transition:
+      border-color 120ms ease,
+      box-shadow 120ms ease;
   }
   .addr-form-input:focus {
     border-color: var(--arc-display);
@@ -56,7 +72,9 @@ export const styles = css`
     box-shadow: 0 0 4px var(--arc-glow-soft);
   }
   .addr-retrieved-pill {
-    display: inline-flex; align-items: center; gap: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     align-self: flex-start;
     padding: 2px 7px;
     background: rgba(52, 214, 112, 0.18);
@@ -69,7 +87,10 @@ export const styles = css`
     text-transform: uppercase;
     font-weight: 700;
   }
-  .addr-retrieved-pill svg { width: 8px; height: 8px; }
+  .addr-retrieved-pill svg {
+    width: 8px;
+    height: 8px;
+  }
   /* End verbatim TTD block. */
 
   /* Compact wrapper + button row. min-height (not height) so the fuller SS5 layout
@@ -122,10 +143,17 @@ export const styles = css`
     cursor: pointer;
     color: var(--arc-text, var(--pq-text, #f5efe0));
     background: var(--pq-navy-low, #143352);
-    transition: transform 60ms ease, box-shadow 60ms ease;
+    transition:
+      transform 60ms ease,
+      box-shadow 60ms ease;
   }
-  .arc-btn svg { width: 10px; height: 10px; }
-  .arc-btn:active { transform: translateY(1px); }
+  .arc-btn svg {
+    width: 10px;
+    height: 10px;
+  }
+  .arc-btn:active {
+    transform: translateY(1px);
+  }
   .arc-btn--primary {
     background: linear-gradient(
       135deg,
@@ -133,12 +161,13 @@ export const styles = css`
       var(--cat-orange, var(--pq-gold, #ff8c2c))
     );
     color: var(--arc-bg-deep, var(--pq-navy-deep, #0a1a2e));
-    box-shadow: 0 2px 0 var(--arc-display-deep, var(--pq-gold, #e0b71b)),
+    box-shadow:
+      0 2px 0 var(--arc-display-deep, var(--pq-gold, #e0b71b)),
       0 4px 12px var(--arc-display-glow, rgba(252, 191, 73, 0.45)),
       inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
   .arc-btn--ghost {
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     color: var(--arc-text-dim, var(--pq-text-muted, #d0bfec));
     box-shadow: none;
@@ -166,8 +195,16 @@ export const styles = css`
     flex-direction: column;
     gap: 20px;
   }
-  .addr-form-wrap .addr-form-row { display: flex; gap: 18px; }
-  .addr-form-wrap .addr-form-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .addr-form-wrap .addr-form-row {
+    display: flex;
+    gap: 18px;
+  }
+  .addr-form-wrap .addr-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
   .addr-form-wrap .addr-form-label {
     font-family: var(--arc-font-mono);
     font-size: 12px;
@@ -187,7 +224,9 @@ export const styles = css`
     font-family: var(--arc-font-body);
     font-size: 18px;
     outline: none;
-    transition: border-color 160ms ease, box-shadow 160ms ease;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
   .addr-form-wrap .addr-form-input:focus {
     border-color: var(--arc-display);
@@ -203,10 +242,13 @@ export const styles = css`
     border-radius: var(--arc-r-pill, 999px);
     font-family: var(--arc-font-display);
     font-size: 13px;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     font-weight: var(--arc-font-display-weight, 800);
   }
-  .addr-form-wrap-pill.addr-retrieved-pill svg { width: 14px; height: 14px; }
+  .addr-form-wrap-pill.addr-retrieved-pill svg {
+    width: 14px;
+    height: 14px;
+  }
   /* End verbatim kiosk block. */
 
   /* Expanded scroll/flow wrapper + hero + button row. */
@@ -262,8 +304,13 @@ export const styles = css`
     font-size: 20px;
     border-radius: var(--arc-r-md, var(--pq-r-md, 8px));
   }
-  .xl-btn-row .arc-btn svg { width: 22px; height: 22px; }
-  .xl-btn-row .arc-btn--ghost { font-size: 18px; }
+  .xl-btn-row .arc-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+  .xl-btn-row .arc-btn--ghost {
+    font-size: 18px;
+  }
 
   /* =========================================================
      STANDARD PROFILE — mobile/tablet single-column stack.
@@ -291,8 +338,14 @@ export const styles = css`
     text-transform: uppercase;
     font-weight: 700;
   }
-  .std-pill svg { width: 12px; height: 12px; }
-  .std-row { display: flex; gap: 12px; }
+  .std-pill svg {
+    width: 12px;
+    height: 12px;
+  }
+  .std-row {
+    display: flex;
+    gap: 12px;
+  }
   .std-field {
     display: flex;
     flex-direction: column;
@@ -321,7 +374,9 @@ export const styles = css`
     /* 16px avoids iOS Safari zoom-on-focus. */
     font-size: 16px;
     outline: none;
-    transition: border-color 160ms ease, box-shadow 160ms ease;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
   .std-input:focus {
     border-color: var(--pq-gold-bright, #fcbf49);
@@ -424,7 +479,8 @@ export const styles = css`
     );
     color: var(--cl-cream, #f5efe0);
     border: 1px solid var(--cl-red, #d12030);
-    box-shadow: 0 0 10px var(--cl-red-glow, rgba(209, 32, 48, 0.5)),
+    box-shadow:
+      0 0 10px var(--cl-red-glow, rgba(209, 32, 48, 0.5)),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
   :host-context([data-pq-mode="casino-loud"]) .arc-btn--ghost,

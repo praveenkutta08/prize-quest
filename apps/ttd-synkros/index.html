@@ -3,18 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prize Quest · SYNKROS TTD demo (with hub)</title>
+    <title>Tier Rewards Promotions · TTD demo (with hub)</title>
     <link rel="stylesheet" href="/src/styles.css" />
-    <!-- Force the TTD channel before the module (and pq-screen) upgrade, so the very
-         first composition load resolves to ttd/compact rather than the viewport
-         default. The whole app is TTD-only; detectChannel() reads this param. -->
+    <!-- Pin the composition channel before the module (and pq-screen) upgrade, so the
+         very first composition load resolves to the right channel rather than the
+         viewport default. detectChannel() reads this param.
+
+         The FORM FACTOR decides the channel: the Konami (480x234) and generic stretched
+         (640x240) TTD panels run the dense `ttd` compositions; the L&W iView (1024x600)
+         is a different class of device and runs the `iview-4` compositions instead, so
+         its screens re-lay-out for the bigger panel rather than stretching. An explicit
+         ?channel= in the URL always wins (shareable sales deep links). -->
     <script>
       (function () {
-        if (!/[?&]channel=/.test(location.search)) {
-          var u = new URL(location.href);
-          u.searchParams.set("channel", "ttd");
+        // Both panels in the fleet are TTD-class (the L&W iView is 640×240, not a
+        // kiosk-sized iVIEW), so both run the dense `ttd` compositions. The map is kept
+        // because a future panel may warrant a different channel.
+        var FF_CHANNEL = { "480x234": "ttd", "640x240": "ttd" };
+        var ff = "480x234";
+        try {
+          ff = localStorage.getItem("pq.ttd.ff") || ff;
+        } catch (e) {
+          /* private browsing — ignore */
+        }
+        var u = new URL(location.href);
+        var channel = u.searchParams.get("channel");
+        if (!channel) {
+          channel = FF_CHANNEL[ff] || "ttd";
+          u.searchParams.set("channel", channel);
           history.replaceState({}, "", u);
         }
+        // Widgets key their iVIEW layout off [data-formfactor^="iview"] (same contract
+        // the kiosk dev-chrome uses), so set it here before the first paint.
+        document.documentElement.setAttribute(
+          "data-formfactor",
+          channel === "iview-4" ? "iview-4" : "ttd"
+        );
       })();
     </script>
   </head>
@@ -24,16 +48,18 @@
       <span class="ff-bar__label">Form factor</span>
       <select id="ff-switch" class="ff-bar__select" aria-label="Select TTD form factor">
         <option value="480x234" selected>Konami SYNKROS TTD</option>
-        <option value="640x240">Generic stretched TTD</option>
+        <option value="640x240">L&amp;W iView</option>
       </select>
       <span class="ff-bar__dims">Active · <strong id="ff-bar-dims">480 × 234</strong> px</span>
       <span class="ff-bar__label">Tenant</span>
-      <!-- Station Arcade / Casinos are the built-in TTD tenants; the *-style entries are
-           generic operator-flavored arcade STYLE DEMOS (Session 34, private sales only). -->
+      <!-- Tier Rewards is the production default; Station Arcade is the built-in demo tenant.
+           The *-style entries are generic operator-flavored arcade STYLE DEMOS (Session 34,
+           private sales only). The casino-loud tenant (station-casinos) is retired from this
+           switcher — it stays in the registry and is still reachable via ?tenant=station-casinos. -->
       <select id="tenant-switch" class="ff-bar__select" aria-label="Select tenant">
-        <option value="resort-style" selected>Resort Rewards · navy + gold (default)</option>
+        <option value="tier-rewards" selected>Casino Luxe · black + gold (default)</option>
+        <option value="resort-style">Resort Rewards · navy + gold</option>
         <option value="station-arcade">Station Arcade · arcade</option>
-        <option value="station-casinos">Station Casinos · casino-loud</option>
         <option value="velvet-style">Velvet Reserve · burgundy + brass</option>
         <option value="emerald-style">Emerald Club · green + brass</option>
       </select>

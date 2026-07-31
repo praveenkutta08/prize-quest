@@ -241,13 +241,15 @@ export const styles = css`
     padding: 12px 22px;
     border-radius: var(--pq-r-pill, 999px);
     border: 1px solid var(--pq-hairline, rgba(180, 130, 240, 0.35));
-    background: var(--pq-surface-glass, rgba(60, 25, 110, 0.5));
+    background: var(--pq-surface-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     color: var(--pq-text-muted, #94a3b8);
     font-family: var(--pq-font-body, sans-serif);
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    transition: background 160ms var(--pq-ease, ease), color 160ms var(--pq-ease, ease);
+    transition:
+      background 160ms var(--pq-ease, ease),
+      color 160ms var(--pq-ease, ease);
   }
   .exp-back:hover {
     background: var(--pq-surface-elev, rgba(80, 40, 140, 0.6));
@@ -315,7 +317,7 @@ export const styles = css`
     padding: 12px 22px;
     border-radius: var(--pq-r-pill, 999px);
     border: 1px solid var(--pq-hairline, rgba(180, 130, 240, 0.35));
-    background: var(--pq-surface-glass, rgba(60, 25, 110, 0.5));
+    background: var(--pq-surface-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
   }
   .exp-datepill svg {
     width: 20px;
@@ -390,7 +392,7 @@ export const styles = css`
     color: var(--pq-danger, #ef4444);
   }
   .arc-pill--ghost {
-    background: var(--pq-surface-glass, rgba(60, 25, 110, 0.5));
+    background: var(--pq-surface-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     border: 1px solid var(--pq-hairline, rgba(180, 130, 240, 0.35));
     color: var(--pq-text-muted, #94a3b8);
     font-family: var(--pq-font-mono, monospace);
@@ -450,7 +452,8 @@ export const styles = css`
     color: var(--cl-cream, #f5f1e8);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    box-shadow: 0 0 10px var(--cl-red-glow, rgba(230, 57, 70, 0.55)),
+    box-shadow:
+      0 0 10px var(--cl-red-glow, rgba(230, 57, 70, 0.55)),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
@@ -466,20 +469,12 @@ export const styles = css`
      not mode-driven). Default arcade badge is pink. */
   :host-context([data-pq-mode="arcade"]) .exp-freq {
     --exp-freq-accent: var(--cat-pink, #ff3fa4);
-    --exp-freq-bg: linear-gradient(
-      135deg,
-      rgba(255, 63, 164, 0.25),
-      rgba(142, 71, 232, 0.35)
-    );
+    --exp-freq-bg: linear-gradient(135deg, rgba(255, 63, 164, 0.25), rgba(142, 71, 232, 0.35));
     --exp-freq-fg: var(--cat-pink-bright, #ff6fb5);
   }
   :host-context([data-pq-mode="arcade"]):host(:not([status="eligible"])) .exp-freq {
     --exp-freq-accent: var(--cat-blue, #3d8bf5);
-    --exp-freq-bg: linear-gradient(
-      135deg,
-      rgba(61, 139, 245, 0.25),
-      rgba(45, 212, 191, 0.35)
-    );
+    --exp-freq-bg: linear-gradient(135deg, rgba(61, 139, 245, 0.25), rgba(45, 212, 191, 0.35));
     --exp-freq-fg: var(--cat-blue-bright, #6fb2ff);
   }
 
@@ -503,11 +498,7 @@ export const styles = css`
     );
   }
   :host-context([data-pq-mode="arcade"]) .arc-pill--danger {
-    --exp-pill-danger-bg: linear-gradient(
-      135deg,
-      rgba(255, 77, 109, 0.2),
-      rgba(233, 30, 99, 0.35)
-    );
+    --exp-pill-danger-bg: linear-gradient(135deg, rgba(255, 77, 109, 0.2), rgba(233, 30, 99, 0.35));
     color: #ff7088;
   }
 
@@ -609,7 +600,7 @@ export const styles = css`
     padding: 6px 12px;
     border-radius: var(--arc-r-pill, 999px);
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     color: var(--arc-text-dim, #d0bfec);
     font-family: var(--arc-font-body, sans-serif);
     font-size: 12px;
@@ -658,7 +649,7 @@ export const styles = css`
     padding: 4px 10px;
     border-radius: var(--arc-r-pill, 999px);
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     font-family: var(--arc-font-mono, monospace);
     font-size: 9px;
     letter-spacing: 0.14em;
@@ -749,7 +740,11 @@ export const styles = css`
     text-align: left;
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     border-radius: var(--arc-r-md, 12px);
-    background: linear-gradient(160deg, rgba(60, 25, 110, 0.45), rgba(30, 10, 60, 0.6));
+    background: linear-gradient(
+      160deg,
+      var(--arc-surface-1, rgba(60, 25, 110, 0.45)),
+      var(--arc-surface-2, rgba(30, 10, 60, 0.6))
+    );
     cursor: pointer;
   }
   :host-context([data-formfactor^="iview"]):host([profile="compact"]) .iv-prize--locked {
@@ -763,7 +758,7 @@ export const styles = css`
     display: grid;
     place-items: center;
     border-radius: var(--arc-r-sm, 8px);
-    background: rgba(15, 4, 46, 0.55);
+    background: var(--arc-surface-0, rgba(15, 4, 46, 0.55));
     color: var(--arc-display, #ffd93d);
   }
   :host-context([data-formfactor^="iview"]):host([profile="compact"]) .iv-prize__img svg {
@@ -799,7 +794,11 @@ export const styles = css`
     font-size: 11px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: linear-gradient(135deg, var(--arc-display-bright, #ffee5c), var(--cat-orange, #ff8c2c));
+    background: linear-gradient(
+      135deg,
+      var(--arc-display-bright, #ffee5c),
+      var(--cat-orange, #ff8c2c)
+    );
     color: var(--arc-bg-deep, #15042e);
   }
   :host-context([data-formfactor^="iview"]):host([profile="compact"]) .iv-prize__locked {
@@ -834,7 +833,8 @@ export const styles = css`
       var(--arc-display-bright, #ffee5c),
       var(--cat-orange, #ff8c2c)
     );
-    box-shadow: 0 0 16px var(--arc-display-glow, rgba(255, 217, 61, 0.5)),
+    box-shadow:
+      0 0 16px var(--arc-display-glow, rgba(255, 217, 61, 0.5)),
       0 4px 10px rgba(0, 0, 0, 0.4);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .rewards-cta svg {

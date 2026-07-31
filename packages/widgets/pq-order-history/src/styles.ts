@@ -100,7 +100,9 @@ export const styles = css`
     border: 1px solid var(--pq-navy-hairline, #2a4f7a);
     border-radius: var(--pq-r-lg, 12px);
     cursor: pointer;
-    transition: border-color 200ms var(--pq-ease, ease), transform 200ms var(--pq-ease, ease);
+    transition:
+      border-color 200ms var(--pq-ease, ease),
+      transform 200ms var(--pq-ease, ease);
   }
   .exp-card:hover {
     border-color: var(--pq-emerald, #10b981);
@@ -332,14 +334,16 @@ export const styles = css`
     color: var(--arc-text-faint, var(--pq-text-faint, #64748b));
   }
   :host-context([data-pq-mode="arcade"]) .exp-card {
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.45));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.45)));
     border-color: var(--arc-hairline-2, #2a4f7a);
     border-radius: var(--arc-r-lg, 20px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   }
   :host-context([data-pq-mode="arcade"]) .exp-card:hover {
     border-color: var(--arc-display, #ffd93d);
-    box-shadow: 0 0 28px var(--arc-glow-soft, transparent), 0 16px 40px rgba(0, 0, 0, 0.45);
+    box-shadow:
+      0 0 28px var(--arc-glow-soft, transparent),
+      0 16px 40px rgba(0, 0, 0, 0.45);
   }
   :host-context([data-pq-mode="arcade"]) .exp-thumb {
     background: var(--arc-bg-deep, rgba(10, 26, 46, 0.6));
@@ -366,8 +370,8 @@ export const styles = css`
      Title row + back · stats strip · filter pills · pagination footer. Colors use
      the premium-safe var(--arc-*, <fallback>) trick so non-arcade expanded
      surfaces still resolve sane navy/gold values; the arcade host supplies the
-     neon --arc-*/--cat-* tokens. */
-  .oh-titlerow {
+     neon --arc-*/
+  --cat-* tokens. */ .oh-titlerow {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -509,7 +513,7 @@ export const styles = css`
     letter-spacing: 0.06em;
     text-transform: uppercase;
     cursor: pointer;
-    background: rgba(60, 25, 110, 0.5);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.5));
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     color: var(--arc-text-dim, var(--pq-text-muted, #94a3b8));
     transition: border-color 200ms var(--pq-ease, ease);
@@ -599,8 +603,8 @@ export const styles = css`
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     background: linear-gradient(
       160deg,
-      rgba(60, 25, 110, 0.55),
-      rgba(30, 10, 60, 0.75)
+      var(--arc-surface-1, rgba(60, 25, 110, 0.55)),
+      var(--arc-surface-2, rgba(30, 10, 60, 0.75))
     );
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ord-card__thumb {

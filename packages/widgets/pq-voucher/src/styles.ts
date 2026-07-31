@@ -470,7 +470,8 @@ export const styles = css`
       var(--cl-red-deep, #a8131a)
     );
     color: var(--cl-cream, #f5f1e8);
-    box-shadow: 0 0 10px var(--cl-red-glow, rgba(230, 57, 70, 0.55)),
+    box-shadow:
+      0 0 10px var(--cl-red-glow, rgba(230, 57, 70, 0.55)),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
@@ -480,11 +481,7 @@ export const styles = css`
      No widget code changes — same markup, flipped treatment. */
   :host-context([data-pq-mode="arcade"]) .card,
   :host-context([data-pq-mode="arcade"]) .ticket {
-    background: linear-gradient(
-      160deg,
-      var(--arc-bg-mid, #2a1454),
-      var(--arc-bg-base, #1f0b3e)
-    );
+    background: linear-gradient(160deg, var(--arc-bg-mid, #2a1454), var(--arc-bg-base, #1f0b3e));
     border-color: var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     box-shadow: 0 0 24px var(--arc-glow-soft, rgba(255, 217, 61, 0.18));
   }
@@ -519,7 +516,7 @@ export const styles = css`
   :host-context([data-pq-mode="arcade"]) .vou-code {
     border-style: dashed;
     border-color: var(--arc-display-deep, #e0b71b);
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.45));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.45)));
     color: var(--arc-display, #ffd93d);
   }
   :host-context([data-pq-mode="arcade"]) .how {
@@ -540,18 +537,22 @@ export const styles = css`
     color: var(--arc-bg-deep, #15042e);
     font-family: var(--arc-font-display, "Manrope", sans-serif);
     font-weight: var(--arc-font-display-weight, 800);
-    box-shadow: 0 4px 0 var(--arc-display-deep, #e0b71b),
+    box-shadow:
+      0 4px 0 var(--arc-display-deep, #e0b71b),
       0 12px 32px var(--arc-display-glow, rgba(255, 217, 61, 0.55)),
       inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    transition: transform 80ms ease, box-shadow 80ms ease;
+    transition:
+      transform 80ms ease,
+      box-shadow 80ms ease;
   }
   :host-context([data-pq-mode="arcade"]) .cta:not(.cta--ghost):active {
     transform: translateY(2px);
-    box-shadow: 0 2px 0 var(--arc-display-deep, #e0b71b),
+    box-shadow:
+      0 2px 0 var(--arc-display-deep, #e0b71b),
       0 4px 12px rgba(0, 0, 0, 0.5);
   }
   :host-context([data-pq-mode="arcade"]) .cta--ghost {
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     color: var(--arc-text-dim, #d0bfec);
   }

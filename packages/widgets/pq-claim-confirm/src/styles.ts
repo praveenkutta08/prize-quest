@@ -517,11 +517,7 @@ export const styles = css`
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: linear-gradient(
-      180deg,
-      var(--pq-gold-bright, #fcbf49),
-      var(--pq-gold, #f7a93a)
-    );
+    background: linear-gradient(180deg, var(--pq-gold-bright, #fcbf49), var(--pq-gold, #f7a93a));
     color: var(--pq-navy-deep, #0a1a2e);
   }
   .ghost {
@@ -550,7 +546,8 @@ export const styles = css`
     color: var(--cl-cream, #f5f1e8);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    box-shadow: 0 0 10px var(--cl-red-glow, rgba(230, 57, 70, 0.55)),
+    box-shadow:
+      0 0 10px var(--cl-red-glow, rgba(230, 57, 70, 0.55)),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
@@ -577,7 +574,7 @@ export const styles = css`
     background: linear-gradient(
       160deg,
       var(--cat-tint-bg, rgba(142, 71, 232, 0.18)),
-      rgba(40, 15, 75, 0.92)
+      var(--arc-surface-2, rgba(40, 15, 75, 0.92))
     );
     box-shadow:
       0 0 48px var(--cat-tint-bg, rgba(142, 71, 232, 0.4)),
@@ -609,7 +606,7 @@ export const styles = css`
   /* strong secondary "ghost" button (ref .arc-btn--ghost): filled semi-opaque
      purple instead of the faint transparent base, with a visible hover. */
   :host-context([data-pq-mode="arcade"]) .ghost {
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     border-color: var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     color: var(--arc-text-dim, var(--pq-text, #f5efe0));
     font-family: var(--arc-font-display, var(--pq-font-display, sans-serif));
@@ -685,7 +682,11 @@ export const styles = css`
     padding: 8px 10px;
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     border-radius: var(--arc-r-md, 8px);
-    background: linear-gradient(160deg, rgba(60, 25, 110, 0.45), rgba(30, 10, 60, 0.7));
+    background: linear-gradient(
+      160deg,
+      var(--arc-surface-1, rgba(60, 25, 110, 0.45)),
+      var(--arc-surface-2, rgba(30, 10, 60, 0.7))
+    );
     overflow: hidden;
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cc::before {
@@ -739,7 +740,7 @@ export const styles = css`
     background: linear-gradient(
       160deg,
       var(--cat-tint-bg, rgba(142, 71, 232, 0.18)),
-      rgba(60, 25, 110, 0.55)
+      var(--arc-surface-1, rgba(60, 25, 110, 0.55))
     );
     border-radius: var(--arc-r-md, var(--pq-r-lg, 12px));
   }

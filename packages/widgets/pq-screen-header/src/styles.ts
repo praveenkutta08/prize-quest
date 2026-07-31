@@ -20,11 +20,7 @@ export const styles = css`
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--cl-gold, var(--pq-cream-muted, #c9b79c));
-    background: linear-gradient(
-      180deg,
-      var(--cl-gold-glow, rgba(20, 51, 82, 0.6)),
-      transparent
-    );
+    background: linear-gradient(180deg, var(--cl-gold-glow, rgba(20, 51, 82, 0.6)), transparent);
     border-bottom: 1px solid var(--cl-gold-deep, var(--pq-navy-hairline, #2a4f7a));
   }
   .left,
@@ -49,6 +45,27 @@ export const styles = css`
     color: var(--cl-gold-bright, var(--pq-gold-bright, #fcbf49));
     font-weight: 700;
     white-space: nowrap;
+  }
+  /* Tenant logo — occupies the slot the points readout used to. Height-constrained so a
+     tall stacked lockup (Tier Rewards) and a wide horizontal one both sit on the bar. */
+  .brandmark {
+    display: block;
+    height: 18px;
+    width: auto;
+    max-width: 96px;
+    object-fit: contain;
+    flex: 0 0 auto;
+  }
+  /* Fallback when a tenant has no logo asset on disk. */
+  .wordmark {
+    color: var(--cl-cream, var(--pq-text, #f1f5f9));
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+    font-size: 8px;
+    letter-spacing: 0.14em;
   }
   .back {
     display: inline-flex;
@@ -82,7 +99,7 @@ export const styles = css`
     align-items: center;
     justify-content: space-between;
     padding: 32px 56px;
-    background: linear-gradient(180deg, rgba(15, 4, 46, 0.65), transparent);
+    background: linear-gradient(180deg, var(--arc-surface-0, rgba(15, 4, 46, 0.65)), transparent);
     border-bottom: 1px solid var(--arc-hairline, var(--pq-navy-hairline, rgba(140, 100, 200, 0.22)));
     font-family: var(--pq-font-body, "Inter", system-ui, sans-serif);
   }
@@ -152,6 +169,14 @@ export const styles = css`
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
+  .arc-brandmark {
+    display: flex;
+    align-items: center;
+  }
+  .arc-brandmark .brandmark {
+    height: 34px;
+    max-width: 180px;
+  }
   .arc-header__right {
     display: flex;
     align-items: center;
@@ -162,7 +187,7 @@ export const styles = css`
     align-items: center;
     gap: 12px;
     padding: 8px 18px 8px 12px;
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.6));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.6)));
     border: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     border-radius: 999px;
   }
@@ -244,16 +269,12 @@ export const styles = css`
      compact/standard are deliberately left untouched here.
      ========================================================= */
   :host-context([data-pq-mode="arcade"]) .arc-header {
-    background: linear-gradient(180deg, rgba(15, 4, 46, 0.65), transparent);
+    background: linear-gradient(180deg, var(--arc-surface-0, rgba(15, 4, 46, 0.65)), transparent);
     border-bottom-color: var(--arc-hairline, rgba(140, 100, 200, 0.22));
   }
   :host-context([data-pq-mode="arcade"]) .arc-logo,
   :host-context([data-pq-mode="arcade"]) .arc-tier-pill__icon {
-    background: linear-gradient(
-      135deg,
-      var(--arc-display, #ffd93d),
-      var(--cat-orange, #ff8c2c)
-    );
+    background: linear-gradient(135deg, var(--arc-display, #ffd93d), var(--cat-orange, #ff8c2c));
   }
   :host-context([data-pq-mode="arcade"]) .arc-logo {
     box-shadow: 0 0 24px var(--arc-display-glow, rgba(255, 217, 61, 0.55));
@@ -276,7 +297,11 @@ export const styles = css`
     gap: 4px;
     padding: 5px 10px;
     min-height: 26px;
-    background: linear-gradient(180deg, rgba(15, 4, 46, 0.65), transparent);
+    background: linear-gradient(
+      180deg,
+      var(--arc-bg-glass-2, var(--arc-surface-0, rgba(15, 4, 46, 0.65))),
+      transparent
+    );
     border-bottom: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     font-family: var(--arc-font-body, var(--pq-font-body, "Inter", system-ui, sans-serif));
   }
@@ -300,6 +325,18 @@ export const styles = css`
     width: 9px;
     height: 9px;
   }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .brandmark {
+    height: 20px;
+    max-width: 104px;
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .wordmark {
+    font-family: var(--arc-font-display, var(--pq-font-display, "Manrope", sans-serif));
+    font-weight: var(--arc-font-display-weight, 800);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--arc-cream, var(--pq-text, #f5efe0));
+  }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .pts {
     display: flex;
     align-items: center;
@@ -307,7 +344,7 @@ export const styles = css`
     font-family: var(--arc-font-mono, var(--pq-font-mono, monospace));
     font-weight: 400;
     font-size: 9px;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--arc-display, var(--pq-gold-bright, #ffd93d));
   }
@@ -322,6 +359,13 @@ export const styles = css`
   }
   :host-context([data-formfactor^="iview"]):host([profile="compact"]) .pts {
     font-size: 12px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .brandmark {
+    height: 32px;
+    max-width: 170px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .wordmark {
+    font-size: 13px;
   }
   :host-context([data-formfactor^="iview"]):host([profile="compact"]) .back {
     font-size: 12px;

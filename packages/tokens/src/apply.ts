@@ -74,6 +74,12 @@ export function applyTokens(config: TenantConfig): void {
   // to premium when a tenant omits `mode`.
   const mode = config.theme.mode ?? "premium";
   root.dataset.pqMode = mode;
+  // Publish the tenant's brand identity for chrome widgets (pq-screen-header renders the
+  // logo where the points readout used to sit). Exposed as data-* on <html> rather than
+  // imported, mirroring the data-pq-mode contract — widgets never import tenant config.
+  root.dataset.pqBrandName = config.brand.productName ?? config.name;
+  root.dataset.pqBrandLogo = config.brand.logo.src;
+  root.dataset.pqBrandAlt = config.brand.logo.alt;
   // Arcade campaign-card progress treatment (segmented default · shimmer opt-in).
   // Read by pq-campaign-card from `<html data-pq-progress-style>`, mirroring the
   // data-pq-mode pattern (widgets never import tenant config).
@@ -89,10 +95,7 @@ export function applyTokens(config: TenantConfig): void {
  * `electronics: "purple"` → `--pq-cat-electronics: var(--cat-purple)`). Cleared when not
  * in arcade mode so a previous tenant's categories never bleed through.
  */
-function applyCategoryMap(
-  root: HTMLElement,
-  map: Record<string, string> | undefined,
-): void {
+function applyCategoryMap(root: HTMLElement, map: Record<string, string> | undefined): void {
   // Clear any previously written category props first.
   for (let i = root.style.length - 1; i >= 0; i--) {
     const prop = root.style.item(i);
@@ -134,9 +137,7 @@ function injectGoogleFonts(config: TenantConfig): void {
   const href = config.theme.fonts.googleFontsUrl ?? buildGoogleFontsUrl(config);
   if (!href) return;
 
-  let link = document.getElementById(
-    GOOGLE_FONTS_LINK_ID,
-  ) as HTMLLinkElement | null;
+  let link = document.getElementById(GOOGLE_FONTS_LINK_ID) as HTMLLinkElement | null;
   if (!link) {
     link = document.createElement("link");
     link.id = GOOGLE_FONTS_LINK_ID;

@@ -390,18 +390,10 @@ export const styles = css`
     color: var(--cl-black, #0a1a2e);
   }
   :host([profile="compact"][ready]) .bar-fill {
-    background: linear-gradient(
-      90deg,
-      var(--cl-gold, #fcbf49),
-      var(--cl-gold-bright, #ffd55c)
-    );
+    background: linear-gradient(90deg, var(--cl-gold, #fcbf49), var(--cl-gold-bright, #ffd55c));
   }
   :host([profile="compact"][ready]) .cta {
-    background: linear-gradient(
-      180deg,
-      var(--cl-red-bright, #ff5b6a),
-      var(--cl-red, #e63946)
-    );
+    background: linear-gradient(180deg, var(--cl-red-bright, #ff5b6a), var(--cl-red, #e63946));
     color: var(--cl-cream, #fff);
   }
 
@@ -522,7 +514,9 @@ export const styles = css`
   }
   :host-context([data-pq-mode="arcade"]):host([profile="expanded"][ready]) .card {
     border-color: var(--cat-pink);
-    box-shadow: 0 0 32px var(--cat-pink-glow), 0 16px 40px rgba(0, 0, 0, 0.5);
+    box-shadow:
+      0 0 32px var(--cat-pink-glow),
+      0 16px 40px rgba(0, 0, 0, 0.5);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="expanded"]) .cta {
     color: var(--arc-text, #fff);
@@ -554,8 +548,8 @@ export const styles = css`
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .card {
     background: linear-gradient(
       160deg,
-      rgba(60, 25, 110, 0.55),
-      rgba(30, 10, 60, 0.85)
+      var(--arc-surface-1, rgba(60, 25, 110, 0.55)),
+      var(--arc-surface-2, rgba(30, 10, 60, 0.85))
     );
     border: 1px solid var(--arc-hairline-2);
     border-radius: var(--arc-r-md);
@@ -603,7 +597,7 @@ export const styles = css`
   /* progress track + fill (ref .arc-progress__track / __fill). */
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .bar-track {
     height: 5px;
-    background: rgba(15, 4, 46, 0.7);
+    background: var(--arc-surface-0, rgba(15, 4, 46, 0.7));
     border-radius: 999px;
     border: 1px solid var(--arc-hairline-2);
   }
@@ -774,11 +768,7 @@ export const styles = css`
     padding: 6px 16px 6px 6px;
     clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
     background:
-      radial-gradient(
-        ellipse at 50% 30%,
-        rgba(255, 255, 255, 0.2) 0%,
-        transparent 55%
-      ),
+      radial-gradient(ellipse at 50% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 55%),
       linear-gradient(
         160deg,
         var(--cat-tint-bright, var(--cat-purple-bright)) 0%,
@@ -805,17 +795,17 @@ export const styles = css`
     width: 70%;
     height: 50%;
     pointer-events: none;
-    background: radial-gradient(
-      ellipse,
-      rgba(255, 255, 255, 0.22),
-      transparent 70%
-    );
+    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.22), transparent 70%);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__hero-icon {
     font-size: 22px;
     line-height: 1;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
   }
+  /* The hero panel is painted with the CATEGORY TINT, so its ink has to be tenant-
+     controlled: on a dark tint (arcade purple) the value is gold; on a light tint
+     (Tier Rewards' gold) gold-on-gold is invisible, so those tenants override the
+     --arc-tint-ink-* trio with near-blacks and the value reads as a struck plaque. */
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__hero-value {
     font-family: var(--arc-font-display);
     font-weight: 900;
@@ -825,9 +815,9 @@ export const styles = css`
     margin-top: 1px;
     background: linear-gradient(
       180deg,
-      var(--arc-display-bright) 0%,
-      var(--arc-display) 35%,
-      var(--cat-orange) 100%
+      var(--arc-tint-ink-hi, var(--arc-display-bright)) 0%,
+      var(--arc-tint-ink, var(--arc-display)) 35%,
+      var(--arc-tint-ink-lo, var(--cat-orange)) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -838,7 +828,7 @@ export const styles = css`
     font-family: var(--arc-font-mono);
     font-size: 7px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--arc-on-tint, rgba(255, 255, 255, 0.95));
     letter-spacing: 0.22em;
     text-transform: uppercase;
     margin-top: 3px;
@@ -846,7 +836,7 @@ export const styles = css`
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__hero-pool {
     font-family: var(--arc-font-mono);
     font-size: 6.5px;
-    color: rgba(255, 255, 255, 0.62);
+    color: var(--arc-on-tint-soft, rgba(255, 255, 255, 0.62));
     letter-spacing: 0.14em;
     text-transform: uppercase;
     margin-top: 1px;
@@ -948,8 +938,8 @@ export const styles = css`
     height: 22px;
     background: linear-gradient(
       180deg,
-      rgba(10, 3, 28, 0.92),
-      rgba(15, 4, 46, 0.98)
+      var(--arc-bg-glass-2, rgba(10, 3, 28, 0.92)),
+      var(--arc-bg-deep, var(--arc-surface-0, rgba(15, 4, 46, 0.98)))
     );
     border-top: 1px solid var(--arc-hairline);
   }
@@ -966,176 +956,104 @@ export const styles = css`
     content: "⏱ ";
   }
 
-  /* Progress block — shared chrome + segmented + shimmer. */
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 5px 7px 6px;
+  /* ===================== A+B · MARQUEE NAME + FACT RAIL =====================
+     The progress block that used to sit here is gone (progress is no longer shown
+     anywhere in the patron flow). The campaign NAME takes the space instead: two
+     lines of gradient display type over a sweeping gold rule, with a rail of short
+     facts beneath it. Nothing here needs data the card did not already have. */
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__name--marquee {
+    font-size: 19px;
+    line-height: 1.02;
+    letter-spacing: -0.005em;
+    margin: 2px 0 0;
+    /* Gradient display type — the same treatment the hub hero tile uses, so the
+       promotion name reads as the loudest thing on the card. */
     background: linear-gradient(
-      180deg,
-      rgba(15, 4, 46, 0.55),
-      rgba(10, 3, 28, 0.4)
+      135deg,
+      var(--arc-display-bright) 0%,
+      var(--arc-display) 45%,
+      var(--cat-tint-bright, var(--cat-purple-bright)) 100%
     );
-    border: 1px solid var(--arc-glow-soft, rgba(255, 217, 61, 0.18));
-    border-radius: 6px;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+    /* Two lines max — long operator campaign names must not push the rail off-card. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__rule {
+    height: 2px;
+    border-radius: 999px;
+    margin: 4px 0 1px;
     flex-shrink: 0;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock-label {
-    font-family: var(--arc-font-mono);
-    font-size: 7px;
-    font-weight: 700;
-    color: var(--arc-text-faint);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    /* Shrink/ellipsis so the label, value and % never collide in the narrow card
-       column (was overflowing on top of the value text). */
-    flex: 0 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock-val {
-    font-family: var(--arc-font-display);
-    font-weight: 800;
-    font-size: 10.5px;
-    color: var(--arc-cream);
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    flex: 0 0 auto;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock-val strong {
-    color: var(--arc-display);
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock-remain {
-    font-family: var(--arc-font-display);
-    font-weight: 800;
-    font-size: 8.5px;
-    padding: 1.5px 7px;
-    border-radius: 999px;
-    background: rgba(255, 140, 44, 0.18);
-    color: var(--cat-orange);
-    border: 1px solid rgba(255, 140, 44, 0.6);
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__progblock-segs {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__seg {
-    height: 11px;
-    border-radius: 3px;
     position: relative;
-    border: 1.25px dashed rgba(180, 130, 240, 0.45);
-    background: repeating-linear-gradient(
-      45deg,
-      rgba(15, 4, 46, 0.85),
-      rgba(15, 4, 46, 0.85) 3px,
-      rgba(40, 20, 80, 0.6) 3px,
-      rgba(40, 20, 80, 0.6) 6px
-    );
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__seg--done {
-    border: 1.25px solid var(--arc-display);
-    background: linear-gradient(90deg, var(--cat-orange), var(--arc-display-bright));
-    box-shadow:
-      0 0 8px var(--arc-display-glow),
-      inset 0 0 3px rgba(255, 255, 255, 0.3);
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__seg--done::after {
-    content: "✓";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--arc-font-display);
-    font-weight: 800;
-    font-size: 8px;
-    color: var(--arc-bg-base);
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__seg--current {
-    border: 1.25px solid var(--arc-display);
+    overflow: hidden;
     background: linear-gradient(
       90deg,
-      var(--cat-orange) 0%,
-      var(--arc-display-bright) 55%,
-      transparent 55%
+      var(--arc-display) 0%,
+      var(--cat-tint-bright, var(--cat-purple-bright)) 45%,
+      transparent 100%
     );
-    box-shadow: 0 0 8px var(--arc-display-glow);
-  }
-
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__shim-pct {
-    font-family: var(--arc-font-display);
-    font-weight: 900;
-    font-size: 9.5px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--arc-display-bright), var(--cat-orange));
-    color: var(--arc-bg-base);
-    letter-spacing: 0.04em;
-    box-shadow: 0 0 10px var(--arc-display-glow);
-    white-space: nowrap;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__shim-bar {
-    height: 12px;
-    border-radius: 999px;
-    border: 1px solid var(--arc-hairline);
-    background: linear-gradient(
-      180deg,
-      rgba(15, 4, 46, 0.95),
-      rgba(30, 12, 70, 0.7)
-    );
-    overflow: hidden;
-    position: relative;
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__shim-fill {
-    height: 100%;
-    border-radius: 999px;
-    position: relative;
-    overflow: hidden;
-    transform-origin: left center;
-    /* In-progress fill: orange→gold, matching the campaign-detail progress bar. */
-    background: linear-gradient(
-      90deg,
-      var(--cat-orange-deep, #ff6b1a) 0%,
-      var(--arc-display, #ffd93d) 50%,
-      var(--arc-display-bright, #ffee5c) 100%
-    );
-    box-shadow: 0 0 12px var(--arc-display-glow);
   }
   @media (prefers-reduced-motion: no-preference) {
-    /* Grow from empty → progress width once on mount. */
-    :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__shim-fill {
-      animation: pq-prog-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-    :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__shim-fill::after {
+    :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__rule::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        110deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.45) 50%,
-        transparent 70%
-      );
-      animation: shimmer 2.2s linear infinite;
+      width: 34%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+      animation: pq-rule-sweep 2.6s ease-in-out infinite;
     }
   }
-  @keyframes pq-prog-grow {
+  @keyframes pq-rule-sweep {
     from {
-      transform: scaleX(0);
+      transform: translateX(-120%);
     }
     to {
-      transform: scaleX(1);
+      transform: translateX(340%);
     }
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__facts {
+    display: flex;
+    gap: 4px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__fact {
+    font-family: var(--arc-font-mono);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--arc-hairline);
+    color: var(--arc-text-dim);
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cmpd__fact--hi {
+    color: var(--arc-display);
+    border-color: var(--arc-hairline-2);
+    background: var(--arc-glow-soft);
+  }
+  /* iVIEW (1024×600) — the marquee scales with the bigger card. */
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .cmpd__name--marquee {
+    font-size: 30px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .cmpd__rule {
+    height: 3px;
+    margin: 8px 0 3px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .cmpd__fact {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
   }
 `;

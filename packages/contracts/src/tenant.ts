@@ -15,7 +15,15 @@ export interface TenantConfig {
   brand: {
     logo: { src: string; alt: string; height?: number };
     favicon: string;
-    productName?: string; // override 'Prize Quest' if needed
+    /**
+     * The OPERATOR'S own loyalty-programme name — e.g. "Luxe Rewards" for Casino Luxe.
+     * It labels the casino-owned chrome (the attract marquee), NOT our product.
+     *
+     * The Tier Rewards product name and logo are vendor chrome: fixed across every
+     * tenant, published by the host app on `<html data-pq-product-name / -logo>`, and
+     * shown from the moment the patron taps into the Tier Rewards widget.
+     */
+    productName?: string;
   };
 
   theme: {

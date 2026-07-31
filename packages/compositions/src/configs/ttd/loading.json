@@ -6,7 +6,7 @@
     {
       "widget": "pq-screen-header",
       "props": {
-        "title": "Prize Quest",
+        "title": "Tier Rewards Promotions",
         "showBack": false
       }
     },

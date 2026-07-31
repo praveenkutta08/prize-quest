@@ -3,7 +3,13 @@
   "channel": "ttd",
   "profile": "compact",
   "layout": [
-    { "widget": "pq-screen-header", "props": { "title": "Prize Quest", "showBack": true } },
-    { "widget": "pq-success", "props": { "ctaLabel": "View Order History", "dismissLabel": "Back to Hub" } }
+    {
+      "widget": "pq-screen-header",
+      "props": { "title": "Tier Rewards Promotions", "showBack": true }
+    },
+    {
+      "widget": "pq-success",
+      "props": { "ctaLabel": "View Order History", "dismissLabel": "Back to Hub" }
+    }
   ]
 }

@@ -1,21 +1,8 @@
-// <ttd-hub> — host-app vendor dashboard shown after the attract screen.
-//
-// The hub is CASINO-OWNED chrome: its header carries the operator's name. The hero tile
-// is where OUR widget starts, so it carries the Tier Rewards mark and product name —
-// identical on every tenant. Everything reached through that tile is vendor surface.
-//
-// ARCADE PATH (every listed tenant): a THREE-tile dashboard — a full-height
-// Tier Rewards Promotions hero on the left, with My Account and Tier Status stacked
-// on the right. Order History, Promotions and Sign Out were retired from this screen;
-// /orders is still reachable from the post-claim success CTA, and the session still
-// ends on the 60s idle timeout. The header carries the tenant logo where the points
-// balance used to be — points are gone from the patron-facing chrome.
-//
-// CASINO-LOUD PATH: the original Session-24c 5-tile dashboard, unchanged. Its tenant
-// (station-casinos) is no longer in the dev-chrome switcher, so this path is only
-// reachable via ?tenant=station-casinos.
-//
-// NOT a @pq/widget; inherits --cl-* / --arc-* from :root. LIT 3, no decorators.
+// <ttd-hub> — host-app vendor dashboard shown after the attract screen (480×234,
+// casino-loud). Mirrors the SYNKROS "post-card dashboard" (SS1 · 01B): three system
+// tiles (Account / Tier / Promos — vendor chrome, non-interactive in this demo) plus
+// the two gold "ours" tiles (Orders + Prize Quest) that launch the embedded flow.
+// NOT a @pq/widget; inherits --cl-* from :root. LIT 3, no decorators.
 import { LitElement, css, html, type TemplateResult } from "lit";
 import { navigate } from "@pq/router";
 import { getActiveTenant } from "@pq/tenants";
@@ -28,25 +15,40 @@ const aUser = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const aStar = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
   <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6z" />
 </svg>`;
+const aTag = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+  <line x1="7" y1="7" x2="7.01" y2="7" />
+</svg>`;
+const aPackage = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <path
+    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+  />
+  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+  <line x1="12" y1="22.08" x2="12" y2="12" />
+</svg>`;
 const aAward = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
   <circle cx="12" cy="8" r="6" />
   <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
 </svg>`;
-/** Per-tile category tint inline-style strings. Every value resolves through the tenant
- *  ramp — the icon wells used to hardcode their rgba fill, which painted a maroon/navy
- *  box on a black-and-gold tenant. */
+const aLogout = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+  <polyline points="16 17 21 12 16 7" />
+  <line x1="21" y1="12" x2="9" y2="12" />
+</svg>`;
+
+/** Per-tile category tint inline-style strings (arcade Pre-B). */
 const TILE_TINTS: Record<string, string> = {
-  blue: "--tile-tint: var(--cat-blue, #3d8bf5); --tile-tint-bg: var(--cat-blue-glow, rgba(61,139,245,0.18)); --tile-tint-bright: var(--cat-blue-bright, #6fb2ff);",
-  pink: "--tile-tint: var(--cat-pink, #ff3fa4); --tile-tint-bg: var(--cat-pink-glow, rgba(255,63,164,0.22)); --tile-tint-bright: var(--cat-pink-bright, #ff6fb5);",
+  blue: "--tile-tint: var(--cat-blue, #3d8bf5); --tile-tint-bg: rgba(61,139,245,0.18); --tile-tint-bright: var(--cat-blue-bright, #6fb2ff);",
+  pink: "--tile-tint: var(--cat-pink, #ff3fa4); --tile-tint-bg: rgba(255,63,164,0.22); --tile-tint-bright: var(--cat-pink-bright, #ff6fb5);",
   orange:
-    "--tile-tint: var(--cat-orange, #ff8c2c); --tile-tint-bg: var(--cat-orange-glow, rgba(255,140,44,0.18)); --tile-tint-bright: var(--cat-orange-bright, #ffb066);",
+    "--tile-tint: var(--cat-orange, #ff8c2c); --tile-tint-bg: rgba(255,140,44,0.18); --tile-tint-bright: var(--cat-orange-bright, #ffb066);",
   purple:
-    "--tile-tint: var(--cat-purple, #8e47e8); --tile-tint-bg: var(--cat-purple-glow, rgba(142,71,232,0.18)); --tile-tint-bright: var(--cat-purple-bright, #b47bff);",
+    "--tile-tint: var(--cat-purple, #8e47e8); --tile-tint-bg: rgba(142,71,232,0.18); --tile-tint-bright: var(--cat-purple-bright, #b47bff);",
   display:
-    "--tile-tint: var(--arc-display, #ffd93d); --tile-tint-bg: var(--arc-glow-soft, rgba(255,217,61,0.15)); --tile-tint-bright: var(--arc-display-bright, #ffee5c);",
+    "--tile-tint: var(--arc-display, #ffd93d); --tile-tint-bg: rgba(255,217,61,0.15); --tile-tint-bright: var(--arc-display-bright, #ffee5c);",
   green:
-    "--tile-tint: var(--cat-green, #34d670); --tile-tint-bg: var(--cat-green-glow, rgba(52,214,112,0.15)); --tile-tint-bright: var(--cat-green-bright, #5be389);",
-  teal: "--tile-tint: var(--cat-teal, #2dd4bf); --tile-tint-bg: var(--cat-teal-glow, rgba(45,212,191,0.15)); --tile-tint-bright: var(--cat-teal-bright, #5eead4);",
+    "--tile-tint: var(--cat-green, #34d670); --tile-tint-bg: rgba(52,214,112,0.15); --tile-tint-bright: var(--cat-green-bright, #5be389);",
+  teal: "--tile-tint: var(--cat-teal, #2dd4bf); --tile-tint-bg: rgba(45,212,191,0.15); --tile-tint-bright: var(--cat-teal-bright, #5eead4);",
   danger:
     "--tile-tint: var(--arc-danger, #ff4d6d); --tile-tint-bg: rgba(255,77,109,0.12); --tile-tint-bright: #ff8095; opacity: 0.85;",
 };
@@ -194,7 +196,7 @@ export class TtdHub extends LitElement {
       width: 12px;
       height: 12px;
     }
-    /* tile grid — system row (3) + ours row (Orders 1fr / Promotions 2fr) */
+    /* tile grid — system row (3) + ours row (Orders 1fr / Prize Quest 2fr) */
     .grid {
       flex: 1;
       min-height: 0;
@@ -299,19 +301,9 @@ export class TtdHub extends LitElement {
       flex-direction: column;
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
-      /* Backdrop follows the tenant ramp — no hardcoded arcade purple, or Tier Rewards
-         (black + gold) would glow violet at the corners. */
       background:
-        radial-gradient(
-          ellipse at 20% 0%,
-          var(--arc-bg-glass, rgba(142, 71, 232, 0.3)),
-          transparent 55%
-        ),
-        radial-gradient(
-          ellipse at 80% 100%,
-          var(--arc-glow-soft, rgba(255, 63, 164, 0.18)),
-          transparent 60%
-        ),
+        radial-gradient(ellipse at 20% 0%, rgba(142, 71, 232, 0.3), transparent 55%),
+        radial-gradient(ellipse at 80% 100%, rgba(255, 63, 164, 0.18), transparent 60%),
         linear-gradient(
           160deg,
           var(--arc-bg-deep, #15042e) 0%,
@@ -336,46 +328,20 @@ export class TtdHub extends LitElement {
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    /* Hero-tile brandmark — on the hub the tenant logo lives INSIDE the Promotions
-       tile (replacing the star icon well), not in the header. */
-    .hub-tile__logo {
+    .scr-head__pts {
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-bottom: 2px;
-    }
-    .hub-tile__logo img {
-      display: block;
-      height: 46px;
-      width: auto;
-      max-width: 78%;
-      object-fit: contain;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile__logo img {
-      height: 104px;
-    }
-    /* Tenant logo — occupies the slot the points readout used to. */
-    .scr-head__mark {
-      display: flex;
-      align-items: center;
-      flex: 0 0 auto;
-    }
-    .scr-head__mark img {
-      display: block;
-      height: 22px;
-      width: auto;
-      max-width: 112px;
-      object-fit: contain;
-    }
-    /* Fallback for a tenant with no logo asset on disk. */
-    .scr-head__wordmark {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 800);
+      gap: 4px;
+      font-family: var(--arc-font-mono, monospace);
       font-size: 9px;
-      letter-spacing: 0.08em;
+      color: var(--arc-display, #ffd93d);
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--arc-cream, #f5efe0);
+    }
+    .scr-head__pts strong {
+      color: var(--arc-display-bright, #ffee5c);
+      font-family: var(--arc-font-display, sans-serif);
+      font-size: 10px;
     }
     .scr-body {
       flex: 1;
@@ -405,19 +371,13 @@ export class TtdHub extends LitElement {
     }
     .hub-tiles {
       display: grid;
-      /* THREE tiles: a full-height Promotions hero on the left (the only tile that
-         launches a flow) with My Account + Tier Status stacked on the right. The 1.25fr
-         hero column gives "Tier Rewards Promotions" room to set on two lines at 15px —
-         the long product name is the real constraint on a 480×234 panel. */
-      grid-template-columns: 1.25fr 1fr;
+      /* 6 tiles in 3×2 (Comp $/Events dropped) — wider tiles give the name + sub
+         room to read on the dense 480×234 panel. */
+      grid-template-columns: repeat(3, 1fr);
       grid-template-rows: 1fr 1fr;
       gap: 5px;
       flex: 1;
       min-height: 0;
-    }
-    .hub-tile--hero {
-      grid-column: 1;
-      grid-row: 1 / span 2;
     }
     .hub-tile {
       position: relative;
@@ -452,11 +412,7 @@ export class TtdHub extends LitElement {
       background: var(--tile-tint, var(--cat-purple, #8e47e8));
     }
     .hub-tile--hero {
-      background: linear-gradient(
-        160deg,
-        var(--cat-pink-glow, rgba(255, 63, 164, 0.22)),
-        var(--arc-bg-glass-2, rgba(40, 15, 75, 0.92))
-      );
+      background: linear-gradient(160deg, rgba(255, 63, 164, 0.22), rgba(40, 15, 75, 0.92));
       border: 1.5px solid var(--cat-pink, #ff3fa4);
       box-shadow: 0 0 10px var(--cat-pink-glow, rgba(255, 63, 164, 0.55));
     }
@@ -485,77 +441,11 @@ export class TtdHub extends LitElement {
       color: var(--arc-cream, #f5efe0);
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      line-height: 1.08;
-      /* Wraps now — "Tier Rewards Promotions" needs two lines, and the 3-tile grid
-         has the room the old 6-tile grid did not. */
+      line-height: 1.05;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
       max-width: 100%;
-    }
-    .hub-tile--hero .hub-tile__icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-    }
-    .hub-tile--hero .hub-tile__icon svg {
-      width: 24px;
-      height: 24px;
-    }
-    .hub-tile--hero .hub-tile__name {
-      font-size: 15px;
-      letter-spacing: 0.02em;
-    }
-    .hub-tile--hero .hub-tile__sub {
-      font-size: 9.5px;
-    }
-    /* iVIEW (1024×600): the same three tiles, scaled for the bigger panel. */
-    :host-context([data-formfactor^="iview"]) .hub-tile__icon {
-      width: 40px;
-      height: 40px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile__icon svg {
-      width: 24px;
-      height: 24px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile__name {
-      font-size: 20px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile__sub {
-      font-size: 13px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile--hero .hub-tile__icon {
-      width: 72px;
-      height: 72px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile--hero .hub-tile__icon svg {
-      width: 42px;
-      height: 42px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile--hero .hub-tile__name {
-      font-size: 34px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tile--hero .hub-tile__sub {
-      font-size: 15px;
-    }
-    :host-context([data-formfactor^="iview"]) .ahub-greet {
-      font-size: 20px;
-    }
-    :host-context([data-formfactor^="iview"]) .scr-head__brand {
-      font-size: 20px;
-    }
-    :host-context([data-formfactor^="iview"]) .scr-head__mark img {
-      height: 40px;
-      max-width: 200px;
-    }
-    :host-context([data-formfactor^="iview"]) .scr-head {
-      min-height: 52px;
-      padding: 8px 20px;
-    }
-    :host-context([data-formfactor^="iview"]) .scr-body {
-      padding: 16px 20px;
-      gap: 10px;
-    }
-    :host-context([data-formfactor^="iview"]) .hub-tiles {
-      gap: 12px;
     }
     .hub-tile--hero .hub-tile__name {
       background: linear-gradient(
@@ -610,18 +500,14 @@ export class TtdHub extends LitElement {
 
   static override properties = {
     claimableCount: { type: Number },
-    logoBroken: { state: true },
   };
 
   declare claimableCount: number;
-  /** Set when the tenant logo asset 404s — falls the header back to a wordmark. */
-  declare logoBroken: boolean;
 
   constructor() {
     super();
     // Demo default: one ready campaign (the VIP Game Day Quest hero).
     this.claimableCount = 1;
-    this.logoBroken = false;
   }
 
   #go(path: string): void {
@@ -642,16 +528,9 @@ export class TtdHub extends LitElement {
     return this.arcade ? this.renderArcade() : this.renderCasino();
   }
 
-  /**
-   * Arcade hub — THREE tiles: a full-height Promotions hero on the left, My Account and
-   * Tier Status stacked on the right. Order History, Promotions (vendor offers) and
-   * Sign Out were retired from this screen; the header shows the tenant logo where the
-   * points balance used to be.
-   */
+  /** Arcade hub (Station Arcade) — 8-tile 4×2 grid, mirrors ttd-arcade Pre-B. */
   private renderArcade(): TemplateResult {
-    // The casino owns this screen — the header is the operator's name.
-    const brand = getActiveTenant()?.name ?? "Casino";
-    const product = document.documentElement.dataset.pqProductName ?? "Tier Rewards Promotions";
+    const brand = getActiveTenant()?.name ?? "Station Arcade";
     const tiles: Array<{
       name: string;
       sub: string;
@@ -660,15 +539,6 @@ export class TtdHub extends LitElement {
       hero?: boolean;
       go: () => void;
     }> = [
-      // The hero is declared first so it takes grid column 1 / rows 1–2.
-      {
-        name: product,
-        sub: "Campaigns · prizes · claims",
-        icon: aStar,
-        tint: "pink",
-        hero: true,
-        go: () => this.#go("/"),
-      },
       {
         name: "My Account",
         sub: "Balance · statements · profile",
@@ -677,17 +547,47 @@ export class TtdHub extends LitElement {
         go: () => {},
       },
       {
+        name: "Prize Quest",
+        sub: "Campaigns · prizes · claims",
+        icon: aStar,
+        tint: "pink",
+        hero: true,
+        go: () => this.#go("/"),
+      },
+      {
+        name: "Promotions",
+        sub: "Free play · multipliers · offers",
+        icon: aTag,
+        tint: "orange",
+        go: () => {},
+      },
+      {
+        name: "Order History",
+        sub: "Past prizes · tracking · receipts",
+        icon: aPackage,
+        tint: "purple",
+        go: () => this.#go("/orders"),
+      },
+      {
         name: "Tier Status",
         sub: "Platinum · benefits · next tier",
         icon: aAward,
         tint: "display",
         go: () => {},
       },
+      {
+        name: "Sign Out",
+        sub: "End session · return to attract",
+        icon: aLogout,
+        tint: "danger",
+        go: this.#signOut,
+      },
     ];
     return html`
       <div class="aroot">
         <div class="scr-head">
           <div class="scr-head__brand">${brand}</div>
+          <div class="scr-head__pts"><strong>142,580</strong> pts</div>
         </div>
         <div class="scr-body">
           <div class="ahub-greet">Hi <span>James</span> · what's next?</div>
@@ -700,9 +600,7 @@ export class TtdHub extends LitElement {
                   style=${TILE_TINTS[t.tint]}
                   @click=${t.go}
                 >
-                  ${t.hero
-                    ? html`<div class="hub-tile__logo">${this.renderBrandmark()}</div>`
-                    : html`<div class="hub-tile__icon">${t.icon}</div>`}
+                  <div class="hub-tile__icon">${t.icon}</div>
                   <div class="hub-tile__name">${t.name}</div>
                   <div class="hub-tile__sub">${t.sub}</div>
                   ${t.hero && this.claimableCount > 0
@@ -714,27 +612,6 @@ export class TtdHub extends LitElement {
         </div>
       </div>
     `;
-  }
-
-  /**
-   * The VENDOR mark shown on the hero tile — Tier Rewards, the same on every tenant,
-   * because that tile is the entry point to our widget rather than anything the casino
-   * owns. Reads `<html data-pq-product-logo>` (published by the host app) so this stays
-   * free of both app config and tenant config. Degrades to a text wordmark.
-   */
-  private renderBrandmark(): TemplateResult {
-    const root = document.documentElement.dataset;
-    const src = this.logoBroken ? null : root.pqProductLogo || null;
-    if (!src) {
-      return html`<span class="scr-head__wordmark">${root.pqProductAlt ?? "Tier Rewards"}</span>`;
-    }
-    return html`<img
-      src=${src}
-      alt=${root.pqProductAlt ?? "Tier Rewards"}
-      @error=${() => {
-        this.logoBroken = true;
-      }}
-    />`;
   }
 
   /** Casino-loud hub (Station Casinos) — unchanged from Session 24c. */
@@ -780,7 +657,7 @@ export class TtdHub extends LitElement {
               ${this.claimableCount > 0
                 ? html`<span class="badge">${this.claimableCount} Ready</span>`
                 : ""}
-              ${giftIcon}<span class="tile-name">Tier Rewards Promotions</span>
+              ${giftIcon}<span class="tile-name">Prize Quest</span>
             </button>
           </div>
         </div>

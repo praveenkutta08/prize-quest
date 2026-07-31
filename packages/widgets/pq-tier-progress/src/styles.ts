@@ -53,11 +53,7 @@ export const styles = css`
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: linear-gradient(
-      135deg,
-      var(--pq-gold, #ffd93d),
-      var(--pq-gold-2, #ff8c2c)
-    );
+    background: linear-gradient(135deg, var(--pq-gold, #ffd93d), var(--pq-gold-2, #ff8c2c));
     color: var(--pq-navy-deep, #15042e);
     font-weight: 800;
     font-size: 14px;
@@ -91,15 +87,11 @@ export const styles = css`
 
   /* ===== arcade — neon glass "Status" pill (expanded). CSS-only; no TS branch. ===== */
   :host-context([data-pq-mode="arcade"]) .pill {
-    background: var(--arc-glass-bg, rgba(60, 25, 110, 0.6));
+    background: var(--arc-glass-bg, var(--arc-surface-1, rgba(60, 25, 110, 0.6)));
     border-color: var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
   }
   :host-context([data-pq-mode="arcade"]) .pill-icon {
-    background: linear-gradient(
-      135deg,
-      var(--arc-display, #ffd93d),
-      var(--cat-orange, #ff8c2c)
-    );
+    background: linear-gradient(135deg, var(--arc-display, #ffd93d), var(--cat-orange, #ff8c2c));
     color: var(--arc-bg-deep, #15042e);
   }
   :host-context([data-pq-mode="arcade"]) .pill-label {

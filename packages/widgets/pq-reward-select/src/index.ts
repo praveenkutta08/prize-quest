@@ -1,9 +1,5 @@
 import { LitElement, html, nothing, type TemplateResult } from "lit";
-import {
-  deriveRarity,
-  type Campaign,
-  type Prize,
-} from "@pq/mock-data";
+import { deriveRarity, type Campaign, type Prize } from "@pq/mock-data";
 import { bindAtom, $activeCampaign, $prizes } from "@pq/store";
 import { styles } from "./styles";
 import "@pq/pq-list-carousel";
@@ -23,21 +19,114 @@ const CATEGORY_EMOJI: Record<string, string> = {
   sports: "⛳",
 };
 
-function money(n: number): string {
-  return `$${Math.round(n).toLocaleString("en-US")}`;
+/**
+ * Product-level art hints, matched against the prize NAME before falling back to the
+ * category. A category map alone gave every "electronics" prize the same phone glyph —
+ * AirPods, an iPad and a smart speaker all looked identical on the card. Ordered
+ * longest-match-first where prefixes overlap. Placeholder art only: production swaps
+ * these for the operator's `artUrl` product shots.
+ */
+const NAME_EMOJI: ReadonlyArray<readonly [pattern: string, emoji: string]> = [
+  ["airpod", "🎧"],
+  ["headphone", "🎧"],
+  ["earbud", "🎧"],
+  ["speaker", "🔊"],
+  ["ipad", "📱"],
+  ["tablet", "📱"],
+  ["tab ", "📱"],
+  ["iphone", "📱"],
+  ["phone", "📱"],
+  ["macbook", "💻"],
+  ["laptop", "💻"],
+  ["watch", "⌚"],
+  ["tv", "📺"],
+  ["camera", "📷"],
+  ["echo", "🔊"],
+  ["show", "🖥️"],
+  ["console", "🎮"],
+  ["playstation", "🎮"],
+  ["xbox", "🎮"],
+  ["cap", "🧢"],
+  ["hat", "🧢"],
+  ["jersey", "👕"],
+  ["shirt", "👕"],
+  ["hoodie", "🧥"],
+  ["backpack", "🎒"],
+  ["bag", "🎒"],
+  ["luggage", "🧳"],
+  ["sneaker", "👟"],
+  ["shoe", "👟"],
+  ["rambler", "🥤"],
+  ["tumbler", "🥤"],
+  ["bottle", "🍾"],
+  ["cooler", "🧊"],
+  ["grill", "🍖"],
+  ["golf", "⛳"],
+  ["topgolf", "⛳"],
+  ["bike", "🚲"],
+  ["tent", "🏕️"],
+  ["chair", "🪑"],
+  ["trip", "✈️"],
+  ["flight", "✈️"],
+  ["vegas", "🎰"],
+  ["hotel", "🏨"],
+  ["suite", "🏨"],
+  ["spa", "💆"],
+  ["dinner", "🍽️"],
+  ["dining", "🍽️"],
+  ["wine", "🍷"],
+  ["gift card", "💳"],
+  ["amazon", "📦"],
+  ["voucher", "🎟️"],
+  ["credit", "💳"],
+];
+
+/** Prize art: product-level match on the name, else the category map, else a gift. */
+function emojiFor(prize: Prize): string {
+  const name = (prize.name ?? "").toLowerCase();
+  for (const [pattern, emoji] of NAME_EMOJI) {
+    if (name.includes(pattern)) return emoji;
+  }
+  return CATEGORY_EMOJI[prize.category?.toLowerCase()] ?? "🎁";
 }
 
-function emojiFor(category: string): string {
-  return CATEGORY_EMOJI[category?.toLowerCase()] ?? "🎁";
+/** Title-case a category slug, e.g. "smart-home" → "Smart Home". */
+function categoryLabel(category: string | undefined): string {
+  if (!category) return "";
+  return category
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+/**
+ * The one-line descriptor under a prize name. Prizes carry no copy of their own, so
+ * this is composed from the fields they do have — category plus how the prize is
+ * delivered. Deliberately says nothing about price.
+ */
+function descriptorFor(p: Prize): string {
+  const cat = categoryLabel(p.category);
+  const delivery =
+    p.prizeType === "digital"
+      ? "Digital voucher · delivered instantly"
+      : "Ships free · arrives in 5–7 days";
+  return cat ? `${cat} · ${delivery}` : delivery;
 }
 
 /**
  * `<pq-reward-select>` — the reward-selection screen body (compact arcade only).
- * Shows a pinned complete-state progress strip (orange→yellow, matching every
- * other progress bar) over a paged carousel of
- * `<pq-reward-card>` (3 per page). Tapping a reward fires `pq-prize-select`
- * (bubbles to the app → selects the prize) and then `pq-claim-start`, reusing
- * the existing confirm → pin → … → success claim flow.
+ *
+ * ONE PRIZE PER PAGE, full width, in the same `<pq-list-carousel>` the promotions list
+ * uses — so a prize gets the same room a campaign does instead of being squeezed into a
+ * third of the panel. Each card is the `layout="wide"` product well with its own
+ * Collect button.
+ *
+ * Two things were deliberately removed: the pinned strip that used to sit above the
+ * carousel (the campaign name is already in the screen header, so it was said twice),
+ * and the price on each card (the prize is earned, not bought).
+ *
+ * Tapping a reward fires `pq-prize-select` (bubbles to the app → selects the prize) and
+ * then `pq-claim-start`, reusing the existing confirm → pin → … → success claim flow.
  */
 export class PqRewardSelect extends LitElement {
   static override styles = styles;
@@ -49,8 +138,8 @@ export class PqRewardSelect extends LitElement {
   };
 
   declare profile: "compact" | "standard" | "expanded";
-  private declare _campaign: Campaign | null;
-  private declare _prizes: Prize[] | null;
+  declare private _campaign: Campaign | null;
+  declare private _prizes: Prize[] | null;
 
   constructor() {
     super();
@@ -86,33 +175,22 @@ export class PqRewardSelect extends LitElement {
         <p class="empty">No campaign selected.</p>
       </div>`;
     }
-    const goal = money(c.goal);
     return html`
       <div class="rwd-body" @pq-prize-select=${this.#onPick}>
-        <div class="rwd-prog">
-          <div class="rwd-prog__row">
-            <span class="rwd-prog__label">Wager Complete</span>
-            <span class="rwd-prog__val"><strong>${goal}</strong> / ${goal} ✓</span>
-            <span class="rwd-prog__cta">Pick your prize ↓</span>
-          </div>
-          <div class="rwd-prog__bar">
-            <div class="rwd-prog__fill"></div>
-          </div>
-        </div>
         ${rewards.length
-          ? html`<pq-list-carousel
-              .itemsPerPage=${3}
-              aria-label="Available rewards"
-            >
+          ? html`<pq-list-carousel .itemsPerPage=${1} aria-label="Available rewards">
               ${rewards.map(
-                (p) => html`<pq-reward-card
-                  name=${p.name}
-                  value=${money(p.value)}
-                  rarity=${p.rarity ?? deriveRarity(p.value)}
-                  art-emoji=${emojiFor(p.category)}
-                  prize-id=${p.id}
-                  ?disabled=${p.inStock === false}
-                ></pq-reward-card>`,
+                (p) =>
+                  html`<pq-reward-card
+                    layout="wide"
+                    cta="Collect"
+                    name=${p.name}
+                    sub=${descriptorFor(p)}
+                    rarity=${p.rarity ?? deriveRarity(p.value)}
+                    art-emoji=${emojiFor(p)}
+                    prize-id=${p.id}
+                    ?disabled=${p.inStock === false}
+                  ></pq-reward-card>`,
               )}
             </pq-list-carousel>`
           : nothing}

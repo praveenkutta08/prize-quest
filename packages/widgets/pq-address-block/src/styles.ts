@@ -378,8 +378,8 @@ export const styles = css`
     border-color: var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     background: linear-gradient(
       160deg,
-      rgba(60, 25, 110, 0.5),
-      rgba(40, 15, 75, 0.85)
+      var(--arc-surface-1, rgba(60, 25, 110, 0.5)),
+      var(--arc-surface-2, rgba(40, 15, 75, 0.85))
     );
   }
   :host-context([data-pq-mode="arcade"]) .name,
@@ -400,7 +400,7 @@ export const styles = css`
   }
   :host-context([data-pq-mode="arcade"]) .addr--xl {
     color: var(--arc-cream, var(--pq-text, #f1f5f9));
-    background: var(--arc-bg-glass, rgba(15, 4, 46, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-0, rgba(15, 4, 46, 0.5)));
     border-left-color: var(--arc-display, var(--pq-gold-bright, #fcbf49));
   }
   :host-context([data-pq-mode="arcade"]) .confirm--xl {
@@ -440,7 +440,11 @@ export const styles = css`
   /* "what happens next" panel — glass surface + neon numbered steps */
   :host-context([data-pq-mode="arcade"]) .next-panel {
     border-color: var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
-    background: linear-gradient(160deg, rgba(60, 25, 110, 0.5), rgba(40, 15, 75, 0.85));
+    background: linear-gradient(
+      160deg,
+      var(--arc-surface-1, rgba(60, 25, 110, 0.5)),
+      var(--arc-surface-2, rgba(40, 15, 75, 0.85))
+    );
   }
   :host-context([data-pq-mode="arcade"]) .next-panel__title,
   :host-context([data-pq-mode="arcade"]) .next-step__name {
@@ -460,7 +464,7 @@ export const styles = css`
 
   /* strong secondary "ghost" Edit button (ref .arc-btn--ghost) */
   :host-context([data-pq-mode="arcade"]) .ghost-btn {
-    background: var(--arc-bg-glass, rgba(60, 25, 110, 0.5));
+    background: var(--arc-bg-glass, var(--arc-surface-1, rgba(60, 25, 110, 0.5)));
     border-color: var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     color: var(--arc-text-dim, var(--pq-text, #f5efe0));
     font-family: var(--arc-font-display, var(--pq-font-display, sans-serif));
@@ -488,7 +492,9 @@ export const styles = css`
 
   @media (prefers-reduced-motion: no-preference) {
     :host-context([data-pq-mode="arcade"]) .confirm--xl {
-      transition: box-shadow 0.3s ease, transform 0.15s ease;
+      transition:
+        box-shadow 0.3s ease,
+        transform 0.15s ease;
     }
     :host-context([data-pq-mode="arcade"]) .confirm--xl:hover {
       box-shadow: 0 0 36px var(--arc-display-glow, rgba(252, 191, 73, 0.65));
@@ -547,7 +553,7 @@ export const styles = css`
     border-color: var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .edit button {
-    background: rgba(60, 25, 110, 0.5);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.5));
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     border-radius: var(--arc-r-sm, var(--pq-r-md, 6px));
     padding: 4px 8px;
@@ -570,20 +576,50 @@ export const styles = css`
     box-sizing: border-box;
     padding-bottom: 2px;
   }
-  :host([profile="compact"]) .cm-check {
+  /* Standing note where the confirmation tick used to be. On these surfaces the address
+     cannot be edited, so the one thing the patron needs is where it CAN be — which makes
+     this the most useful sentence on the screen, not the least. Rendered as a filled
+     attention band so it is read before the patron commits.
+
+     Every colour resolves through the tenant ramp: the band is the tenant's accent, not
+     a fixed gold, so it stays on-brand on navy, purple or black-and-gold alike. */
+  :host([profile="compact"]) .cm-note {
     flex: 0 0 auto;
-    width: 26px;
-    height: 26px;
-    margin: 0 auto;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--pq-emerald, #10b981);
-    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 0;
+    padding: 5px 9px;
+    border: 1px solid var(--arc-display, var(--pq-gold, #ffd93d));
+    border-radius: 5px;
+    background: linear-gradient(
+      180deg,
+      var(--arc-display-glow, rgba(255, 217, 61, 0.28)),
+      var(--arc-glow-soft, rgba(255, 217, 61, 0.1))
+    );
+    font-family: var(--arc-font-display, var(--pq-font-display, "Manrope", sans-serif));
+    font-weight: 700;
+    font-size: 9.5px;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+    text-align: left;
+    color: var(--arc-display-bright, var(--pq-gold-bright, #ffee5c));
   }
-  :host([profile="compact"]) .cm-check svg {
-    width: 14px;
-    height: 14px;
+  :host([profile="compact"]) .cm-note svg {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 auto;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .cm-note {
+    font-size: 15px;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 8px;
+  }
+  :host-context([data-formfactor^="iview"]):host([profile="compact"]) .cm-note svg {
+    width: 19px;
+    height: 19px;
   }
   :host([profile="compact"]) .cm-card {
     padding: 6px 9px;
@@ -646,14 +682,18 @@ export const styles = css`
     box-shadow: 0 0 14px rgba(52, 214, 112, 0.6);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cm-go {
-    background: linear-gradient(135deg, var(--arc-display-bright, #ffee5c), var(--cat-orange, #ff8c2c));
+    background: linear-gradient(
+      135deg,
+      var(--arc-display-bright, #ffee5c),
+      var(--cat-orange, #ff8c2c)
+    );
     color: var(--arc-bg-deep, #15042e);
     box-shadow:
       0 2px 0 var(--arc-display-deep, #e0b71b),
       0 0 10px var(--arc-display-glow, rgba(255, 217, 61, 0.45));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .cm-edit {
-    background: rgba(60, 25, 110, 0.5);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.5));
     border-color: var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     color: var(--arc-text-dim, #d0bfec);
     font-family: var(--arc-font-display, sans-serif);

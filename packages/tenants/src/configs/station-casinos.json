@@ -2,9 +2,13 @@
   "id": "station-casinos",
   "name": "Station Casinos",
   "brand": {
-    "logo": { "src": "/assets/station-casinos/logo.svg", "alt": "Station Casinos", "height": 32 },
+    "logo": {
+      "src": "/assets/station-casinos/logo.svg",
+      "alt": "Station Casinos",
+      "height": 32
+    },
     "favicon": "/assets/station-casinos/favicon.svg",
-    "productName": "Prize Quest"
+    "productName": "Station Rewards"
   },
   "theme": {
     "tokens": {},

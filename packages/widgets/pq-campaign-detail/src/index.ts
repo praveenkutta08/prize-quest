@@ -4,21 +4,38 @@ import { bindAtom, $activeCampaign, $prizes } from "@pq/store";
 import { styles } from "./styles";
 import type { DetailProfile } from "./types";
 import "@pq/pq-prize-tile";
-import "@pq/pq-progress-bar";
 import "@pq/pq-status-pill";
 import type { PrizeTileState } from "@pq/pq-prize-tile";
 import type { StatusPillVariant } from "@pq/pq-status-pill";
 
-const lockIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+const lockIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
   <rect x="3" y="11" width="18" height="11" rx="2" />
   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
 </svg>`;
 
-const chevronLeftIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+const chevronLeftIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
   <polyline points="15 18 9 12 15 6" />
 </svg>`;
 
-const calendarIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+const calendarIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
   <rect x="3" y="4" width="18" height="18" rx="2" />
   <line x1="16" y1="2" x2="16" y2="6" />
   <line x1="8" y1="2" x2="8" y2="6" />
@@ -29,67 +46,168 @@ const sparkIcon = html`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden=
   <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6z" />
 </svg>`;
 
-const checkIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+const checkIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
   <polyline points="20 6 9 17 4 12" />
 </svg>`;
 
-const clockIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+const clockIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
   <circle cx="12" cy="12" r="10" />
   <polyline points="12 6 12 12 16 14" />
 </svg>`;
 
-const giftIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-  <rect x="3" y="8" width="18" height="13" rx="1" /><path d="M12 8v13M3 12h18" />
+const giftIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  aria-hidden="true"
+>
+  <rect x="3" y="8" width="18" height="13" rx="1" />
+  <path d="M12 8v13M3 12h18" />
   <path d="M12 8S10 3 7.5 4.5 9 8 12 8ZM12 8s2-5 4.5-3.5S15 8 12 8Z" />
 </svg>`;
 
 /** Slot-machine illustration (eligible). Floats via the global `float` keyframe. */
-const slotIllustration = html`<svg viewBox="0 0 240 240" width="320" height="320" aria-hidden="true">
+const slotIllustration = html`<svg
+  viewBox="0 0 240 240"
+  width="320"
+  height="320"
+  aria-hidden="true"
+>
   <defs>
     <linearGradient id="pqcd-slot-body" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#FF3FA4" /><stop offset="100%" stop-color="#8E47E8" />
+      <stop offset="0%" stop-color="#FF3FA4" />
+      <stop offset="100%" stop-color="#8E47E8" />
     </linearGradient>
     <linearGradient id="pqcd-slot-top" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#FFEE5C" /><stop offset="100%" stop-color="#FFB627" />
+      <stop offset="0%" stop-color="#FFEE5C" />
+      <stop offset="100%" stop-color="#FFB627" />
     </linearGradient>
     <linearGradient id="pqcd-lever" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF6B1A" /><stop offset="100%" stop-color="#C73B0A" />
+      <stop offset="0%" stop-color="#FF6B1A" />
+      <stop offset="100%" stop-color="#C73B0A" />
     </linearGradient>
   </defs>
   <ellipse cx="120" cy="220" rx="80" ry="10" fill="rgba(0,0,0,0.4)" />
-  <rect x="40" y="60" width="160" height="160" rx="20" fill="url(#pqcd-slot-body)" stroke="#FFEE5C" stroke-width="3" />
-  <ellipse cx="120" cy="60" rx="80" ry="40" fill="url(#pqcd-slot-top)" stroke="#FFEE5C" stroke-width="3" />
+  <rect
+    x="40"
+    y="60"
+    width="160"
+    height="160"
+    rx="20"
+    fill="url(#pqcd-slot-body)"
+    stroke="#FFEE5C"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="120"
+    cy="60"
+    rx="80"
+    ry="40"
+    fill="url(#pqcd-slot-top)"
+    stroke="#FFEE5C"
+    stroke-width="3"
+  />
   <circle cx="120" cy="40" r="10" fill="#FFEE5C" stroke="#FF6B1A" stroke-width="2" />
   <circle cx="120" cy="40" r="5" fill="#FFF" />
-  <rect x="58" y="110" width="124" height="60" rx="8" fill="#1F0B3E" stroke="#FFEE5C" stroke-width="2" />
-  <text x="78" y="152" font-family="Manrope" font-size="34" fill="#FFEE5C" text-anchor="middle">7</text>
-  <text x="120" y="152" font-family="Manrope" font-size="34" fill="#FF3FA4" text-anchor="middle">7</text>
-  <text x="162" y="152" font-family="Manrope" font-size="34" fill="#34D670" text-anchor="middle">7</text>
+  <rect
+    x="58"
+    y="110"
+    width="124"
+    height="60"
+    rx="8"
+    fill="#1F0B3E"
+    stroke="#FFEE5C"
+    stroke-width="2"
+  />
+  <text x="78" y="152" font-family="Manrope" font-size="34" fill="#FFEE5C" text-anchor="middle">
+    7
+  </text>
+  <text x="120" y="152" font-family="Manrope" font-size="34" fill="#FF3FA4" text-anchor="middle">
+    7
+  </text>
+  <text x="162" y="152" font-family="Manrope" font-size="34" fill="#34D670" text-anchor="middle">
+    7
+  </text>
   <rect x="195" y="100" width="14" height="80" rx="6" fill="url(#pqcd-lever)" />
   <circle cx="202" cy="98" r="14" fill="#FF6B1A" stroke="#FFEE5C" stroke-width="2" />
-  <rect x="60" y="185" width="120" height="22" rx="6" fill="#15042E" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+  <rect
+    x="60"
+    y="185"
+    width="120"
+    height="22"
+    rx="6"
+    fill="#15042E"
+    stroke="rgba(255,255,255,0.2)"
+    stroke-width="1"
+  />
   <circle cx="65" cy="80" r="10" fill="#FFEE5C" stroke="#E0B71B" stroke-width="2" />
-  <text x="65" y="85" font-family="Manrope" font-size="12" fill="#E0B71B" text-anchor="middle">$</text>
+  <text x="65" y="85" font-family="Manrope" font-size="12" fill="#E0B71B" text-anchor="middle">
+    $
+  </text>
   <circle cx="190" cy="70" r="8" fill="#FFEE5C" stroke="#E0B71B" stroke-width="2" />
   <circle cx="50" cy="180" r="7" fill="#FFEE5C" stroke="#E0B71B" stroke-width="2" />
 </svg>`;
 
 /** Tablet + lock illustration (locked). Floats via the global `float` keyframe. */
-const tabletLockIllustration = html`<svg viewBox="0 0 240 240" width="320" height="320" aria-hidden="true">
+const tabletLockIllustration = html`<svg
+  viewBox="0 0 240 240"
+  width="320"
+  height="320"
+  aria-hidden="true"
+>
   <defs>
     <linearGradient id="pqcd-tablet-body" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#3D8BF5" /><stop offset="100%" stop-color="#2DD4BF" />
+      <stop offset="0%" stop-color="#3D8BF5" />
+      <stop offset="100%" stop-color="#2DD4BF" />
     </linearGradient>
   </defs>
   <ellipse cx="120" cy="220" rx="80" ry="10" fill="rgba(0,0,0,0.4)" />
-  <rect x="50" y="40" width="140" height="180" rx="14" fill="#1F0B3E" stroke="#FFEE5C" stroke-width="3" />
+  <rect
+    x="50"
+    y="40"
+    width="140"
+    height="180"
+    rx="14"
+    fill="#1F0B3E"
+    stroke="#FFEE5C"
+    stroke-width="3"
+  />
   <rect x="60" y="55" width="120" height="140" rx="6" fill="url(#pqcd-tablet-body)" />
   <circle cx="120" cy="208" r="5" fill="#FFB627" />
-  <text x="120" y="135" font-family="Manrope" font-size="36" fill="#FFEE5C" text-anchor="middle">TECH</text>
+  <text x="120" y="135" font-family="Manrope" font-size="36" fill="#FFEE5C" text-anchor="middle">
+    TECH
+  </text>
   <g transform="translate(120 120)">
     <circle r="42" fill="rgba(15, 4, 46, 0.85)" stroke="#FF4D6D" stroke-width="3" />
-    <rect x="-16" y="-8" width="32" height="22" rx="3" fill="none" stroke="#FF4D6D" stroke-width="3" />
-    <path d="M -10 -8 L -10 -18 a10 10 0 0 1 20 0 L 10 -8" fill="none" stroke="#FF4D6D" stroke-width="3" />
+    <rect
+      x="-16"
+      y="-8"
+      width="32"
+      height="22"
+      rx="3"
+      fill="none"
+      stroke="#FF4D6D"
+      stroke-width="3"
+    />
+    <path
+      d="M -10 -8 L -10 -18 a10 10 0 0 1 20 0 L 10 -8"
+      fill="none"
+      stroke="#FF4D6D"
+      stroke-width="3"
+    />
     <circle cx="0" cy="3" r="3" fill="#FF4D6D" />
   </g>
 </svg>`;
@@ -109,12 +227,16 @@ const STATUS_PILL: Record<Campaign["status"], { variant: StatusPillVariant; labe
 };
 
 /**
- * `<pq-campaign-detail>` — campaign hero (status eyebrow, serif title, progress, earn
- * note) plus a "Prize vault" grid of `<pq-prize-tile>`. Single-column (standard) or
- * two-column (expanded). Selecting a tile emits `pq-prize-select` and enables the claim
- * CTA, which fires `pq-claim-start` ({campaignId, prizeId}) when the campaign is eligible.
+ * `<pq-campaign-detail>` — campaign hero (status eyebrow, serif title, earn note) plus a
+ * "Prize vault" grid of `<pq-prize-tile>`. Single-column (standard) or two-column
+ * (expanded). Selecting a tile emits `pq-prize-select` and enables the claim CTA, which
+ * fires `pq-claim-start` ({campaignId, prizeId}) when the campaign is eligible.
  *
- * Composes `<pq-status-pill>`, `<pq-progress-bar>`, `<pq-prize-tile>`.
+ * NO PROGRESS UI: wager progress was removed from the whole patron flow, so the hero
+ * leads with the campaign name and status instead of a bar. Locked campaigns still say
+ * how much is left to unlock — that is a gate, not a progress readout.
+ *
+ * Composes `<pq-status-pill>`, `<pq-prize-tile>`.
  */
 export class PqCampaignDetail extends LitElement {
   static override styles = styles;
@@ -205,21 +327,13 @@ export class PqCampaignDetail extends LitElement {
             <p class="exp-desc">${description}</p>
             <div class="exp-datepill">${calendarIcon}<span>${dateLabel}</span></div>
             <div class="exp-progress">
-              <div class="exp-progress__head">
-                <span class="exp-progress__label">Progress</span>
-                <span class="exp-progress__val"
-                  ><strong>$${c.progress.toLocaleString()}</strong> / $${c.goal.toLocaleString()}</span
-                >
-              </div>
-              <pq-progress-bar
-                profile="expanded"
-                .value=${c.progress}
-                .max=${c.goal}
-                .variant=${eligible ? "complete" : "default"}
-              ></pq-progress-bar>
               <div class="exp-pillrow">
                 ${statusPill}
-                <span class="arc-pill arc-pill--ghost">${clockIcon} ${c.pct}% complete</span>
+                ${c.expiresAt
+                  ? html`<span class="arc-pill arc-pill--ghost"
+                      >${clockIcon} Ends ${c.expiresAt}</span
+                    >`
+                  : nothing}
               </div>
             </div>
           </div>
@@ -237,13 +351,14 @@ export class PqCampaignDetail extends LitElement {
           </h2>
           <div class="exp-grid">
             ${this.prizes.map(
-              (p) => html`<pq-prize-tile
-                profile="expanded"
-                .prize=${p}
-                .state=${this.tileState}
-                .category=${p.category}
-                .selected=${this.selectedPrizeId === p.id}
-              ></pq-prize-tile>`,
+              (p) =>
+                html`<pq-prize-tile
+                  profile="expanded"
+                  .prize=${p}
+                  .state=${this.tileState}
+                  .category=${p.category}
+                  .selected=${this.selectedPrizeId === p.id}
+                ></pq-prize-tile>`,
             )}
           </div>
         </div>
@@ -253,43 +368,41 @@ export class PqCampaignDetail extends LitElement {
 
   /** Dense casino detail: hero strip + 2×2 prize grid (eligible) or 3-across locked grid. */
   private renderCompact(c: Campaign): TemplateResult {
-    const heroTitle = `$${c.progress.toLocaleString()} / $${c.goal.toLocaleString()}`;
+    const remaining = Math.max(0, c.goal - c.progress);
     return html`
       <div class="wrap-compact" @pq-prize-select=${this.handlePrizeSelect}>
         <div class="det-hero">
-          <span class="det-hero__label">Progress</span>
-          <span class="det-hero__title">${heroTitle}</span>
-          <span class="det-hero__pct">${c.pct}%</span>
+          <span class="det-hero__label">${this.eligible ? "Ready" : "Locked"}</span>
+          <span class="det-hero__title">${c.name}</span>
+          <span class="det-hero__pct"
+            >${this.eligible ? "✓" : `$${remaining.toLocaleString()} to go`}</span
+          >
         </div>
-        <pq-progress-bar
-          class="det-progress"
-          profile="compact"
-          .value=${c.progress}
-          .max=${c.goal}
-          .variant=${this.eligible ? "complete" : "default"}
-        ></pq-progress-bar>
         ${this.eligible
           ? document.documentElement.dataset.pqMode === "arcade"
             ? this.renderRewardsCta()
             : html`<div class="prize-grid">
                 ${this.prizes.map(
-                  (p) => html`<pq-prize-tile
-                    profile="compact"
-                    .prize=${p}
-                    .state=${this.tileState}
-                    .selected=${this.selectedPrizeId === p.id}
-                  ></pq-prize-tile>`,
+                  (p) =>
+                    html`<pq-prize-tile
+                      profile="compact"
+                      .prize=${p}
+                      .state=${this.tileState}
+                      .selected=${this.selectedPrizeId === p.id}
+                    ></pq-prize-tile>`,
                 )}
               </div>`
-          : html`
-              <div class="locked-banner">${lockIcon}<span>Locked · Complete to unlock</span></div>
+          : html` <div class="locked-banner">
+                ${lockIcon}<span>Locked · Complete to unlock</span>
+              </div>
               <div class="prize-grid prize-grid--locked">
                 ${this.prizes.map(
-                  (p) => html`<pq-prize-tile
-                    profile="compact"
-                    .prize=${p}
-                    .state=${this.tileState}
-                  ></pq-prize-tile>`,
+                  (p) =>
+                    html`<pq-prize-tile
+                      profile="compact"
+                      .prize=${p}
+                      .state=${this.tileState}
+                    ></pq-prize-tile>`,
                 )}
               </div>`}
       </div>
@@ -323,23 +436,11 @@ export class PqCampaignDetail extends LitElement {
           <h2 class="iv-hero__name">${c.name}</h2>
           <p class="iv-hero__desc">${description}</p>
           <div class="iv-hero__datepill">${calendarIcon}<span>${dateLabel}</span></div>
-          <div class="iv-progress">
-            <div class="iv-progress__head">
-              <span class="iv-progress__label">Progress</span>
-              <span class="iv-progress__val"
-                ><strong>$${c.progress.toLocaleString()}</strong> / $${c.goal.toLocaleString()}</span
-              >
-            </div>
-            <pq-progress-bar
-              profile="compact"
-              .value=${c.progress}
-              .max=${c.goal}
-              .variant=${eligible ? "complete" : "default"}
-            ></pq-progress-bar>
-          </div>
           <div class="iv-pillrow">${statusPill}</div>
         </div>
-        <h3 class="iv-rewards-title">${eligible ? "Choose Your Reward" : "Preview Your Rewards"}</h3>
+        <h3 class="iv-rewards-title">
+          ${eligible ? "Choose Your Reward" : "Preview Your Rewards"}
+        </h3>
         ${eligible
           ? this.renderRewardsCta()
           : html`<div class="iv-grid iv-grid--locked">
@@ -393,7 +494,15 @@ export class PqCampaignDetail extends LitElement {
   private renderRewardsCta(): TemplateResult {
     return html`<button class="rewards-cta" type="button" @click=${this.#viewRewards}>
       ${giftIcon}<span>Pick your prize</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.6"
+        aria-hidden="true"
+      >
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
     </button>`;
   }
 
@@ -418,18 +527,9 @@ export class PqCampaignDetail extends LitElement {
         </div>
         <h2 class="title">${c.name}</h2>
         <p class="sub">${c.meta}</p>
-        <div class="progress-head">
-          <span class="progress-label">Progress</span>
-          <span class="progress-value">${c.pct}%</span>
-        </div>
-        <pq-progress-bar
-          .value=${c.progress}
-          .max=${c.goal}
-          .variant=${this.eligible ? "complete" : "default"}
-        ></pq-progress-bar>
         <p class="earn">
-          <strong>How to earn:</strong> reach $${c.goal.toLocaleString()} in tracked play to
-          unlock every prize in the vault.
+          <strong>How to earn:</strong> reach $${c.goal.toLocaleString()} in tracked play to unlock
+          every prize in the vault.
         </p>
       </section>
     `;
@@ -442,19 +542,26 @@ export class PqCampaignDetail extends LitElement {
       <section class="vault" @pq-prize-select=${this.handlePrizeSelect}>
         <div class="vault-head">
           <h3 class="vault-title">Prize vault</h3>
-          <span class="vault-count">${prizes.length} ${this.eligible ? "available" : "locked"}</span>
+          <span class="vault-count"
+            >${prizes.length} ${this.eligible ? "available" : "locked"}</span
+          >
         </div>
         <div class="grid">
           ${prizes.map(
-            (p) => html`<pq-prize-tile
-              .prize=${p}
-              .state=${this.tileState}
-              .selected=${this.selectedPrizeId === p.id}
-            ></pq-prize-tile>`,
+            (p) =>
+              html`<pq-prize-tile
+                .prize=${p}
+                .state=${this.tileState}
+                .selected=${this.selectedPrizeId === p.id}
+              ></pq-prize-tile>`,
           )}
         </div>
         <button class="claim" ?disabled=${!claimReady} @click=${this.handleClaim}>
-          ${claimReady ? "Claim your prize" : this.eligible ? "Select a prize" : "Keep playing to unlock"}
+          ${claimReady
+            ? "Claim your prize"
+            : this.eligible
+              ? "Select a prize"
+              : "Keep playing to unlock"}
         </button>
       </section>
     `;

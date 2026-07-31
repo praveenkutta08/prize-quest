@@ -17,11 +17,7 @@ export const styles = css`
     padding: 12px;
     border: 1px solid var(--pq-navy-hairline, #2a4f7a);
     border-radius: var(--pq-r-lg, 12px);
-    background: linear-gradient(
-      180deg,
-      var(--pq-navy-low, #143352) 0%,
-      rgba(20, 51, 82, 0.6) 100%
-    );
+    background: linear-gradient(180deg, var(--pq-navy-low, #143352) 0%, rgba(20, 51, 82, 0.6) 100%);
     transition:
       transform 200ms var(--pq-ease, ease),
       border-color 200ms var(--pq-ease, ease);
@@ -202,8 +198,11 @@ export const styles = css`
     margin-bottom: 0;
     border-radius: 3px;
     border: 1px solid var(--cl-gold-glow, rgba(42, 79, 122, 0.4));
-    background:
-      radial-gradient(circle, var(--cl-gold-glow, rgba(252, 191, 73, 0.18)), rgba(6, 3, 10, 0.85));
+    background: radial-gradient(
+      circle,
+      var(--cl-gold-glow, rgba(252, 191, 73, 0.18)),
+      rgba(6, 3, 10, 0.85)
+    );
   }
   :host([profile="compact"]) .img svg {
     width: 22px;
@@ -292,8 +291,8 @@ export const styles = css`
     border-radius: var(--arc-r-xl, var(--pq-r-xl, 28px));
     background: linear-gradient(
       160deg,
-      rgba(60, 25, 110, 0.7),
-      rgba(30, 10, 60, 0.85)
+      var(--arc-surface-1, rgba(60, 25, 110, 0.7)),
+      var(--arc-surface-2, rgba(30, 10, 60, 0.85))
     );
   }
   :host([profile="expanded"]) .tile::before {
@@ -313,11 +312,7 @@ export const styles = css`
     border-radius: var(--arc-r-lg, var(--pq-r-lg, 20px));
     margin-bottom: 0;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.06),
-      rgba(255, 255, 255, 0.02)
-    );
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
   }
   :host([profile="expanded"]) .img svg {
     width: 40%;
@@ -511,7 +506,8 @@ export const styles = css`
   }
 
   /* expanded card under arcade: selectable hover lift toward the category tint */
-  :host-context([data-pq-mode="arcade"]):host([profile="expanded"][state="selectable"]) .tile:hover {
+  :host-context([data-pq-mode="arcade"]):host([profile="expanded"][state="selectable"])
+    .tile:hover {
     transform: translateY(-4px);
     border-color: var(--cat-tint, var(--cat-purple, #8e47e8));
     box-shadow: 0 16px 40px -16px var(--cat-tint-bg, rgba(142, 71, 232, 0.4));
@@ -561,8 +557,8 @@ export const styles = css`
     border: 1px solid var(--arc-hairline-2, var(--pq-navy-hairline, #2a4f7a));
     background: linear-gradient(
       160deg,
-      rgba(60, 25, 110, 0.55),
-      rgba(30, 10, 60, 0.75)
+      var(--arc-surface-1, rgba(60, 25, 110, 0.55)),
+      var(--arc-surface-2, rgba(30, 10, 60, 0.75))
     );
     overflow: hidden;
   }
@@ -580,7 +576,7 @@ export const styles = css`
     height: 36px;
     border-radius: 3px;
     border: none;
-    background: rgba(15, 4, 46, 0.6);
+    background: var(--arc-surface-0, rgba(15, 4, 46, 0.6));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .img svg {
     width: 80%;

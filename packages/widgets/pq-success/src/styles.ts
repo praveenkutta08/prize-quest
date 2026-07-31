@@ -368,7 +368,7 @@ export const styles = css`
     width: 90px;
     height: 90px;
     border-radius: var(--pq-r-md, 8px);
-    background: var(--pq-surface, rgba(15, 4, 46, 0.6));
+    background: var(--pq-surface, var(--arc-surface-0, rgba(15, 4, 46, 0.6)));
     color: var(--pq-text-muted, #d0bfec);
     display: grid;
     place-items: center;
@@ -517,19 +517,19 @@ export const styles = css`
     color: var(--arc-text-dim, #d0bfec);
   }
   :host-context([data-pq-mode="arcade"]) .burst__glow {
-    background-image: radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 217, 61, 0.4),
-      transparent 50%
-    );
+    background-image: radial-gradient(circle at 50% 50%, rgba(255, 217, 61, 0.4), transparent 50%);
   }
   :host-context([data-pq-mode="arcade"]) .order {
-    background: linear-gradient(160deg, rgba(60, 25, 110, 0.5), rgba(40, 15, 75, 0.85));
+    background: linear-gradient(
+      160deg,
+      var(--arc-surface-1, rgba(60, 25, 110, 0.5)),
+      var(--arc-surface-2, rgba(40, 15, 75, 0.85))
+    );
     border-color: var(--arc-display, #ffd93d);
     box-shadow: 0 0 32px var(--arc-glow-soft, rgba(255, 217, 61, 0.18));
   }
   :host-context([data-pq-mode="arcade"]) .order__img {
-    background: rgba(15, 4, 46, 0.6);
+    background: var(--arc-surface-0, rgba(15, 4, 46, 0.6));
   }
   :host-context([data-pq-mode="arcade"]) .order__label {
     color: var(--arc-display, #ffd93d);
@@ -566,7 +566,11 @@ export const styles = css`
      only re-skinned in the TTD compact profile; standard/expanded untouched. */
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .check {
     border: none;
-    background: radial-gradient(circle, var(--arc-display-glow, rgba(255, 217, 61, 0.55)), transparent 60%);
+    background: radial-gradient(
+      circle,
+      var(--arc-display-glow, rgba(255, 217, 61, 0.55)),
+      transparent 60%
+    );
     color: var(--arc-display, #ffd93d);
     filter: drop-shadow(0 0 8px var(--arc-display-glow, rgba(255, 217, 61, 0.55)));
   }
@@ -589,7 +593,7 @@ export const styles = css`
     letter-spacing: 0.02em;
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .ref {
-    background: rgba(60, 25, 110, 0.4);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.4));
     border: 1px solid var(--arc-display, #ffd93d);
     border-radius: var(--arc-r-sm, 6px);
     font-family: var(--arc-font-mono, monospace);
@@ -600,7 +604,7 @@ export const styles = css`
   /* arcade order pill (gold border + code) + action row — ref preview .suc-order */
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .sc-order {
     border-color: var(--arc-display, #ffd93d);
-    background: rgba(60, 25, 110, 0.4);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.4));
     box-shadow: 0 0 8px var(--arc-glow-soft, rgba(255, 217, 61, 0.18));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .sc-order__code,
@@ -608,7 +612,11 @@ export const styles = css`
     color: var(--arc-display, #ffd93d);
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .actions--row .cta {
-    background: linear-gradient(135deg, var(--arc-display-bright, #ffee5c), var(--cat-orange, #ff8c2c));
+    background: linear-gradient(
+      135deg,
+      var(--arc-display-bright, #ffee5c),
+      var(--cat-orange, #ff8c2c)
+    );
     color: var(--arc-bg-deep, #15042e);
     font-family: var(--arc-font-display, sans-serif);
     font-weight: var(--arc-font-display-weight, 800);
@@ -617,7 +625,7 @@ export const styles = css`
     box-shadow: 0 0 10px var(--arc-display-glow, rgba(255, 217, 61, 0.45));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .actions--row .cta--ghost {
-    background: rgba(60, 25, 110, 0.5);
+    background: var(--arc-surface-1, rgba(60, 25, 110, 0.5));
     border-color: var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
     color: var(--arc-text-dim, #d0bfec);
   }

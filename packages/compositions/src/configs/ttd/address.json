@@ -11,7 +11,12 @@
       }
     },
     {
-      "widget": "pq-address-form"
+      "widget": "pq-address-block",
+      "props": {
+        "verified": true,
+        "showConfirm": true,
+        "allowEdit": false
+      }
     }
   ]
 }
