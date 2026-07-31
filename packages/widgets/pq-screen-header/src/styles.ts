@@ -302,10 +302,24 @@ export const styles = css`
       var(--arc-bg-glass-2, var(--arc-surface-0, rgba(15, 4, 46, 0.65))),
       transparent
     );
-    border-bottom: 1px solid var(--arc-hairline-2, rgba(180, 130, 240, 0.35));
+    /* Mock divider: a gold gradient line brightest at center, not a flat hairline. */
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        transparent,
+        var(--arc-display, #ffd93d) 35%,
+        var(--arc-display-bright, #ffee5c) 50%,
+        var(--arc-display, #ffd93d) 65%,
+        transparent
+      )
+      1;
     font-family: var(--arc-font-body, var(--pq-font-body, "Inter", system-ui, sans-serif));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     font-family: var(--arc-font-display, var(--pq-font-display, "Manrope", sans-serif));
     font-weight: var(--arc-font-display-weight, 800);
     font-size: 11px;
@@ -313,13 +327,40 @@ export const styles = css`
     text-transform: uppercase;
     color: var(--arc-cream, var(--pq-text, #f5efe0));
   }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .brand-ico {
+    display: inline-grid;
+    place-items: center;
+    width: 13px;
+    height: 13px;
+    color: var(--arc-display, #ffd93d);
+    filter: drop-shadow(0 0 4px var(--arc-display-glow, rgba(255, 217, 61, 0.5)));
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .brand-ico svg {
+    width: 100%;
+    height: 100%;
+  }
+  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .brand-gold {
+    background: linear-gradient(
+      180deg,
+      var(--arc-display-bright, #ffee5c),
+      var(--arc-display, #ffd93d) 60%,
+      var(--arc-display-deep, #e0b71b)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .back {
     gap: 4px;
+    padding: 2.5px 9px;
+    border: 1px solid var(--arc-hairline-2, rgba(255, 217, 61, 0.4));
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
     font-family: var(--arc-font-body, var(--pq-font-body, "Inter", system-ui, sans-serif));
     font-size: 9px;
     letter-spacing: 0.04em;
     text-transform: none;
-    color: var(--arc-text-dim, var(--pq-text-muted, #d0bfec));
+    color: var(--arc-cream, var(--pq-text, #f5efe0));
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .back svg {
     width: 9px;

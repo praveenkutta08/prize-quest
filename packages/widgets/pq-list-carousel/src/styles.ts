@@ -35,36 +35,68 @@ export const styles = css`
   }
 
   ::slotted(*) {
-    flex: 0 0
-      calc((100% - (var(--ipp, 1) - 1) * var(--carousel-gap)) / var(--ipp, 1));
+    flex: 0 0 calc((100% - (var(--ipp, 1) - 1) * var(--carousel-gap)) / var(--ipp, 1));
     min-width: 0;
   }
 
+  /* Round paging arrows — polished (customer note): a filled gold coin with dark
+     chevron ink instead of the old hollow ring, so they read as pressable buttons
+     rather than outlines. Press compresses; disabled fades to a ghost ring. */
   .arrow {
     position: absolute;
     top: calc(50% - 8px);
     transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 217, 61, 0.35) 0%,
-      rgba(255, 217, 61, 0.08) 100%
+    background: linear-gradient(
+      180deg,
+      var(--carousel-gold-bright, var(--arc-display-bright, #ffee5c)),
+      var(--carousel-gold) 55%,
+      var(--carousel-gold-deep, var(--arc-display-deep, #e0b71b))
     );
-    border: 1.5px solid var(--carousel-gold);
+    border: 1px solid var(--carousel-gold-deep, var(--arc-display-deep, #e0b71b));
     display: grid;
     place-items: center;
-    color: var(--carousel-gold);
+    color: var(--carousel-ink, var(--arc-tint-ink, #141005));
     cursor: pointer;
     z-index: 10;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.5),
+      0 0 12px var(--carousel-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition:
+      transform 120ms ease,
+      box-shadow 120ms ease,
+      opacity 160ms ease;
     padding: 0;
-    box-shadow: 0 0 16px var(--carousel-glow),
+    box-shadow:
+      0 0 16px var(--carousel-glow),
       inset 0 0 8px rgba(255, 217, 61, 0.22);
   }
   .arrow svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
+  }
+  @media (hover: hover) {
+    .arrow:not(:disabled):hover {
+      transform: translateY(-50%) scale(1.08);
+      box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.55),
+        0 0 18px var(--carousel-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+  }
+  .arrow:not(:disabled):active {
+    transform: translateY(-50%) scale(0.92);
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.55),
+      inset 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .arrow {
+      transition: none;
+    }
   }
   .arrow--prev {
     left: 6px;
@@ -95,7 +127,9 @@ export const styles = css`
     height: 5px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.25);
-    transition: width 200ms ease, background 200ms ease;
+    transition:
+      width 200ms ease,
+      background 200ms ease;
   }
   .dot--active {
     width: 14px;

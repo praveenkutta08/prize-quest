@@ -18,36 +18,105 @@ import type { CardProfile } from "./types";
 import "@pq/pq-status-pill";
 import type { StatusPillVariant } from "@pq/pq-status-pill";
 
-/** Trophy used on the arcade hero panel (swap for operator artwork in prod). */
-const HERO_ICON = "🏆";
+/* Detail-pane icons for the two-pane arcade card (customer design): calendar (when),
+   chip (what to do), gift (what you win). */
+const stepIcons = [
+  html`<svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <rect x="3" y="4" width="18" height="18" rx="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>`,
+  html`<svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <rect x="2" y="5" width="20" height="14" rx="2" />
+    <line x1="2" y1="10" x2="22" y2="10" />
+  </svg>`,
+  html`<svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <rect x="3" y="9" width="18" height="12" rx="1" />
+    <path d="M12 9v12M3 13h18M12 9S10 4 7.5 5.5 9 9 12 9ZM12 9s2-5 4.5-3.5S15 9 12 9Z" />
+  </svg>`,
+];
 
-/** Whole-dollar money label, e.g. "$1,920". */
-function money(n: number): string {
-  return `$${Math.round(n).toLocaleString("en-US")}`;
+/** "Jun 30" from an ISO date; falls back to the raw string for non-ISO values. */
+function endsLabel(iso: string): string {
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-/** "2 days 14 hours left" / "14 hours left" / "Ended" from an ISO date. */
-function countdownLabel(expiresAt: string | undefined): string {
-  if (!expiresAt) return "";
-  const ms = new Date(expiresAt).getTime() - Date.now();
-  if (!Number.isFinite(ms) || ms <= 0) return "Ended";
-  const hours = Math.floor(ms / 3_600_000);
-  const days = Math.floor(hours / 24);
-  const remHours = hours % 24;
-  if (days > 0)
-    return `${days} day${days === 1 ? "" : "s"} ${remHours} hour${remHours === 1 ? "" : "s"} left`;
-  if (hours > 0) return `${hours} hour${hours === 1 ? "" : "s"} left`;
-  return "Ends soon";
-}
+/* 3-D gold trophy matching the customer mock: gradient cup with a star emblem on a
+   dark plinth. Gradient stops resolve through tenant tokens (with gold fallbacks) so
+   the art re-themes per tenant; IDs are safe because each card owns its shadow root. */
+const trophyArt = html`<svg viewBox="0 0 64 64" aria-hidden="true">
+  <defs>
+    <linearGradient id="tro-cup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style="stop-color: var(--arc-display-bright, #ffee5c)" />
+      <stop offset="0.45" style="stop-color: var(--arc-display, #ffd93d)" />
+      <stop offset="1" style="stop-color: var(--arc-display-deep, #b8860b)" />
+    </linearGradient>
+    <linearGradient id="tro-stem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style="stop-color: var(--arc-display, #ffd93d)" />
+      <stop offset="1" style="stop-color: var(--arc-display-deep, #b8860b)" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M13 14h-7v6a10 10 0 0 0 10 10"
+    fill="none"
+    stroke="url(#tro-cup)"
+    stroke-width="3.6"
+    stroke-linecap="round"
+  />
+  <path
+    d="M51 14h7v6a10 10 0 0 1-10 10"
+    fill="none"
+    stroke="url(#tro-cup)"
+    stroke-width="3.6"
+    stroke-linecap="round"
+  />
+  <path d="M14 10h36v12a18 15 0 0 1-36 0Z" fill="url(#tro-cup)" />
+  <ellipse cx="32" cy="10" rx="18" ry="3.4" fill="var(--arc-display-bright, #ffee5c)" />
+  <path
+    d="M32 17l2.2 4.6 5 .6-3.7 3.4 1 4.9-4.5-2.5-4.5 2.5 1-4.9-3.7-3.4 5-.6z"
+    fill="var(--arc-tint-ink, rgba(0,0,0,0.55))"
+    opacity="0.75"
+  />
+  <path d="M28 39h8l1.6 7h-11.2z" fill="url(#tro-stem)" />
+  <rect x="21" y="47" width="22" height="5" rx="1.6" fill="var(--arc-bg-elev, #3a1a5e)" />
+  <rect x="17" y="52" width="30" height="7" rx="2" fill="var(--arc-bg-elev, #3a1a5e)" />
+  <path
+    d="M32 53l1.3 2.6 2.9.4-2.1 2 .5 2.8-2.6-1.4-2.6 1.4.5-2.8-2.1-2 2.9-.4z"
+    fill="var(--arc-display, #ffd93d)"
+  />
+</svg>`;
 
-/** Title-case a category slug for the fact rail, e.g. "smart-home" → "Smart Home". */
-function categoryLabel(category: string | undefined): string {
-  if (!category) return "";
-  return category
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-}
+const giftGlyph = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
+  <rect x="3" y="9" width="18" height="12" rx="1" />
+  <path d="M12 9v12M3 13h18M12 9S10 4 7.5 5.5 9 9 12 9ZM12 9s2-5 4.5-3.5S15 9 12 9Z" />
+</svg>`;
 
 interface StatusPresentation {
   pill: StatusPillVariant;
@@ -244,10 +313,33 @@ export class PqCampaignCard extends LitElement {
     `;
   }
 
-  /** Arcade compact hero-art card (.cmpd) — Session 33 carousel layout. */
+  /**
+   * Arcade compact card — customer-approved TWO-PANE layout (mirrors the supplied
+   * mock): a poster on the left (trophy art over a gold glow, campaign name, prize
+   * count chip, big COLLECT button) and a detail column on the right (Promotion
+   * Overview / How It Works / Prizes). Deliberately NO currency anywhere — amounts in
+   * the copy are plain numbers ("Wager 500"), per the customer.
+   *
+   * The whole card stays one tap target: the COLLECT button is a visual affordance
+   * (rendered as a span) whose click bubbles to the card's handler, exactly like the
+   * old CTA. Content comes from the campaign's overview/steps/prizesNote fields with
+   * fallbacks derived from fields every campaign already has, so campaigns that
+   * predate the fields still render a complete card.
+   */
   private renderCompactArcade(c: Campaign): TemplateResult {
     const pres = STATUS[c.status];
-    const pool = c.prizePool ?? c.goal;
+    const count = c.prizeIds.length;
+    const overview = c.overview ?? c.description ?? c.meta;
+    const steps = (c.steps ?? []).slice(0, 3);
+    const prizesNote =
+      c.prizesNote ?? (count > 0 ? `${count} prize${count === 1 ? "" : "s"} to choose from.` : "");
+    const cta = pres.ready
+      ? "Collect"
+      : c.status === "claimed"
+        ? "View prize"
+        : c.status === "in-progress"
+          ? "View details"
+          : pres.chip;
     return html`
       <div
         class="cmpd"
@@ -255,51 +347,61 @@ export class PqCampaignCard extends LitElement {
         @click=${this.handleActivate}
         @keydown=${this.handleKeydown}
       >
-        <div class="cmpd__hero">
-          <div class="cmpd__hero-icon">${HERO_ICON}</div>
-          <div class="cmpd__hero-value">${money(pool)}</div>
-          <div class="cmpd__hero-label">Prize Pool</div>
-          <div class="cmpd__hero-pool">${c.prizeIds.length} prizes</div>
+        <div class="promo__poster">
+          <div class="promo__art">${trophyArt}</div>
+          ${this.renderSplitName(c.name)}
+          <span class="promo__chip">${giftGlyph} ${count} ${count === 1 ? "Prize" : "Prizes"}</span>
+          <span class="promo__ctawrap">
+            <span class="promo__cta ${pres.clickable ? "" : "promo__cta--off"}">
+              <span class="promo__cta-badge">${giftGlyph}</span>
+              <span class="promo__cta-label">${cta}</span>
+            </span>
+          </span>
         </div>
-        <div class="cmpd__main">
-          <div class="cmpd__head">
-            <div class="cmpd__chips"></div>
-            <span class="cmpd__pill cmpd__pill--${pres.chipKind}"
-              >${pres.pillLabel ?? pres.chip}</span
-            >
-          </div>
-          <h3 class="cmpd__name cmpd__name--marquee">${c.name}</h3>
-          <div class="cmpd__rule"></div>
-          ${this.renderFacts(c)}
-          <p class="cmpd__desc">${c.description ?? c.meta}</p>
-        </div>
-        <div class="cmpd__foot">
-          <span class="cmpd__expires">${countdownLabel(c.expiresAt)}</span>
+        <div class="promo__info">
+          <section class="promo__sec">
+            <h4 class="promo__h">Promotion Overview</h4>
+            <p class="promo__p">${overview}</p>
+          </section>
+          ${steps.length
+            ? html`<section class="promo__sec">
+                <h4 class="promo__h">How It Works</h4>
+                ${steps.map(
+                  (step, i) =>
+                    html`<div class="promo__step">
+                      <span class="promo__step-ico">${stepIcons[i % stepIcons.length]}</span>
+                      <span>${step}</span>
+                    </div>`,
+                )}
+              </section>`
+            : nothing}
+          ${prizesNote
+            ? html`<section class="promo__sec">
+                <h4 class="promo__h">Prizes</h4>
+                <p class="promo__p">
+                  ${prizesNote}${c.expiresAt
+                    ? html` <span class="promo__ends">· Ends ${endsLabel(c.expiresAt)}</span>`
+                    : nothing}
+                </p>
+              </section>`
+            : nothing}
         </div>
       </div>
     `;
   }
 
   /**
-   * Fact rail — the short, glanceable line that took the progress block's place.
-   * Prize count leads (highlighted), then the prize category and the campaign cadence.
-   * Cadence moved here from the head chip so nothing is stated twice on the card:
-   * the head now carries only the status pill, and the countdown stays in the footer.
+   * Two-tone poster name per the mock: everything but the last word in white on the
+   * first line, the last word in gold flanked by em-dashes ("SUNDAY SLOT" / "— SPRINT —").
+   * Single-word names render entirely in the gold treatment.
    */
-  private renderFacts(c: Campaign): TemplateResult {
-    const count = c.prizeIds.length;
-    const category = categoryLabel(c.category);
-    return html`
-      <div class="cmpd__facts">
-        ${count > 0
-          ? html`<span class="cmpd__fact cmpd__fact--hi"
-              >${count} ${count === 1 ? "Prize" : "Prizes"}</span
-            >`
-          : nothing}
-        ${category ? html`<span class="cmpd__fact">${category}</span>` : nothing}
-        ${c.frequency ? html`<span class="cmpd__fact">${c.frequency}</span>` : nothing}
-      </div>
-    `;
+  private renderSplitName(name: string): TemplateResult {
+    const words = name.trim().split(/\s+/);
+    const last = words.pop() ?? "";
+    return html`<h3 class="promo__name">
+      ${words.length ? html`<span class="promo__name-top">${words.join(" ")}</span>` : nothing}
+      <span class="promo__name-gold"><i>—</i> ${last} <i>—</i></span>
+    </h3>`;
   }
 
   private renderSkeleton(): TemplateResult {

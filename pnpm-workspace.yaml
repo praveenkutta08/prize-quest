@@ -2,6 +2,11 @@ packages:
   - "packages/*"
   - "packages/widgets/*"
   - "apps/*"
+  # Snapshot folder kept in the repo for reference. It declares the SAME package name
+  # as apps/ttd-synkros, so leaving it in the workspace makes `--filter @pq/ttd-synkros`
+  # ambiguous — it matches both and builds both on every deploy. Excluding it keeps the
+  # files in git while taking it out of install / build / lint / typecheck.
+  - "!apps/ttd-synkros copy"
 
 onlyBuiltDependencies:
   - esbuild

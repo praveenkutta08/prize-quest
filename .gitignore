@@ -39,3 +39,4 @@ Thumbs.db
 
 # stray temp files
 _tmp_*
+.env*

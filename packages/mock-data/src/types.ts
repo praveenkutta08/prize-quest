@@ -3,12 +3,7 @@
 // prize-quest-html5.html (screen 01 campaign list, prize grid, order history).
 
 /** Where a campaign sits in the patron flow. */
-export type CampaignStatus =
-  | "eligible"
-  | "in-progress"
-  | "expired"
-  | "claimed"
-  | "locked";
+export type CampaignStatus = "eligible" | "in-progress" | "expired" | "claimed" | "locked";
 
 export interface Campaign {
   id: string;
@@ -31,6 +26,15 @@ export interface Campaign {
    * wager `goal`. When omitted the hero card falls back to `goal`.
    */
   prizePool?: number;
+  /**
+   * Long-form promotion overview for the two-pane arcade card (customer design).
+   * Written WITHOUT currency symbols — amounts are plain numbers ("Wager 500").
+   */
+  overview?: string;
+  /** Up to three short "How it works" steps for the detail pane. */
+  steps?: string[];
+  /** One-line prizes blurb, e.g. "Compete for 4 exciting prizes every Sunday." */
+  prizesNote?: string;
   /** Cadence label for the expanded/arcade card chip, e.g. "Weekly". */
   frequency?: "Weekly" | "Monthly" | "Seasonal" | (string & {});
   /** Longer marketing blurb shown on the expanded/arcade card. */

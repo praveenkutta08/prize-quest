@@ -3,6 +3,12 @@ import type { Campaign, Player } from "@pq/mock-data";
 import { bindAtom, $activeCampaign, $player } from "@pq/store";
 import { styles } from "./styles";
 
+const trophyIcon = html`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path
+    d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.35A6 6 0 0 1 13 15.9V18h3v2H8v-2h3v-2.1A6 6 0 0 1 7.35 12H7a4 4 0 0 1-4-4V5h3V3Zm-1 4v1a2 2 0 0 0 2 2V7H5Zm14 0h-2v3a2 2 0 0 0 2-2V7Z"
+  />
+</svg>`;
+
 const backIcon = html`<svg
   viewBox="0 0 24 24"
   fill="none"
@@ -80,9 +86,9 @@ export class PqScreenHeader extends LitElement {
     super();
     this.title = "";
     this.showBack = false;
-    // Tenant-driven, with the product name as the floor. applyTokens has already run by
-    // the time any screen mounts, so this resolves to e.g. "Tier Rewards Promotions".
-    this.brand = document.documentElement.dataset.pqBrandName ?? "Tier Rewards Promotions";
+    // The PRODUCT name, not the tenant's programme name — these screens are vendor
+    // surface. Published by the host app before boot (data-pq-product-name).
+    this.brand = document.documentElement.dataset.pqProductName ?? "Tier Rewards Promotions";
     this.profile = "standard";
     this._campaign = null;
     this._player = null;
@@ -131,7 +137,7 @@ export class PqScreenHeader extends LitElement {
     return this.renderStandard();
   }
 
-  /** Original `.bar` chrome (back chevron · brand · points) — compact + standard. */
+  /** Original `.bar` chrome (back chevron · brand · logo) — compact + standard. */
   private renderStandard(): TemplateResult {
     return html`
       <div class="bar">
@@ -142,10 +148,26 @@ export class PqScreenHeader extends LitElement {
               </button>`
             : html`<span class="spacer"></span>`}
         </div>
-        <span class="brand">${this.displayTitle}</span>
+        <span class="brand">${this.renderTitle()}</span>
         <div class="right">${this.renderBrandmark()}</div>
       </div>
     `;
+  }
+
+  /**
+   * Title per the customer mock: a small gold trophy leads the PRODUCT title, and the
+   * last word renders in gold ("TIER REWARDS" white · "PROMOTIONS" gold). Applied only
+   * when the screen title IS the product name — campaign-name titles ("Sunday Slot
+   * Sprint") render plain, so the treatment marks the promotions surface specifically.
+   */
+  private renderTitle(): TemplateResult {
+    const title = this.displayTitle;
+    if (title !== this.brand) return html`${title}`;
+    const words = title.trim().split(/\s+/);
+    const last = words.pop() ?? "";
+    return html`<span class="brand-ico">${trophyIcon}</span>${words.length
+        ? html`<span>${words.join(" ")} </span>`
+        : nothing}<span class="brand-gold">${last}</span>`;
   }
 
   /**
