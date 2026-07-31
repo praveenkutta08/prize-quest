@@ -349,7 +349,22 @@ export class TtdAttract extends LitElement {
     if (this.#teaserTimer) clearInterval(this.#teaserTimer);
   }
 
-  #dismiss = (): void => {
+  #dismiss = (e?: Event): void => {
+    // The listener is window-wide (any tap on the cabinet starts a session), which on
+    // the demo page also caught the DEV CHROME: opening the form-factor or tenant
+    // <select> fired pointerdown — and arrowing through its options fired keydown —
+    // dismissing the attract screen behind the dropdown. Ignore anything that
+    // originates in the .ff-bar; a real TTD has no chrome, so this is demo-only.
+    if (e) {
+      const inDevChrome = e
+        .composedPath()
+        .some(
+          (t) =>
+            t instanceof HTMLElement &&
+            (t.classList?.contains("ff-bar") || t.closest?.(".ff-bar") !== null),
+        );
+      if (inDevChrome) return;
+    }
     this.dispatchEvent(new CustomEvent("ttd-attract-dismissed", { bubbles: true, composed: true }));
     navigate(`/hub${location.search}`);
   };
