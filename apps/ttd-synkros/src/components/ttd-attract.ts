@@ -326,8 +326,11 @@ export class TtdAttract extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    window.addEventListener("pointerdown", this.#dismiss, { passive: true });
-    window.addEventListener("keydown", this.#dismiss);
+    // Dismiss on a tap of the DEVICE SCREEN only — the listener lives on this element,
+    // not window. A real TTD has nothing outside the panel and no keyboard, so on the
+    // demo page clicks on the backdrop/dev chrome and stray keystrokes must not start
+    // a session (they were: the old window-wide pointerdown/keydown pair).
+    this.addEventListener("pointerdown", this.#dismiss, { passive: true });
     // Future vendor adapter hook: a real card insert fires this global event.
     if ((window as unknown as { __SYNKROS_CARD_TAP__?: unknown }).__SYNKROS_CARD_TAP__) {
       window.addEventListener("synkros-card-tap", this.#dismiss);
@@ -343,28 +346,12 @@ export class TtdAttract extends LitElement {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.removeEventListener("pointerdown", this.#dismiss);
-    window.removeEventListener("keydown", this.#dismiss);
+    this.removeEventListener("pointerdown", this.#dismiss);
     window.removeEventListener("synkros-card-tap", this.#dismiss);
     if (this.#teaserTimer) clearInterval(this.#teaserTimer);
   }
 
-  #dismiss = (e?: Event): void => {
-    // The listener is window-wide (any tap on the cabinet starts a session), which on
-    // the demo page also caught the DEV CHROME: opening the form-factor or tenant
-    // <select> fired pointerdown — and arrowing through its options fired keydown —
-    // dismissing the attract screen behind the dropdown. Ignore anything that
-    // originates in the .ff-bar; a real TTD has no chrome, so this is demo-only.
-    if (e) {
-      const inDevChrome = e
-        .composedPath()
-        .some(
-          (t) =>
-            t instanceof HTMLElement &&
-            (t.classList?.contains("ff-bar") || t.closest?.(".ff-bar") !== null),
-        );
-      if (inDevChrome) return;
-    }
+  #dismiss = (): void => {
     this.dispatchEvent(new CustomEvent("ttd-attract-dismissed", { bubbles: true, composed: true }));
     navigate(`/hub${location.search}`);
   };
