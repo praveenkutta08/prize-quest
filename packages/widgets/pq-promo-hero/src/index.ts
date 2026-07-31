@@ -137,9 +137,7 @@ export class PqPromoHero extends LitElement {
         ${(shown as Prize[]).map(
           (p) =>
             html`<div class="thumb">
-              <div class="thumb__img">
-                ${giftIcon}<span class="thumb__val">$${p.value ?? ""}</span>
-              </div>
+              <div class="thumb__img">${giftIcon}</div>
               <h4 class="thumb__name">${p.name ?? "Prize"}</h4>
               <p class="thumb__cat">${p.category ?? ""}</p>
             </div>`,

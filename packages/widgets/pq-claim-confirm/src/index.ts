@@ -3,20 +3,61 @@ import type { Address, Campaign, Prize } from "@pq/mock-data";
 import { bindAtom, $activeCampaign, $address, $selectedPrize } from "@pq/store";
 import { styles } from "./styles";
 
-const giftIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-  <rect x="3" y="8" width="18" height="13" rx="2" /><path d="M12 8v13M3 12h18" />
+const giftIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <rect x="3" y="8" width="18" height="13" rx="2" />
+  <path d="M12 8v13M3 12h18" />
   <path d="M12 8S9 3 6.5 4.5 9 8 12 8zM12 8s3-5 5.5-3.5S15 8 12 8z" />
 </svg>`;
-const arrowIcon = html`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
-  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+const arrowIcon = html`<svg
+  viewBox="0 0 24 24"
+  width="22"
+  height="22"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
+  <line x1="5" y1="12" x2="19" y2="12" />
+  <polyline points="12 5 19 12 12 19" />
 </svg>`;
-const backIcon = html`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+const backIcon = html`<svg
+  viewBox="0 0 24 24"
+  width="18"
+  height="18"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
   <polyline points="15 18 9 12 15 6" />
 </svg>`;
-const lockGlyph = html`<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-  <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+const lockGlyph = html`<svg
+  viewBox="0 0 24 24"
+  width="11"
+  height="11"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
+  <rect x="3" y="11" width="18" height="11" rx="2" />
+  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
 </svg>`;
-const checkGlyph = html`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3.5" aria-hidden="true">
+const checkGlyph = html`<svg
+  viewBox="0 0 24 24"
+  width="18"
+  height="18"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3.5"
+  aria-hidden="true"
+>
   <polyline points="20 6 9 17 4 12" />
 </svg>`;
 
@@ -52,7 +93,7 @@ export class PqClaimConfirm extends LitElement {
   /** Optional "cannot change" notice for the pre-PIN step. */
   declare warning?: string;
   declare profile: "compact" | "standard" | "expanded";
-  private declare accepted: boolean;
+  declare private accepted: boolean;
 
   constructor() {
     super();
@@ -82,13 +123,17 @@ export class PqClaimConfirm extends LitElement {
   private renderExpandedPrePin(): TemplateResult {
     const p = this.prize;
     const deliveryNote =
-      p?.prizeType === "digital" ? "Delivered instantly to your email" : "Ships free to your address on file";
+      p?.prizeType === "digital"
+        ? "Delivered instantly to your email"
+        : "Ships free to your address on file";
     return html`
       <section class="wrap wrap--xl">
         <div class="xl-head">
           <p class="eyebrow">Step 1 of 4 · Confirm Selection</p>
           <h2 class="xl-title">Confirm Your Reward</h2>
-          <p class="xl-sub">Make sure this is the prize you want. You can swap before you continue.</p>
+          <p class="xl-sub">
+            Make sure this is the prize you want. You can swap before you continue.
+          </p>
         </div>
         <div class="xl-grid xl-grid--prepin">
           <div class="prize-card">
@@ -97,7 +142,7 @@ export class PqClaimConfirm extends LitElement {
             ${p?.category ? html`<span class="prize-card__cat">${p.category}</span>` : nothing}
             <h3 class="prize-card__name">${p?.name ?? "No prize selected"}</h3>
             <div class="prize-card__foot">
-              <span class="prize-card__value">${p ? `$${p.value.toLocaleString()}` : "—"}</span>
+              <span class="prize-card__value">${p?.category ?? "—"}</span>
               <span class="prize-card__stock"><span class="dot"></span>In Stock · Ships Free</span>
             </div>
           </div>
@@ -144,9 +189,7 @@ export class PqClaimConfirm extends LitElement {
               <div class="summary-card__body">
                 ${p?.category ? html`<span class="prize-card__cat">${p.category}</span>` : nothing}
                 <div class="summary-card__name">${p?.name ?? "No prize selected"}</div>
-                <div class="summary-card__value">
-                  ${p ? `$${p.value.toLocaleString()}` : "—"} · Free ship
-                </div>
+                <div class="summary-card__value">Free shipping · 5–7 days</div>
               </div>
             </div>
             <div class="summary-card__meta">
@@ -171,15 +214,26 @@ export class PqClaimConfirm extends LitElement {
               <span class="terms__box" data-checked=${this.accepted ? "true" : "false"}>
                 ${this.accepted ? checkGlyph : nothing}
               </span>
-              <input type="checkbox" class="terms__input" .checked=${this.accepted} @change=${this.toggle} />
+              <input
+                type="checkbox"
+                class="terms__input"
+                .checked=${this.accepted}
+                @change=${this.toggle}
+              />
               <span>
                 I agree to the
-                <a href="#" @click=${(e: Event) => e.preventDefault()}>reward terms &amp; conditions</a>.
-                Reward is non-transferable, non-refundable for cash. Allow 5–7 business days for shipping.
+                <a href="#" @click=${(e: Event) => e.preventDefault()}
+                  >reward terms &amp; conditions</a
+                >. Reward is non-transferable, non-refundable for cash. Allow 5–7 business days for
+                shipping.
               </span>
             </label>
             <div class="xl-actions xl-actions--row">
-              <button class="cta cta--xl" ?disabled=${!this.accepted || !p} @click=${this.handleContinue}>
+              <button
+                class="cta cta--xl"
+                ?disabled=${!this.accepted || !p}
+                @click=${this.handleContinue}
+              >
                 Place Reward ${arrowIcon}
               </button>
               <button class="ghost" type="button" @click=${this.handleBack}>Cancel</button>
@@ -204,16 +258,22 @@ export class PqClaimConfirm extends LitElement {
                 <p class="card__meta">
                   ${p.category} · ${p.prizeType === "digital" ? "Digital voucher" : "Ships to you"}
                 </p>
-                ${this.campaign ? html`<p class="card__camp">from ${this.campaign.name}</p>` : nothing}
+                ${this.campaign
+                  ? html`<p class="card__camp">from ${this.campaign.name}</p>`
+                  : nothing}
               </div>
-              <span class="card__value">$${p.value.toLocaleString()}</span>
+              <span class="card__value"
+                >${p.prizeType === "digital" ? "Digital" : "Ships free"}</span
+              >
             </div>`
           : html`<p class="empty">No prize selected yet.</p>`}
         <label class="terms">
           <input type="checkbox" .checked=${this.accepted} @change=${this.toggle} />
           <span>
             I accept the
-            <a href="#" @click=${(e: Event) => e.preventDefault()}>promotion terms &amp; conditions</a>
+            <a href="#" @click=${(e: Event) => e.preventDefault()}
+              >promotion terms &amp; conditions</a
+            >
             and confirm I'm the eligible account holder.
           </span>
         </label>

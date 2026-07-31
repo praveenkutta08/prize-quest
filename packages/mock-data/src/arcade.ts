@@ -110,7 +110,7 @@ export const arcadePrizes: Prize[] = [
   },
   {
     id: "amazon-100",
-    name: "$100 Amazon Gift Card",
+    name: "Amazon Gift Card",
     category: "gift-cards",
     value: 100,
     inStock: true,
@@ -300,7 +300,7 @@ export const arcadeOrders: (Order & { imageSeed: string; category: string })[] =
   },
   {
     id: "PQ-26-7842-A5C3",
-    prizeName: "$50 DoorDash Gift",
+    prizeName: "DoorDash Gift Card",
     campaignName: "VIP Game Day Quest",
     status: "shipped",
     claimedAt: "May 28, 2026",
@@ -335,7 +335,7 @@ export const arcadeOrders: (Order & { imageSeed: string; category: string })[] =
   },
   {
     id: "PQ-26-7842-2D88",
-    prizeName: "$100 Amazon Gift",
+    prizeName: "Amazon Gift Card",
     campaignName: "Sunday Slot Sprint",
     status: "delivered",
     claimedAt: "Mar 11, 2026",
@@ -379,7 +379,7 @@ export const arcadeOrders: (Order & { imageSeed: string; category: string })[] =
   },
   {
     id: "PQ-26-7842-8AD1",
-    prizeName: "$25 Starbucks Gift",
+    prizeName: "Starbucks Gift Card",
     campaignName: "Sunday Slot Sprint",
     status: "shipped",
     claimedAt: "Dec 28, 2025",

@@ -15,9 +15,36 @@ const STATUS: Record<ClaimStatus, { variant: StatusPillVariant; label: string }>
   delivered: { variant: "delivered", label: "Delivered" },
 };
 
-const giftIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="1" /><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4.5 9 8 12 8ZM12 8s2-5 4.5-3.5S15 8 12 8Z" /></svg>`;
-const backIcon = html`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>`;
-const chevronDown = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>`;
+const giftIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.4"
+  aria-hidden="true"
+>
+  <rect x="3" y="8" width="18" height="13" rx="1" />
+  <path d="M12 8v13M3 12h18M12 8S10 3 7.5 4.5 9 8 12 8ZM12 8s2-5 4.5-3.5S15 8 12 8Z" />
+</svg>`;
+const backIcon = html`<svg
+  viewBox="0 0 24 24"
+  width="18"
+  height="18"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
+  <polyline points="15 18 9 12 15 6" />
+</svg>`;
+const chevronDown = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  aria-hidden="true"
+>
+  <polyline points="6 9 12 15 18 9" />
+</svg>`;
 
 /** Expanded order-history filter pills (Section 6.13). `all` shows everything. */
 const FILTERS = [
@@ -55,9 +82,9 @@ export class PqOrderHistory extends LitElement {
   declare profile: OrderHistoryProfile;
   declare loading: boolean;
   /** Active filter pill (expanded only). */
-  private declare _filter: OrderFilter;
+  declare private _filter: OrderFilter;
   /** Number of orders revealed so far (expanded pagination). */
-  private declare _shown: number;
+  declare private _shown: number;
 
   constructor() {
     super();
@@ -88,11 +115,7 @@ export class PqOrderHistory extends LitElement {
     // card per page so each order reads cleanly (2-up clipped the right card on the
     // narrow TTD frame); casino-loud / premium compact keep the 2-col grid.
     if (document.documentElement.dataset.pqMode === "arcade") {
-      return html`<pq-list-carousel
-        class="carousel"
-        .itemsPerPage=${1}
-        aria-label="Your orders"
-      >
+      return html`<pq-list-carousel class="carousel" .itemsPerPage=${1} aria-label="Your orders">
         ${cards}
       </pq-list-carousel>`;
     }
@@ -130,7 +153,13 @@ export class PqOrderHistory extends LitElement {
     return html`<div class="stack">
       ${this.orders.map((o) => {
         const s = STATUS[o.status];
-        return html`<div class="row" role="button" tabindex="0" @click=${() => this.open(o.id)} @keydown=${(e: KeyboardEvent) => this.onKey(e, o.id)}>
+        return html`<div
+          class="row"
+          role="button"
+          tabindex="0"
+          @click=${() => this.open(o.id)}
+          @keydown=${(e: KeyboardEvent) => this.onKey(e, o.id)}
+        >
           <span class="thumb">${giftIcon}</span>
           <div>
             <h4 class="name">${o.prizeName}</h4>
@@ -208,7 +237,9 @@ export class PqOrderHistory extends LitElement {
     return html`<div class="exp">
       <div class="oh-titlerow">
         <div class="oh-titlerow__left">
-          <button class="oh-back" type="button" @click=${this.goBack}>${backIcon}<span>Back to hub</span></button>
+          <button class="oh-back" type="button" @click=${this.goBack}>
+            ${backIcon}<span>Back to hub</span>
+          </button>
           <div>
             <p class="exp-eyebrow">Your account</p>
             <h3 class="exp-title">Order History</h3>
@@ -232,8 +263,8 @@ export class PqOrderHistory extends LitElement {
           <div class="stat-card__sub">Tracking active</div>
         </div>
         <div class="stat-card stat-card--value">
-          <div class="stat-card__eyebrow">Total Value</div>
-          <div class="stat-card__num">$${s.totalValue.toLocaleString()}</div>
+          <div class="stat-card__eyebrow">Prizes Claimed</div>
+          <div class="stat-card__num">${s.totalOrders}</div>
           <div class="stat-card__sub">Lifetime rewards</div>
         </div>
         <div class="stat-card stat-card--favorite">
@@ -246,13 +277,14 @@ export class PqOrderHistory extends LitElement {
       <div class="filter-row">
         <span class="filter-label">Filter</span>
         ${FILTERS.map(
-          (f) => html`<button
-            class="filter-pill ${this._filter === f.key ? "filter-pill--active" : ""}"
-            type="button"
-            @click=${() => this.setFilter(f.key)}
-          >
-            ${f.label}
-          </button>`,
+          (f) =>
+            html`<button
+              class="filter-pill ${this._filter === f.key ? "filter-pill--active" : ""}"
+              type="button"
+              @click=${() => this.setFilter(f.key)}
+            >
+              ${f.label}
+            </button>`,
         )}
       </div>
 
@@ -272,9 +304,7 @@ export class PqOrderHistory extends LitElement {
               <h4 class="exp-name">${o.prizeName}</h4>
               <p class="exp-ord">#${o.id} · ${o.campaignName}</p>
               <pq-status-pill .variant=${st.variant} .label=${st.label}></pq-status-pill>
-              <p class="exp-dates">
-                Claimed ${o.claimedAt}${meta ? html` · ${meta}` : nothing}
-              </p>
+              <p class="exp-dates">Claimed ${o.claimedAt}${meta ? html` · ${meta}` : nothing}</p>
             </div>
           </div>`;
         })}
@@ -291,7 +321,9 @@ export class PqOrderHistory extends LitElement {
   }
 
   private open(id: string): void {
-    this.dispatchEvent(new CustomEvent("pq-order-click", { detail: { id }, bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("pq-order-click", { detail: { id }, bubbles: true, composed: true }),
+    );
   }
 
   private onKey(event: KeyboardEvent, id: string): void {

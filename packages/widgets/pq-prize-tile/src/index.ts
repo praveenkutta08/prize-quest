@@ -15,16 +15,34 @@ function catTintStyle(category: string | undefined): string {
 import { styles } from "./styles";
 import type { PrizeTileState } from "./types";
 
-const giftIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+const giftIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.4"
+  aria-hidden="true"
+>
   <rect x="3" y="8" width="18" height="13" rx="1" />
   <path d="M12 8v13M3 12h18M12 8S10 3 7.5 4.5 9 8 12 8ZM12 8s2-5 4.5-3.5S15 8 12 8Z" />
 </svg>`;
 
-const checkIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+const checkIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
   <polyline points="20 6 9 17 4 12" />
 </svg>`;
 
-const lockIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+const lockIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  aria-hidden="true"
+>
   <rect x="5" y="11" width="14" height="9" rx="1" />
   <path d="M8 11V8a4 4 0 0 1 8 0v3" />
 </svg>`;
@@ -86,8 +104,7 @@ export class PqPrizeTile extends LitElement {
     return html`
       <div class="tile" @click=${this.handleSelect} @keydown=${this.handleKeydown}>
         <div class="img">
-          ${giftIcon}
-          ${p ? html`<span class="value">$${p.value}</span>` : nothing}
+          ${giftIcon} ${p ? html`<span class="value">${p.category}</span>` : nothing}
           <span class="check">${checkIcon}</span>
           <span class="lock"><span>${lockIcon}</span></span>
         </div>
@@ -115,13 +132,12 @@ export class PqPrizeTile extends LitElement {
         @keydown=${this.handleKeydown}
       >
         <div class="img">
-          ${giftIcon}
-          ${locked ? html`<span class="lock-overlay">${lockIcon}</span>` : nothing}
+          ${giftIcon} ${locked ? html`<span class="lock-overlay">${lockIcon}</span>` : nothing}
         </div>
         ${catLabel ? html`<span class="cat-pill">${catLabel}</span>` : nothing}
         <h3 class="name">${p?.name ?? ""}</h3>
         <div class="meta-row">
-          ${p ? html`<span class="val">$${p.value}</span>` : nothing}
+          ${p ? html`<span class="val">${p.category}</span>` : nothing}
           ${locked
             ? html`<span class="stock-locked">${lockIcon}Locked</span>`
             : html`<span class="stock">In Stock</span>`}
@@ -153,7 +169,7 @@ export class PqPrizeTile extends LitElement {
         <div class="img">${giftIcon}</div>
         <div class="info">
           <h4 class="name">${p?.name ?? ""}</h4>
-          ${p ? html`<p class="val">$${p.value}</p>` : nothing}
+          ${p ? html`<p class="val">${p.category}</p>` : nothing}
         </div>
       </div>
     `;

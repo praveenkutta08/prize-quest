@@ -24,7 +24,7 @@ export const orders: Order[] = [
   },
   {
     id: "order-3",
-    prizeName: "$100 Amazon Gift Card",
+    prizeName: "Amazon Gift Card",
     campaignName: "Memorial Day Madness",
     status: "delivered",
     claimedAt: "May 20, 2026",
@@ -57,7 +57,7 @@ export const notifications: Notification[] = [
     id: "ntf-3",
     type: "campaign",
     title: "New Gold-tier campaign",
-    body: "Summer Bash 2026 just launched · $500 wager = premium prize",
+    body: "Summer Bash 2026 just launched · wager 500 for a premium prize",
     time: "3h",
     read: true,
     ctaLabel: "View campaign",

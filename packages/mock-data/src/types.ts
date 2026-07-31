@@ -15,7 +15,7 @@ export interface Campaign {
   goal: number;
   /** Convenience 0–100 percentage (progress / goal). */
   pct: number;
-  /** Short mono meta line, e.g. "$725 / $1,000 · 26 days left". */
+  /** Short mono meta line, e.g. "26 days left". No currency symbols anywhere. */
   meta: string;
   /** ISO date the campaign expires, when applicable. */
   expiresAt?: string;

@@ -13,14 +13,38 @@ import {
 } from "@pq/store";
 import { styles } from "./styles";
 
-const giftIcon = html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-  <rect x="3" y="8" width="18" height="13" rx="2" /><path d="M12 8v13M3 12h18" />
+const giftIcon = html`<svg
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  <rect x="3" y="8" width="18" height="13" rx="2" />
+  <path d="M12 8v13M3 12h18" />
   <path d="M12 8S9 3 6.5 4.5 9 8 12 8zM12 8s3-5 5.5-3.5S15 8 12 8z" />
 </svg>`;
-const arrowIcon = html`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
-  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+const arrowIcon = html`<svg
+  viewBox="0 0 24 24"
+  width="22"
+  height="22"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3"
+  aria-hidden="true"
+>
+  <line x1="5" y1="12" x2="19" y2="12" />
+  <polyline points="12 5 19 12 12 19" />
 </svg>`;
-const checkGlyph = html`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3.5" aria-hidden="true">
+const checkGlyph = html`<svg
+  viewBox="0 0 24 24"
+  width="18"
+  height="18"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="3.5"
+  aria-hidden="true"
+>
   <polyline points="20 6 9 17 4 12" />
 </svg>`;
 
@@ -50,17 +74,21 @@ export class PqClaimSummary extends LitElement {
   declare address?: Address;
   /** The address the player entered/edited on <pq-address-form> (Session 30). */
   declare shipping?: AddressData | null;
-  /** Show a pre-ticked "Agree terms" gate (TTD final confirm). Default false (premium). */
+  /**
+   * Show the terms note on the final confirm (TTD). INFORMATIONAL ONLY: submitting the
+   * claim constitutes agreement, so there is no checkbox and the Submit CTA is never
+   * gated on it (customer decision — the box was one more tap on a casino floor for a
+   * step that carries no real choice).
+   */
   declare showTerms: boolean;
   declare profile: "compact" | "standard" | "expanded";
-  private declare termsChecked: boolean;
+  declare private termsChecked: boolean;
 
   constructor() {
     super();
     this.showTerms = false;
     this.profile = "standard";
-    // Terms start UNCHECKED so the patron must actively agree before submitting
-    // (the Submit CTA is disabled until this flips true).
+    // Vestigial: no compact/standard UI gates on this any more (see showTerms).
     this.termsChecked = false;
     bindAtom(this, $activeCampaign, "campaign");
     bindAtom(this, $selectedPrize, "prize");
@@ -97,8 +125,14 @@ export class PqClaimSummary extends LitElement {
         <p class="eyebrow">Final review</p>
         <h2 class="title">Submit your claim</h2>
         <dl class="rows">
-          <div class="row"><dt>Prize</dt><dd>${p ? `${p.name} · $${p.value.toLocaleString()}` : "—"}</dd></div>
-          <div class="row"><dt>Campaign</dt><dd>${this.campaign?.name ?? "—"}</dd></div>
+          <div class="row">
+            <dt>Prize</dt>
+            <dd>${p?.name ?? "—"}</dd>
+          </div>
+          <div class="row">
+            <dt>Campaign</dt>
+            <dd>${this.campaign?.name ?? "—"}</dd>
+          </div>
           <div class="row">
             <dt>Delivery</dt>
             <dd>${digital ? "Digital voucher (instant)" : "Ships to the address below"}</dd>
@@ -118,29 +152,15 @@ export class PqClaimSummary extends LitElement {
           ? html`<p class="ship-warning">Using default address — go back to edit.</p>`
           : nothing}
         ${this.showTerms
-          ? html`<label class="tnc">
-              <span class="tnc__box" ?data-checked=${this.termsChecked}>
-                <input type="checkbox" .checked=${this.termsChecked} @change=${this.toggleTerms} />
-                ${this.termsChecked
-                  ? html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" aria-hidden="true">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>`
-                  : nothing}
-              </span>
-              <span>
-                I agree to the
-                <a href="#" @click=${(e: Event) => e.preventDefault()}>reward terms &amp; conditions</a>.
-                Reward is non-transferable, non-refundable for cash. Allow 5–7 business days for shipping.
-              </span>
-            </label>`
+          ? html`<p class="tnc">
+              By submitting you agree to the
+              <a href="#" @click=${(e: Event) => e.preventDefault()}
+                >reward terms &amp; conditions</a
+              >. Reward is non-transferable, non-refundable for cash. Allow 5–7 business days for
+              shipping.
+            </p>`
           : nothing}
-        <button
-          class="cta"
-          ?disabled=${!p || (this.showTerms && !this.termsChecked)}
-          @click=${this.handleSubmit}
-        >
-          Submit claim
-        </button>
+        <button class="cta" ?disabled=${!p} @click=${this.handleSubmit}>Submit claim</button>
       </section>
     `;
   }
@@ -172,7 +192,7 @@ export class PqClaimSummary extends LitElement {
                 ${p?.category ? html`<span class="prize-card__cat">${p.category}</span>` : nothing}
                 <div class="summary-card__name">${p?.name ?? "No prize selected"}</div>
                 <div class="summary-card__value">
-                  ${p ? `$${p.value.toLocaleString()}` : "—"}${digital ? "" : " · Free ship"}
+                  ${digital ? "Digital voucher" : "Free ship · 5–7 days"}
                 </div>
               </div>
             </div>
@@ -185,29 +205,45 @@ export class PqClaimSummary extends LitElement {
             <div class="address-card">
               <div class="address-card__head">
                 <span class="address-card__label">Ship to</span>
-                <span class="address-card__pill address-card__pill--confirmed">${checkGlyph} Confirmed</span>
+                <span class="address-card__pill address-card__pill--confirmed"
+                  >${checkGlyph} Confirmed</span
+                >
               </div>
               <div class="address-card__body">
-                ${a.name ? html`${a.name}<br />` : nothing}${a.line1}${a.line2 ? html`, ${a.line2}` : nothing}<br />${a.city},
-                ${a.state} ${a.postalCode}
+                ${a.name ? html`${a.name}<br />` : nothing}${a.line1}${a.line2
+                  ? html`, ${a.line2}`
+                  : nothing}<br />${a.city}, ${a.state} ${a.postalCode}
               </div>
               ${ship.fallback
-                ? html`<p class="address-card__warning">Using default address — go back to edit.</p>`
+                ? html`<p class="address-card__warning">
+                    Using default address — go back to edit.
+                  </p>`
                 : nothing}
             </div>
             <label class="terms terms--xl">
               <span class="terms__box" data-checked=${this.termsChecked ? "true" : "false"}>
                 ${this.termsChecked ? checkGlyph : nothing}
               </span>
-              <input type="checkbox" class="terms__input" .checked=${this.termsChecked} @change=${this.toggleTerms} />
+              <input
+                type="checkbox"
+                class="terms__input"
+                .checked=${this.termsChecked}
+                @change=${this.toggleTerms}
+              />
               <span>
                 I agree to the
-                <a href="#" @click=${(e: Event) => e.preventDefault()}>reward terms &amp; conditions</a>.
-                Reward is non-transferable, non-refundable for cash. Allow 5–7 business days for shipping.
+                <a href="#" @click=${(e: Event) => e.preventDefault()}
+                  >reward terms &amp; conditions</a
+                >. Reward is non-transferable, non-refundable for cash. Allow 5–7 business days for
+                shipping.
               </span>
             </label>
             <div class="xl-actions xl-actions--row">
-              <button class="cta cta--xl" ?disabled=${!p || !this.termsChecked} @click=${this.handleSubmit}>
+              <button
+                class="cta cta--xl"
+                ?disabled=${!p || !this.termsChecked}
+                @click=${this.handleSubmit}
+              >
                 Place Reward ${arrowIcon}
               </button>
               <button class="ghost" type="button" @click=${this.handleCancel}>Cancel</button>
@@ -228,8 +264,9 @@ export class PqClaimSummary extends LitElement {
 
   private handleSubmit = (): void => {
     if (!this.prize) return;
-    const gateTerms = this.showTerms || this.profile === "expanded";
-    if (gateTerms && !this.termsChecked) return;
+    // Only the expanded kiosk layout still renders a checkbox; compact/standard submit
+    // is never gated — the terms note is informational (agreement is implied by submit).
+    if (this.profile === "expanded" && !this.termsChecked) return;
     this.dispatchEvent(new CustomEvent("pq-claim-submit", { bubbles: true, composed: true }));
   };
 }

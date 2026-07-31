@@ -72,50 +72,19 @@ export const styles = css`
     cursor: not-allowed;
   }
 
-  /* ---------- terms (showTerms) ---------- */
+  /* ---------- terms note (showTerms) ----------
+     Informational only — the checkbox is gone (customer decision): submitting the
+     claim constitutes agreement, so the note reads as fine print, not a control. */
   .tnc {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    margin: 0;
     font-size: 13px;
     font-weight: 500;
     line-height: 1.45;
     color: var(--pq-text, #f1f5f9);
-    cursor: pointer;
   }
   .tnc a {
     color: var(--pq-gold-bright, #fcbf49);
     text-decoration: underline;
-  }
-  .tnc__box {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    flex: 0 0 auto;
-    border-radius: 3px;
-    border: 1px solid var(--cl-success, var(--pq-emerald, #10b981));
-    background: var(--cl-success, var(--pq-emerald, #10b981));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--cl-black, #0a1a2e);
-  }
-  /* Unchecked state (the boolean data-checked attribute is absent): empty box with a
-     visible hairline so the patron can see it toggle on/off. */
-  .tnc__box:not([data-checked]) {
-    background: transparent;
-    border-color: var(--cl-gold-deep, var(--pq-navy-hairline, #2a4f7a));
-  }
-  .tnc__box input {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-  .tnc__box svg {
-    width: 10px;
-    height: 10px;
   }
 
   /* ---------- compact tightening (must fit 480×234 without scrolling) ---------- */
@@ -539,27 +508,13 @@ export const styles = css`
     color: var(--arc-cream, var(--pq-text, #f1f5f9));
   }
 
-  /* T&C agree row → tc-row panel + filled gold square (tc-checkbox) + gold link. */
+  /* T&C note → framed fine-print panel (no checkbox) + gold link. */
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .tnc {
-    gap: 6px;
-    align-items: flex-start;
-    padding: 5px 6px;
+    padding: 5px 8px;
     border: 1px solid var(--arc-display, var(--pq-gold-bright, #fcbf49));
     border-radius: var(--arc-r-sm, var(--pq-r-md, 8px));
     background: var(--arc-surface-1, rgba(60, 25, 110, 0.3));
     color: var(--arc-cream, var(--pq-text, #f1f5f9));
-  }
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .tnc__box {
-    margin-top: 1px;
-    border-color: var(--arc-display, var(--pq-gold-bright, #fcbf49));
-    background: var(--arc-display, var(--pq-gold-bright, #fcbf49));
-    color: var(--arc-bg-deep, var(--cl-black, #0a1a2e));
-    box-shadow: 0 0 4px var(--arc-display-glow, rgba(252, 191, 73, 0.6));
-  }
-  /* Unchecked: empty box with a gold hairline so it reads as toggleable. */
-  :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .tnc__box:not([data-checked]) {
-    background: transparent;
-    box-shadow: none;
   }
   :host-context([data-pq-mode="arcade"]):host([profile="compact"]) .tnc a {
     color: var(--arc-display, var(--pq-gold-bright, #fcbf49));

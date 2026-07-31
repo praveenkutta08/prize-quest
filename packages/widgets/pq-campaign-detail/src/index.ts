@@ -309,7 +309,7 @@ export class PqCampaignDetail extends LitElement {
     const statusPill = eligible
       ? html`<span class="arc-pill arc-pill--success">${checkIcon} Ready to claim</span>`
       : html`<span class="arc-pill arc-pill--danger"
-          >${lockIcon} Locked · $${remaining.toLocaleString()} to go</span
+          >${lockIcon} Locked · ${remaining.toLocaleString()} to go</span
         >`;
 
     return html`
@@ -375,7 +375,7 @@ export class PqCampaignDetail extends LitElement {
           <span class="det-hero__label">${this.eligible ? "Ready" : "Locked"}</span>
           <span class="det-hero__title">${c.name}</span>
           <span class="det-hero__pct"
-            >${this.eligible ? "✓" : `$${remaining.toLocaleString()} to go`}</span
+            >${this.eligible ? "✓" : `${remaining.toLocaleString()} to go`}</span
           >
         </div>
         ${this.eligible
@@ -425,7 +425,7 @@ export class PqCampaignDetail extends LitElement {
     const statusPill = eligible
       ? html`<span class="iv-pill iv-pill--success">${checkIcon} Ready to claim</span>`
       : html`<span class="iv-pill iv-pill--danger"
-          >${lockIcon} Locked · $${remaining.toLocaleString()} to unlock</span
+          >${lockIcon} Locked · ${remaining.toLocaleString()} to unlock</span
         >`;
     return html`
       <div class="wrap-iview">
@@ -460,7 +460,7 @@ export class PqCampaignDetail extends LitElement {
         <span class="iv-prize__img">${eligible ? giftIcon : lockIcon}</span>
         <span class="iv-prize__body">
           <span class="iv-prize__name">${p.name}</span>
-          <span class="iv-prize__value">$${p.value.toLocaleString()}</span>
+          <span class="iv-prize__value">${p.category}</span>
         </span>
         ${eligible
           ? html`<span class="iv-prize__cta">Claim</span>`
@@ -528,7 +528,7 @@ export class PqCampaignDetail extends LitElement {
         <h2 class="title">${c.name}</h2>
         <p class="sub">${c.meta}</p>
         <p class="earn">
-          <strong>How to earn:</strong> reach $${c.goal.toLocaleString()} in tracked play to unlock
+          <strong>How to earn:</strong> reach ${c.goal.toLocaleString()} in tracked play to unlock
           every prize in the vault.
         </p>
       </section>

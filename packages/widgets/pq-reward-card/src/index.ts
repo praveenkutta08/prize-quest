@@ -111,7 +111,7 @@ export class PqRewardCard extends LitElement {
       <button class="rwd-card" type="button" ?disabled=${this.disabled} @click=${this.#select}>
         <div class="art">${this.renderArt()}</div>
         ${this.name ? html`<h4 class="name">${this.name}</h4>` : nothing}
-        <div class="val">${this.value}</div>
+        ${this.value ? html`<div class="val">${this.value}</div>` : nothing}
         <div class="tier">${TIER_LABEL[this.rarity] ?? TIER_LABEL.common}</div>
       </button>
     `;
