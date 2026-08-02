@@ -1,13 +1,20 @@
-// @pq/ttd-synkros — TTD / iVIEW demo entry.
+// @pq/ttd-synkros — TTD / iVIEW / Device Manager demo entry.
 //
 // Boots the Tier Rewards Promotions experience inside a fixed device frame.
 // Flow: /attract (insert card) → /hub (3-tile menu) → / (campaign list) and the full
 // claim flow. The 'tier-rewards' tenant (mode: arcade) is the default, and the channel
 // is pinned by the form-factor switcher — 'ttd' (compact) for the Konami/stretched TTD
-// panels, 'iview-4' for the L&W iView 1024×600.
+// panels, 'iview-4' for the DEVICE MANAGER main-screen surfaces (1920×1080 / 1024×768).
 //
-// #screen is a mount point: host chrome (<ttd-attract>/<ttd-hub>) for the attract/hub
-// routes, or <pq-screen> (the server-driven Prize Quest flow) for everything else.
+// DEVICE MANAGER form factors are EGM main screens. An EGM cannot split its display,
+// so we do not: the game is a Picture-in-Picture video layer the cabinet's mixer scales
+// and positions, and <dm-stage> owns a full-screen content layer with a HOLE where the
+// game sits. Regions (rail / top band / bottom band) are derived from the game rect —
+// see ./dm/stage.ts. Screens mount into those regions by slot.
+//
+// #screen is a mount point: host chrome (<ttd-attract>/<ttd-hub>, or <dm-stage>) for
+// host routes, or <pq-screen> (the server-driven Prize Quest flow) for everything else
+// — in DM mode the pq-screen is slotted into the stage's content rail.
 import "./styles.css";
 
 import { setActiveTenant, getActiveTenant } from "@pq/tenants";
@@ -18,6 +25,15 @@ import { arcadePlayer, arcadeAddress, getPatronShippingAddress } from "@pq/mock-
 // Host-app chrome (NOT @pq widgets) — the attract + hub screens.
 import "./components/ttd-attract";
 import "./components/ttd-hub";
+// Device Manager host chrome — Picture-in-Picture stage + the screens it hosts.
+import "./components/dm-stage";
+import "./components/dm-attract";
+import "./components/dm-hub";
+import "./components/dm-rewards-hub";
+import "./components/dm-promo-list";
+import "./components/dm-prize-list";
+import "./components/dm-flow-panel";
+import "./components/dm-order-list";
 import {
   $selectedPrize,
   $player,
@@ -135,18 +151,121 @@ function withChannel(path: string): string {
   return `${path}?channel=${channel}`;
 }
 
+/** Device Manager mode is active when the form factor set [data-dm-ff] on <html>. */
+function isDeviceManager(): boolean {
+  return Boolean(document.documentElement.dataset.dmFf);
+}
+
+/**
+ * Stage mode per route — three postures, matching what the patron is doing.
+ *
+ *   BAND     idling or just carded in. The game is untouched at full size and we are
+ *            a service strip beneath it.
+ *   FRAME    browsing (Tier Rewards landing, promotions, prize selection). These are
+ *            DM-native screens that lay themselves out for the rail, so the game keeps
+ *            its full reference rect beside them.
+ *   TAKEOVER the embedded flow (confirm → PIN → address → claim). Those screens are
+ *            drawn by the landscape iview-4 compositions and cannot lay out in a narrow
+ *            rail, so the game steps back to a window and they get the room. Nobody is
+ *            watching the reels while entering a PIN.
+ */
+const DM_PRIZE_ROUTE = /^\/campaign\/[^/]+\/rewards$/;
+
+function dmStageMode(path: string): "band" | "frame" | "takeover" {
+  if (path === "/attract" || path === "/hub") return "band";
+  // ONE GEOMETRY for the whole service window. Browsing promotions, picking a prize and
+  // claiming it are one continuous journey; the game must not change size underneath the
+  // patron halfway through it. An earlier version dropped the claim into a takeover on
+  // the 1024 cabinet — the game lost a third of its width and the content column gained
+  // half of its own, mid-flow, which read as two different applications.
+  return "frame";
+}
+
+/** Swap the stage's child screen, leaving the stage (and the game layer) untouched. */
+function setStageScreen(stage: Element, tag: string, slot: string): void {
+  const current = stage.firstElementChild;
+  if (current && current.tagName.toLowerCase() === tag) return;
+  const el = document.createElement(tag);
+  el.setAttribute("slot", slot);
+  stage.replaceChildren(el);
+}
+
+/**
+ * DM mounting — one persistent <dm-stage> for the whole session so the game layer
+ * never unmounts between screens; only its slotted child changes.
+ */
+function mountForDmRoute(path: string): void {
+  if (!screenMount) return;
+  screenMount.classList.add("host");
+
+  let stage = screenMount.querySelector("dm-stage");
+  if (!stage) {
+    stage = document.createElement("dm-stage");
+    stage.setAttribute("data-ff", document.documentElement.dataset.dmFf ?? "1920x1080");
+    // The stage's own close affordance returns the patron to their game.
+    stage.addEventListener("dm-stage-close", () => navigate(withChannel("/hub")));
+    screenMount.replaceChildren(stage);
+  }
+  const dm = stage as HTMLElement & { mode: string; identity: boolean };
+  dm.mode = dmStageMode(path);
+  // Identity lives in the top band on every screen inside the service window; the
+  // band strips (attract/hub) carry their own. Anything that is not a strip gets it —
+  // whether a given rect solves to frame or takeover is geometry, and the identity
+  // should not blink out just because the game moved a few pixels.
+  dm.identity = dmStageMode(path) !== "band";
+
+  if (path === "/attract") return setStageScreen(stage, "dm-attract", "bottom");
+  if (path === "/hub") return setStageScreen(stage, "dm-hub", "bottom");
+  if (path === "/rewards") return setStageScreen(stage, "dm-rewards-hub", "rail");
+  if (path === "/promotions") return setStageScreen(stage, "dm-promo-list", "rail");
+  // Prize selection is DM-native too — pq-reward-select is built for a landscape panel
+  // and its art well starves the body column in a rail.
+  if (DM_PRIZE_ROUTE.test(path)) return setStageScreen(stage, "dm-prize-list", "rail");
+  // Order history is DM-native for the same reason prize selection is: the shared
+  // widget's card is "118px art well + 1fr", which starves the text column to ~89px in
+  // this rail and clamps the prize name to initials.
+  if (path === "/orders") return setStageScreen(stage, "dm-order-list", "rail");
+
+  // Flow routes (confirm → PIN → address → review → success, plus order history) run
+  // the SAME widgets and the SAME compositions as TTD/iVIEW — not a word of the flow
+  // is re-authored here. What changes is the container: <dm-flow-panel> frames them in
+  // the vitrine chrome, caps the reading width, and carries the step rail, so a 270px
+  // block of content stops looking marooned in a 768px rail. pq-screen is created once
+  // inside the panel and self-routes from there.
+  let panel = stage.querySelector("dm-flow-panel") as (HTMLElement & { route: string }) | null;
+  if (!panel) {
+    panel = document.createElement("dm-flow-panel") as HTMLElement & { route: string };
+    panel.setAttribute("slot", "rail");
+    const pq = document.createElement("pq-screen");
+    pq.setAttribute("route", path);
+    panel.appendChild(pq);
+    stage.replaceChildren(panel);
+  }
+  // The panel needs the route for the step rail; pq-screen self-routes independently.
+  panel.route = path;
+}
+
 /**
  * Mount the right thing for a route: host chrome (attract/hub) edge-to-edge, or the
  * <pq-screen> flow renderer (which self-routes via its own router subscription).
+ * Device Manager form factors route through the dm-* shells instead.
  */
 function mountForRoute(path: string): void {
   if (!screenMount) return;
+  if (isDeviceManager()) {
+    mountForDmRoute(path);
+    return;
+  }
   if (path === "/attract") {
     screenMount.classList.add("host");
     screenMount.replaceChildren(document.createElement("ttd-attract"));
   } else if (path === "/hub") {
     screenMount.classList.add("host");
     screenMount.replaceChildren(document.createElement("ttd-hub"));
+  } else if (path === "/rewards" || path === "/promotions") {
+    // DM-only routes reached without DM chrome (deep link on a TTD panel) — treat as
+    // the campaign list.
+    navigate(withChannel("/"));
   } else {
     screenMount.classList.remove("host");
     // Create pq-screen once; it then self-routes for every subsequent flow change.
@@ -206,7 +325,14 @@ function bindIdleTimeout(): void {
 const FF_CHANNEL: Record<string, string> = {
   "480x234": "ttd",
   "640x240": "ttd",
+  // Device Manager (EGM main screen) — the embedded flow renders inside the 40%
+  // service window, so it runs the roomier iview-4 compositions. A dedicated
+  // `device-manager` channel in @pq/compositions can replace this later.
+  "1920x1080": "iview-4",
+  "1024x768": "iview-4",
 };
+/** Form factors that mount the Device Manager host chrome (dm-* shells). */
+const DM_FF = new Set(["1920x1080", "1024x768"]);
 const FF_DEFAULT = "480x234";
 
 /** Read the persisted form factor (dev chrome only; harmless in private browsing). */
@@ -215,6 +341,34 @@ function storedFormFactor(): string | null {
     return localStorage.getItem("pq.ttd.ff");
   } catch {
     return null;
+  }
+}
+
+/**
+ * Scale the cabinet to the viewport. The TTD frames always fit; the Device Manager
+ * frames (1920×1080 / 1024×768 + cabinet padding) usually don't, so the cabinet is
+ * scaled down with the negative-margin trick to keep the stage centered without
+ * changing its layout size. Demo chrome only — a real DM runs full screen.
+ */
+function fitStage(): void {
+  const cabinet = document.querySelector<HTMLElement>(".cabinet");
+  if (!cabinet) return;
+  const styles = getComputedStyle(document.documentElement);
+  const w = parseFloat(styles.getPropertyValue("--ttd-screen-w")) || 480;
+  const h = parseFloat(styles.getPropertyValue("--ttd-screen-h")) || 234;
+  const pad = parseFloat(styles.getPropertyValue("--ttd-cabinet-pad")) || 30;
+  const cabW = w + pad * 2;
+  const cabH = h + pad * 2;
+  // 49px ff-bar + the stage's own 56/24px padding.
+  const availW = window.innerWidth - 48;
+  const availH = window.innerHeight - 49 - 112;
+  const scale = Math.min(availW / cabW, availH / cabH, 1);
+  if (scale < 1) {
+    cabinet.style.transform = `scale(${scale})`;
+    cabinet.style.margin = `${(cabH * scale - cabH) / 2}px ${(cabW * scale - cabW) / 2}px`;
+  } else {
+    cabinet.style.transform = "";
+    cabinet.style.margin = "";
   }
 }
 
@@ -229,6 +383,13 @@ function bindFormFactor(): void {
     document.documentElement.style.setProperty("--ttd-screen-w", `${w}px`);
     document.documentElement.style.setProperty("--ttd-screen-h", `${h}px`);
     if (dims) dims.textContent = `${w} × ${h}`;
+    // DM host chrome + the head bootstrap key off [data-dm-ff].
+    if (DM_FF.has(value)) {
+      document.documentElement.dataset.dmFf = value;
+    } else {
+      delete document.documentElement.dataset.dmFf;
+    }
+    fitStage();
     // Persist so demo viewers don't have to re-pick on reload.
     try {
       localStorage.setItem("pq.ttd.ff", value);
@@ -247,6 +408,7 @@ function bindFormFactor(): void {
   }
   select.value = active;
   applyFormFactor(active);
+  window.addEventListener("resize", fitStage);
 
   select.addEventListener("change", (e) => {
     const value = (e.target as HTMLSelectElement).value;
@@ -363,10 +525,18 @@ function bindFlow(): void {
   });
 
   // Header back button: the campaign list and the post-claim success/voucher screens
-  // return to the hub (dashboard); mid-flow screens step back through history.
+  // return to the hub (dashboard); mid-flow screens step back through history. In DM
+  // mode the campaign list backs out to the service-window hub (/rewards) instead —
+  // /hub there means "close the window and return to the game".
   document.addEventListener("pq-back", () => {
     const path = getCurrentRoute().path;
-    if (path === "/" || path.startsWith("/success") || path.startsWith("/voucher")) {
+    if (isDeviceManager() && DM_PRIZE_ROUTE.test(path)) {
+      navigate(withChannel("/promotions"));
+    } else if (isDeviceManager() && (path === "/" || path === "/promotions")) {
+      // Inside the service window, Back steps up to the Tier Rewards landing — /hub
+      // there means "close the window and return to the game".
+      navigate(withChannel(path === "/promotions" ? "/rewards" : "/promotions"));
+    } else if (path === "/" || path.startsWith("/success") || path.startsWith("/voucher")) {
       navigate(withChannel("/hub"));
     } else {
       history.back();

@@ -28,10 +28,15 @@ export const styles = css`
     flex: 1 1 0;
     display: flex;
     align-items: center;
-    min-width: 0;
-  }
-  .right {
-    justify-content: flex-end;
+    /* NO "min-width: 0" here, deliberately. These two tracks are "flex-basis: 0" so
+       they grow evenly and keep .brand optically centred — but with the automatic
+       minimum size switched off they also shrink BELOW their own content. In a narrow
+       rail (the Device Manager service window gives the flow ~400px) .left collapses
+       under the Back button and .right collapses under the brandmark, and since neither
+       track clips, both children spill inward and paint on top of the title. Letting
+       the automatic minimum apply keeps the children inside their tracks; .brand
+       already carries its own overflow/ellipsis, so it is the one that yields when
+       space runs out — which is the correct thing to sacrifice. */
   }
   .brand {
     flex: 0 1 auto;
