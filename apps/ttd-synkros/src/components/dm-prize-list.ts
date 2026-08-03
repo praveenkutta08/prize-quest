@@ -40,16 +40,6 @@ import { LitElement, css, html, type TemplateResult } from "lit";
 import { $activeCampaign, $prizes, bindAtom } from "@pq/store";
 import type { Campaign, Prize } from "@pq/mock-data";
 
-const trophyIcon = html`<svg
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="1.6"
-  aria-hidden="true"
->
-  <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z" />
-  <path d="M6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3M9 15h6M12 13v2M8 20h8" />
-</svg>`;
 const lockIcon = html`<svg
   viewBox="0 0 24 24"
   fill="none"
@@ -160,7 +150,10 @@ export class DmPrizeList extends LitElement {
       display: flex;
       flex-direction: column;
       width: 100%;
+      /* Pinned to the rail both ways: fill it, never exceed it. Without the max a long
+         promotion pushed the host past the region and the rail grew a scrollbar. */
       min-height: 100%;
+      max-height: 100%;
     }
     *,
     *::before,
@@ -176,97 +169,6 @@ export class DmPrizeList extends LitElement {
       padding: 22px 24px 18px;
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
-    }
-
-    /* ---------------- header ---------------- */
-    .head {
-      flex: none;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
-    }
-    .back {
-      flex: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 9px 15px;
-      border-radius: 999px;
-      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.2));
-      background: var(--arc-surface-0, rgba(0, 0, 0, 0.6));
-      color: var(--arc-text-dim, #c0c0c0);
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-    .back:hover {
-      color: var(--arc-display-bright, #ebd08a);
-      border-color: var(--arc-display-deep, #a8862a);
-    }
-    .head__mid {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 auto;
-      min-width: 0;
-    }
-    .head__mid svg {
-      width: 20px;
-      height: 20px;
-      flex: none;
-      color: var(--arc-display, #d4af37);
-    }
-    .head__eyebrow {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--arc-cream, #fff);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 26ch;
-    }
-    .head__title {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--arc-display, #d4af37);
-      white-space: nowrap;
-      /* The screen label never yields to the campaign name — a header that reads
-         "SUNDAY SLOT..." tells the patron nothing about where they are. */
-      flex: none;
-    }
-    .head__mark {
-      flex: none;
-      display: grid;
-      place-items: center;
-      padding: 5px 11px;
-      border-radius: 6px;
-      background: var(--arc-bg-deep, #000);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-    }
-    .head__mark img {
-      display: block;
-      height: 26px;
-      max-width: 128px;
-      object-fit: contain;
-    }
-    .head__wordmark {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 14px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--arc-display-bright, #ebd08a);
     }
 
     /* ---------------- the counter ---------------- */
@@ -528,8 +430,9 @@ export class DmPrizeList extends LitElement {
       -webkit-mask-image: linear-gradient(to top, transparent 6%, rgba(0, 0, 0, 0.9) 78%);
       mask-image: linear-gradient(to top, transparent 6%, rgba(0, 0, 0, 0.9) 78%);
     }
-
-    /* ---------------- the label ---------------- */
+    /* The detail pane. NOTE: this rule was destroyed once by a bulk edit that matched
+       CSS selectors by SUBSTRING — stripping the shared header's ".label" also stripped
+       this one, and the card's text went flush to its edges. */
     .label {
       flex: none;
       display: flex;
@@ -719,31 +622,6 @@ export class DmPrizeList extends LitElement {
       gap: 10px;
       padding: 14px 14px 12px;
     }
-    :host-context([data-dm-ff="1024x768"]) .head {
-      gap: 8px;
-      padding-bottom: 10px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .back {
-      padding: 7px 11px;
-      font-size: 9px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__mid {
-      gap: 7px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__mid svg {
-      display: none;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__eyebrow {
-      font-size: 12px;
-      max-width: 11ch;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__title {
-      font-size: 12px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__mark img {
-      height: 20px;
-      max-width: 96px;
-    }
     :host-context([data-dm-ff="1024x768"]) .stage {
       gap: 6px;
     }
@@ -822,20 +700,17 @@ export class DmPrizeList extends LitElement {
     campaign: { attribute: false },
     prizes: { attribute: false },
     index: { type: Number },
-    logoBroken: { state: true },
   };
 
   declare campaign: Campaign | null;
   declare prizes: Prize[] | null;
   declare index: number;
-  declare logoBroken: boolean;
 
   constructor() {
     super();
     this.campaign = null;
     this.prizes = null;
     this.index = 0;
-    this.logoBroken = false;
     bindAtom(this, $activeCampaign, "campaign");
     bindAtom(this, $prizes, "prizes");
   }
@@ -852,10 +727,6 @@ export class DmPrizeList extends LitElement {
   private get track(): HTMLElement | null {
     return this.renderRoot.querySelector<HTMLElement>(".track");
   }
-
-  #back = (): void => {
-    this.dispatchEvent(new CustomEvent("pq-back", { bubbles: true, composed: true }));
-  };
 
   /**
    * ENDLESS CARRY — the track never runs out in either direction.
@@ -1015,15 +886,7 @@ export class DmPrizeList extends LitElement {
 
     return html`
       <div class="root">
-        <div class="head">
-          <button class="back" type="button" @click=${this.#back}>‹ Back</button>
-          <div class="head__mid">
-            ${trophyIcon}
-            <span class="head__eyebrow">${name}</span>
-            <span class="head__title">Prizes</span>
-          </div>
-          ${this.renderMark()}
-        </div>
+        <dm-screen-head .eyebrow=${name} label="Prizes"></dm-screen-head>
 
         ${list.length
           ? html`
@@ -1164,25 +1027,6 @@ export class DmPrizeList extends LitElement {
         </div>
       </article>
     `;
-  }
-
-  private renderMark(): TemplateResult {
-    const root = document.documentElement.dataset;
-    const src = this.logoBroken ? null : root.pqProductLogo || null;
-    if (!src) {
-      return html`<span class="head__mark">
-        <span class="head__wordmark">${root.pqProductAlt ?? "Tier Rewards"}</span>
-      </span>`;
-    }
-    return html`<span class="head__mark">
-      <img
-        src=${src}
-        alt=${root.pqProductAlt ?? "Tier Rewards"}
-        @error=${() => {
-          this.logoBroken = true;
-        }}
-      />
-    </span>`;
   }
 }
 

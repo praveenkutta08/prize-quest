@@ -75,7 +75,7 @@ export class DmHub extends LitElement {
     .id__name {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 22px;
+      font-size: 32px;
       letter-spacing: 0.03em;
       text-transform: uppercase;
       color: var(--arc-cream, #fff);
@@ -109,127 +109,96 @@ export class DmHub extends LitElement {
     }
     /* The 1920 strip has a wide empty middle; the live offer belongs there — it is the
        reason to open the window at all. Hidden at 1024, where there is no room. */
-    .offer {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin: 0 auto;
-      padding: 10px 20px;
-      border-radius: var(--arc-r-md, 8px);
-      background: var(--arc-surface-0, rgba(0, 0, 0, 0.7));
-      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
-    }
-    .offer__dot {
-      width: 8px;
-      height: 8px;
-      flex: none;
-      border-radius: 50%;
-      background: var(--arc-success, #34d670);
-      box-shadow: 0 0 8px var(--arc-success, #34d670);
-    }
-    .offer__label {
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--arc-text-faint, #8a8a8a);
-    }
-    .offer__name {
-      margin-top: 3px;
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--arc-display-bright, #ebd08a);
-      line-height: 1;
-    }
-    .offer__val {
-      padding-left: 14px;
-      border-left: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      color: var(--arc-display, #d4af37);
-      line-height: 1;
-    }
-    .offer__val small {
-      display: block;
-      margin-top: 3px;
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--arc-text-faint, #8a8a8a);
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .offer__dot {
-        animation: dm-blink 1.8s ease-in-out infinite;
-      }
-    }
-    @keyframes dm-blink {
-      50% {
-        opacity: 0.4;
-      }
-    }
     .actions {
       display: flex;
       align-items: stretch;
       gap: 12px;
       margin-left: auto;
       flex: none;
-      height: 62px;
+      /* Sized to the 208px service strip. These are the only touch targets on the
+         carded-in screen, so they take the depth the strip gained. 104px still left
+         the strip half empty — a deeper band with the same-size content just moves the
+         black around. */
+      height: 162px;
     }
+    /* A KEY, not a label in a box. The button grew but its contents did not, so it
+       read as a small icon marooned in a big rectangle. Medallion + label are now
+       sized off the button's own height and fill roughly 85% of it. */
     .dash-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      min-width: 132px;
-      padding: 0 22px;
-      border-radius: var(--arc-r-md, 8px);
+      gap: 16px;
+      min-width: 190px;
+      padding: 18px 26px;
+      border-radius: 10px;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(
-        160deg,
-        var(--arc-bg-glass, rgba(34, 34, 34, 0.6)),
-        var(--arc-bg-glass-2, rgba(12, 12, 12, 0.9))
-      );
+      background-color: var(--arc-bg-base, #0a0a0a);
+      background-image:
+        radial-gradient(
+          78% 62% at 50% 22%,
+          var(--arc-glow-soft, rgba(212, 175, 55, 0.16)),
+          transparent 72%
+        ),
+        linear-gradient(
+          160deg,
+          var(--arc-bg-glass, rgba(34, 34, 34, 0.6)),
+          var(--arc-bg-glass-2, rgba(12, 12, 12, 0.9))
+        );
       border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
       color: var(--arc-cream, #fff);
       font: inherit;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -3px 10px -4px rgba(0, 0, 0, 0.8);
       transition:
         transform 200ms ease,
-        border-color 200ms ease;
+        border-color 200ms ease,
+        box-shadow 200ms ease;
+    }
+    /* The medallion carries the icon at a size you can read across a bank of machines. */
+    .dash-btn__medal {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 84px;
+      height: 84px;
+      border-radius: 10px;
+      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      background: var(--arc-surface-0, rgba(0, 0, 0, 0.7));
+      color: var(--arc-display, #d4af37);
+      box-shadow: inset 0 0 26px -8px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
     }
     .dash-btn:hover {
       transform: translateY(-1px);
       border-color: var(--arc-display-deep, #a8862a);
     }
-    .dash-btn svg {
-      width: 18px;
-      height: 18px;
+    .dash-btn__medal svg {
+      width: 42px;
+      height: 42px;
     }
     /* The Tier Rewards mark is silver/white on transparent — it can't sit directly on
        the gold hero. It gets its own dark plate, the way a brand lockup would on a
        printed gold panel; the plate also separates OUR mark from the casino's chrome. */
     .mark {
+      flex: none;
       display: grid;
       place-items: center;
-      padding: 5px 12px;
-      border-radius: var(--arc-r-sm, 5px);
+      width: 132px;
+      height: 84px;
+      padding: 8px 12px;
+      border-radius: 10px;
       background: var(--arc-bg-deep, #000);
       border: 1px solid rgba(255, 255, 255, 0.16);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
     .mark img {
       display: block;
-      height: 22px;
-      max-width: 132px;
+      max-height: 100%;
+      max-width: 100%;
       object-fit: contain;
     }
     .mark svg {
@@ -238,7 +207,7 @@ export class DmHub extends LitElement {
     .dash-btn__label {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 12px;
+      font-size: 18px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       line-height: 1.05;
@@ -317,38 +286,38 @@ export class DmHub extends LitElement {
       padding: 0 18px;
     }
     :host-context([data-dm-ff="1024x768"]) .id__name {
-      font-size: 17px;
+      font-size: 25px;
     }
     :host-context([data-dm-ff="1024x768"]) .id__pts {
       display: none;
     }
     :host-context([data-dm-ff="1024x768"]) .actions {
-      height: 50px;
-      gap: 8px;
+      height: 130px;
+      gap: 10px;
     }
     :host-context([data-dm-ff="1024x768"]) .dash-btn {
-      min-width: 100px;
-      padding: 0 12px;
+      min-width: 148px;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
     }
-    :host-context([data-dm-ff="1024x768"]) .dash-btn svg {
-      width: 14px;
-      height: 14px;
+    :host-context([data-dm-ff="1024x768"]) .dash-btn__medal {
+      width: 68px;
+      height: 68px;
+      border-radius: 8px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .dash-btn__medal svg {
+      width: 34px;
+      height: 34px;
     }
     :host-context([data-dm-ff="1024x768"]) .dash-btn__label {
-      font-size: 10px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .offer {
-      display: none;
-    }
-    :host-context([data-dm-ff="1024x768"]) .dash-btn--hero {
-      padding: 0 38px 0 12px;
+      font-size: 14px;
     }
     :host-context([data-dm-ff="1024x768"]) .mark {
-      padding: 4px 8px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .mark img {
-      height: 16px;
-      max-width: 96px;
+      width: 106px;
+      height: 68px;
+      padding: 6px 10px;
+      border-radius: 8px;
     }
   `;
 
@@ -370,27 +339,6 @@ export class DmHub extends LitElement {
     this.logoBroken = false;
     bindAtom(this, $player, "player");
     bindAtom(this, $campaigns, "campaigns");
-  }
-
-  /** The live offer, centred in the strip — what the patron gets for opening the window. */
-  private renderOffer(): TemplateResult {
-    const c = this.featured;
-    if (!c) return html``;
-    const ready = c.status === "eligible";
-    const count = c.prizeIds.length;
-    return html`
-      <div class="offer">
-        <span class="offer__dot"></span>
-        <div>
-          <div class="offer__label">${ready ? "Ready to collect" : "In progress"}</div>
-          <div class="offer__name">${c.name}</div>
-        </div>
-        <div class="offer__val">
-          ${ready ? `${count} prize${count === 1 ? "" : "s"}` : "Keep playing"}
-          <small>${ready ? "Yours to choose from" : "to qualify"}</small>
-        </div>
-      </div>
-    `;
   }
 
   /**
@@ -450,7 +398,6 @@ export class DmHub extends LitElement {
                 : nothing}
             </div>
           </div>
-          ${this.renderOffer()}
           <div class="actions">
             <button
               class="dash-btn dash-btn--hero"
@@ -466,11 +413,11 @@ export class DmHub extends LitElement {
               <span class="dash-btn__label">Promotions</span>
             </button>
             <button class="dash-btn" type="button" title="Vendor system (demo)">
-              ${userIcon}
+              <span class="dash-btn__medal">${userIcon}</span>
               <span class="dash-btn__label">My Account</span>
             </button>
             <button class="dash-btn" type="button" title="Vendor system (demo)">
-              ${awardIcon}
+              <span class="dash-btn__medal">${awardIcon}</span>
               <span class="dash-btn__label">Tier Status</span>
             </button>
           </div>

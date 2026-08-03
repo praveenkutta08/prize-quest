@@ -92,10 +92,15 @@ export class DmStage extends LitElement {
       border-radius: 3px;
     }
     ::slotted(*) {
-      flex: 1 0 auto;
+      /* 1 1 auto, not 1 0 auto. With shrink disabled a screen whose content ran even a
+         few pixels past the rail could not give them back, so it grew instead and the
+         RAIL scrolled — a scrollbar down the middle of the service window, beside a
+         game. Screens may fill the rail; they may not exceed it. */
+      flex: 1 1 auto;
       display: flex;
       flex-direction: column;
       min-width: 0;
+      min-height: 0;
     }
     /* The embedded flow keeps its natural height and is centred as a card. */
     ::slotted(pq-screen) {

@@ -95,7 +95,10 @@ export class DmPromoList extends LitElement {
       display: flex;
       flex-direction: column;
       width: 100%;
+      /* Pinned to the rail both ways: fill it, never exceed it. Without the max a long
+         promotion pushed the host past the region and the rail grew a scrollbar. */
       min-height: 100%;
+      max-height: 100%;
     }
     *,
     *::before,
@@ -111,92 +114,6 @@ export class DmPromoList extends LitElement {
       padding: 22px 24px 20px;
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
-    }
-
-    /* ---------------- header ---------------- */
-    .head {
-      flex: none;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
-    }
-    .back {
-      flex: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 9px 15px;
-      border-radius: 999px;
-      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.2));
-      background: var(--arc-surface-0, rgba(0, 0, 0, 0.6));
-      color: var(--arc-text-dim, #c0c0c0);
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-    .back:hover {
-      color: var(--arc-display-bright, #ebd08a);
-      border-color: var(--arc-display-deep, #a8862a);
-    }
-    .head__mid {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 auto;
-      min-width: 0;
-    }
-    .head__mid svg {
-      width: 20px;
-      height: 20px;
-      flex: none;
-      color: var(--arc-display, #d4af37);
-    }
-    .head__eyebrow {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--arc-cream, #fff);
-      white-space: nowrap;
-    }
-    .head__title {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--arc-display, #d4af37);
-      white-space: nowrap;
-    }
-    /* The product mark — this screen is ours, so it signs it. */
-    .head__mark {
-      flex: none;
-      display: grid;
-      place-items: center;
-      padding: 5px 11px;
-      border-radius: 6px;
-      background: var(--arc-bg-deep, #000);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-    }
-    .head__mark img {
-      display: block;
-      height: 26px;
-      max-width: 128px;
-      object-fit: contain;
-    }
-    .head__wordmark {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 14px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--arc-display-bright, #ebd08a);
     }
 
     /* ---------------- carousel ---------------- */
@@ -641,26 +558,7 @@ export class DmPromoList extends LitElement {
     /* ---------- 1024×768 · the rail is ~400px: stack the two panes ---------- */
     :host-context([data-dm-ff="1024x768"]) .root {
       gap: 10px;
-      padding: 13px 14px 12px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head {
-      padding-bottom: 10px;
-      gap: 8px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .back {
-      padding: 7px 11px;
-      font-size: 9px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__mid svg,
-    :host-context([data-dm-ff="1024x768"]) .head__eyebrow {
-      display: none;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__title {
-      font-size: 14px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__mark img {
-      height: 20px;
-      max-width: 96px;
+      padding: 14px 14px 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .stage {
       gap: 7px;
@@ -716,6 +614,15 @@ export class DmPromoList extends LitElement {
     :host-context([data-dm-ff="1024x768"]) .body {
       gap: 14px;
       padding: 16px 16px 18px;
+      /* Stacked at 1024 the detail pane is the part that can outgrow the card. Let IT
+         scroll rather than the card clipping the PRIZES block off the bottom or the
+         whole screen growing. Bar hidden — this is a touch surface. */
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    :host-context([data-dm-ff="1024x768"]) .body::-webkit-scrollbar {
+      display: none;
     }
     :host-context([data-dm-ff="1024x768"]) .body section + section {
       padding-top: 13px;
@@ -745,18 +652,15 @@ export class DmPromoList extends LitElement {
   static override properties = {
     campaigns: { attribute: false },
     index: { type: Number },
-    logoBroken: { state: true },
   };
 
   declare campaigns: Campaign[] | null;
   declare index: number;
-  declare logoBroken: boolean;
 
   constructor() {
     super();
     this.campaigns = null;
     this.index = 0;
-    this.logoBroken = false;
     bindAtom(this, $campaigns, "campaigns");
   }
 
@@ -777,10 +681,6 @@ export class DmPromoList extends LitElement {
       new CustomEvent("pq-card-click", { detail: { id }, bubbles: true, composed: true }),
     );
   }
-
-  #back = (): void => {
-    this.dispatchEvent(new CustomEvent("pq-back", { bubbles: true, composed: true }));
-  };
 
   #page(next: number): void {
     const track = this.track;
@@ -818,15 +718,7 @@ export class DmPromoList extends LitElement {
 
     return html`
       <div class="root">
-        <div class="head">
-          <button class="back" type="button" @click=${this.#back}>‹ Back</button>
-          <div class="head__mid">
-            ${trophyIcon}
-            <span class="head__eyebrow">Tier Rewards</span>
-            <span class="head__title">Promotions</span>
-          </div>
-          ${this.renderMark()}
-        </div>
+        <dm-screen-head eyebrow="Tier Rewards" label="Promotions"></dm-screen-head>
 
         ${list.length
           ? html`
@@ -923,26 +815,6 @@ export class DmPromoList extends LitElement {
         </div>
       </article>
     `;
-  }
-
-  /** The product mark — reads <html data-pq-product-*>; degrades to a wordmark. */
-  private renderMark(): TemplateResult {
-    const root = document.documentElement.dataset;
-    const src = this.logoBroken ? null : root.pqProductLogo || null;
-    if (!src) {
-      return html`<span class="head__mark">
-        <span class="head__wordmark">${root.pqProductAlt ?? "Tier Rewards"}</span>
-      </span>`;
-    }
-    return html`<span class="head__mark">
-      <img
-        src=${src}
-        alt=${root.pqProductAlt ?? "Tier Rewards"}
-        @error=${() => {
-          this.logoBroken = true;
-        }}
-      />
-    </span>`;
   }
 }
 

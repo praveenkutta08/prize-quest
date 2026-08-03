@@ -29,12 +29,26 @@ export class PqScreen extends LitElement {
   static override styles = styles;
 
   static override properties = {
+    /**
+     * Widget tags this host renders ITSELF, so the composition's copy is skipped.
+     *
+     * Added for the Device Manager, where the service window supplies one screen
+     * header for every screen — DM-native and composed alike — so that Back, the
+     * campaign name and the brandmark sit in the same place throughout. Without this
+     * the composed screens draw a SECOND header inside the flow block, which lands
+     * wherever that block happens to be vertically centred: measured at y=167 on
+     * review, y=211 on PIN and y=225 on confirm, against y=18 everywhere else.
+     *
+     * Purely additive: unset (the default) paints every widget, exactly as before.
+     */
+    omit: { attribute: false },
     composition: { attribute: false },
     route: { type: String },
   };
 
   declare composition?: CompositionDoc;
   declare route?: string;
+  declare omit?: readonly string[];
 
   #layout: Ref<HTMLDivElement> = createRef();
   #unsubscribe?: () => void;
@@ -102,12 +116,13 @@ export class PqScreen extends LitElement {
     if (!doc) return;
 
     // Channel-derived profile in route mode; the doc's own profile otherwise.
-    const profile = this.#channel
-      ? getProfileForChannel(this.#channel)
-      : doc.profile;
+    const profile = this.#channel ? getProfileForChannel(this.#channel) : doc.profile;
     applyProfile(profile);
 
     for (const spec of doc.layout) {
+      // The host says it draws this one; the composition still declares it, so any
+      // other surface is unaffected.
+      if (this.omit?.includes(spec.widget)) continue;
       if (!customElements.get(spec.widget)) {
         const placeholder = document.createElement("div");
         placeholder.className = "missing";

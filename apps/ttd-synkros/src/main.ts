@@ -27,6 +27,7 @@ import "./components/ttd-attract";
 import "./components/ttd-hub";
 // Device Manager host chrome — Picture-in-Picture stage + the screens it hosts.
 import "./components/dm-stage";
+import "./components/dm-screen-head";
 import "./components/dm-attract";
 import "./components/dm-hub";
 import "./components/dm-rewards-hub";
@@ -236,8 +237,13 @@ function mountForDmRoute(path: string): void {
   if (!panel) {
     panel = document.createElement("dm-flow-panel") as HTMLElement & { route: string };
     panel.setAttribute("slot", "rail");
-    const pq = document.createElement("pq-screen");
+    const pq = document.createElement("pq-screen") as HTMLElement & { omit: readonly string[] };
     pq.setAttribute("route", path);
+    // The service window draws ONE header for every screen it shows — DM-native and
+    // composed alike — so the composed screens must not draw a second one inside the
+    // flow block. Back, the campaign name and the brandmark then sit in the same place
+    // on every screen instead of moving with the block's height.
+    pq.omit = ["pq-screen-header"];
     panel.appendChild(pq);
     stage.replaceChildren(panel);
   }

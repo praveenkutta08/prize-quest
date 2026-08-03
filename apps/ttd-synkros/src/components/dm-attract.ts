@@ -14,9 +14,9 @@ import type { Campaign } from "@pq/mock-data";
 
 /** Fallback teasers shown until campaigns load. No currency values — house rule. */
 const FALLBACK_TEASERS = [
-  "✦  Sunday Slot Sprint · prizes every Sunday",
-  "✦  VIP Game Day Quest · trip + gear",
-  "✦  VIP Electronics Quest · premium tech",
+  "Sunday Slot Sprint · prizes every Sunday",
+  "VIP Game Day Quest · trip + gear",
+  "VIP Electronics Quest · premium tech",
 ];
 
 export class DmAttract extends LitElement {
@@ -36,24 +36,65 @@ export class DmAttract extends LitElement {
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
     }
-    /* Rotating teaser sits just above the strip, inside the band we were given. */
+    /* OFFER BAND. Was a 11px mono line that nobody reads from two metres away. It is
+       the only thing on the attract screen that says WHY to card in, so it now reads
+       as a live marquee: a pulsing dot, the campaign in display type, gold rules
+       running out to both edges. */
     .teaser {
       flex: none;
-      padding: 5px 14px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 7px 24px;
       background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
-      font-family: var(--arc-font-mono, "JetBrains Mono", monospace);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--arc-display-bright, #ebd08a);
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
       transition: opacity 200ms ease;
       pointer-events: none;
     }
+    .teaser::before,
+    .teaser::after {
+      content: "";
+      flex: 1 1 0;
+      max-width: 190px;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--arc-hairline-2, rgba(212, 175, 55, 0.35))
+      );
+    }
+    .teaser::after {
+      background: linear-gradient(
+        270deg,
+        transparent,
+        var(--arc-hairline-2, rgba(212, 175, 55, 0.35))
+      );
+    }
+    .teaser__dot {
+      flex: none;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--arc-display, #d4af37);
+      box-shadow: 0 0 10px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
+    }
+    .teaser__txt {
+      font-family: var(--arc-font-display, sans-serif);
+      font-weight: var(--arc-font-display-weight, 900);
+      font-size: 15px;
+      line-height: 1;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--arc-display-bright, #ebd08a);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    }
     /* SERVICE STRIP — the only zone Tier Rewards owns while the game plays. */
+    /* THE MARQUEE. A flat black bar under a lit game reads as the screen having run
+       out; a cabinet marquee is a LIT sign. Hence the gold edge light with a bloom
+       under it, a centre glow behind the CTA, and a vignette at the ends. */
     .strip {
+      position: relative;
       flex: 1;
       min-height: 0;
       display: flex;
@@ -61,20 +102,67 @@ export class DmAttract extends LitElement {
       gap: 28px;
       padding: 0 36px;
       cursor: pointer;
-      background: linear-gradient(180deg, rgba(10, 10, 10, 0.92), rgba(0, 0, 0, 0.99));
-      border-top: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      overflow: hidden;
+      background-color: var(--arc-bg-deep, #000);
+      background-image:
+        radial-gradient(
+          62% 150% at 50% 100%,
+          var(--arc-glow-soft, rgba(212, 175, 55, 0.16)),
+          transparent 70%
+        ),
+        linear-gradient(180deg, var(--arc-bg-mid, #141414), rgba(0, 0, 0, 0.99));
       box-shadow: 0 -18px 40px -18px rgba(0, 0, 0, 0.85);
     }
+    /* The light bar itself, and the bloom it throws down onto the sign face. */
+    .strip::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--arc-display-deep, #a8862a) 12%,
+        var(--arc-display-bright, #ebd08a) 50%,
+        var(--arc-display-deep, #a8862a) 88%,
+        transparent
+      );
+      box-shadow: 0 6px 26px -2px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
+      pointer-events: none;
+    }
+    /* Ends fall off into the dark so the sign reads as lit from the centre. */
+    .strip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.75),
+        transparent 22%,
+        transparent 78%,
+        rgba(0, 0, 0, 0.75)
+      );
+      pointer-events: none;
+    }
+    .strip > * {
+      position: relative;
+      z-index: 1;
+    }
+    /* The three zones are 1 / auto / 1 so the CTA sits on the strip's true centre.
+       With the sides sized to their own content it drifted 85px right of centre. */
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      flex: none;
+      flex: 1 1 0;
+      min-width: 0;
     }
     .brand__name {
       font-family: var(--arc-font-display, "Inter", sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 22px;
+      font-size: 30px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--arc-cream, #fff);
@@ -93,50 +181,100 @@ export class DmAttract extends LitElement {
       display: flex;
       align-items: center;
       gap: 24px;
-      margin: 0 auto;
+      flex: none;
+    }
+    /* THE CARD. It was a dead grey rectangle; a patron has to recognise it instantly
+       as "the thing in my pocket". Card proportions, a gold chip, a magnetic stripe,
+       tilted off-axis so it reads as an object being offered rather than an icon —
+       and a pulse ring behind it marking the reader. */
+    .cardwrap {
+      position: relative;
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 132px;
+      height: 108px;
+    }
+    .cardwrap::before {
+      content: "";
+      position: absolute;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      opacity: 0;
     }
     .card-icon {
       position: relative;
-      width: 62px;
-      height: 41px;
-      border-radius: 6px;
-      flex: none;
-      border: 1px solid var(--arc-display, #d4af37);
-      background: linear-gradient(135deg, var(--arc-bg-elev, #1f1f1f), var(--arc-bg-mid, #141414));
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+      width: 112px;
+      height: 72px;
+      border-radius: 8px;
+      transform: rotate(-9deg);
+      border: 1px solid var(--arc-display-deep, #a8862a);
+      background: linear-gradient(135deg, var(--arc-bg-elev, #1f1f1f), var(--arc-bg-deep, #000));
+      box-shadow:
+        0 10px 22px -8px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 0 22px -6px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
     }
+    /* Chip. */
+    .card-icon::before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 14px;
+      width: 22px;
+      height: 17px;
+      border-radius: 3px;
+      background: linear-gradient(
+        150deg,
+        var(--arc-display-bright, #ebd08a),
+        var(--arc-display-deep, #a8862a)
+      );
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.28);
+    }
+    /* Stripe. */
     .card-icon::after {
       content: "";
       position: absolute;
-      top: 8px;
-      left: 9px;
-      width: 12px;
-      height: 9px;
-      border-radius: 1px;
-      background: var(--arc-display, #d4af37);
+      left: 0;
+      right: 0;
+      bottom: 15px;
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        rgba(212, 175, 55, 0.16),
+        rgba(212, 175, 55, 0.42),
+        rgba(212, 175, 55, 0.16)
+      );
     }
+    /* A cabinet button, not a web button: a dark bezel the gold face is seated INTO,
+       a lit top edge, and an engraved shadow along the bottom. */
     .tap-cta {
-      border: 1px solid var(--arc-display, #d4af37);
-      border-radius: var(--arc-r-md, 8px);
+      position: relative;
+      overflow: hidden;
       cursor: pointer;
-      padding: 14px 40px;
+      padding: 54px 68px;
+      border: 3px solid var(--arc-bg-deep, #000);
+      border-radius: 10px;
       background: linear-gradient(
         180deg,
         var(--arc-display-bright, #ebd08a),
-        var(--arc-display, #d4af37) 55%,
+        var(--arc-display, #d4af37) 52%,
         var(--arc-display-deep, #a8862a)
       );
       color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 20px;
+      font-size: 30px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.34);
       box-shadow:
-        0 0 16px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
-      position: relative;
-      overflow: hidden;
+        0 0 0 1px var(--arc-display-deep, #a8862a),
+        0 0 28px -4px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -3px 8px -2px rgba(0, 0, 0, 0.45);
     }
     .tap-cta::after {
       content: "";
@@ -144,12 +282,13 @@ export class DmAttract extends LitElement {
       top: 0;
       bottom: 0;
       left: -100%;
-      width: 50%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      width: 34%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     }
     .clockbox {
       text-align: right;
-      flex: none;
+      flex: 1 1 0;
+      min-width: 0;
       font-family: var(--arc-font-mono, monospace);
       font-size: 10px;
       letter-spacing: 0.14em;
@@ -160,11 +299,17 @@ export class DmAttract extends LitElement {
       display: block;
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 19px;
+      font-size: 23px;
       letter-spacing: 0.04em;
       color: var(--arc-cream, #fff);
     }
     @media (prefers-reduced-motion: no-preference) {
+      .cardwrap::before {
+        animation: dm-reader-pulse 2.6s ease-out infinite;
+      }
+      .teaser__dot {
+        animation: dm-live-dot 1.6s ease-in-out infinite;
+      }
       .card-icon {
         animation: float 2.4s ease-in-out infinite;
       }
@@ -173,6 +318,32 @@ export class DmAttract extends LitElement {
       }
       .tap-cta::after {
         animation: dm-sweep 3.2s linear infinite;
+      }
+    }
+    /* The reader ring: a slow ripple outward from the card, the way a contactless
+       reader signals it is armed. */
+    @keyframes dm-reader-pulse {
+      0% {
+        transform: scale(0.72);
+        opacity: 0;
+      }
+      35% {
+        opacity: 0.75;
+      }
+      100% {
+        transform: scale(1.28);
+        opacity: 0;
+      }
+    }
+    @keyframes dm-live-dot {
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 10px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
+      }
+      50% {
+        opacity: 0.45;
+        box-shadow: 0 0 3px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
       }
     }
     @keyframes float {
@@ -209,24 +380,53 @@ export class DmAttract extends LitElement {
       padding: 0 18px;
     }
     :host-context([data-dm-ff="1024x768"]) .teaser {
-      font-size: 9px;
+      gap: 10px;
+      padding: 6px 16px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .teaser__txt {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+    :host-context([data-dm-ff="1024x768"]) .teaser::before,
+    :host-context([data-dm-ff="1024x768"]) .teaser::after {
+      max-width: 90px;
     }
     :host-context([data-dm-ff="1024x768"]) .brand__name {
-      font-size: 17px;
+      font-size: 24px;
     }
     :host-context([data-dm-ff="1024x768"]) .brand__sub {
       display: none;
     }
+    /* Card proportions hold at 1024 — 86x55 is still a credit card; 82x72 was a box. */
+    :host-context([data-dm-ff="1024x768"]) .cardwrap {
+      width: 104px;
+      height: 84px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .cardwrap::before {
+      width: 80px;
+      height: 80px;
+    }
     :host-context([data-dm-ff="1024x768"]) .card-icon {
-      width: 48px;
-      height: 32px;
+      width: 86px;
+      height: 55px;
+      border-radius: 6px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .card-icon::before {
+      top: 11px;
+      left: 11px;
+      width: 17px;
+      height: 13px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .card-icon::after {
+      bottom: 11px;
+      height: 9px;
     }
     :host-context([data-dm-ff="1024x768"]) .tap-cta {
-      padding: 10px 26px;
-      font-size: 15px;
+      padding: 43px 50px;
+      font-size: 22px;
     }
     :host-context([data-dm-ff="1024x768"]) .clockbox strong {
-      font-size: 15px;
+      font-size: 19px;
     }
   `;
 
@@ -283,7 +483,7 @@ export class DmAttract extends LitElement {
   private get teasers(): string[] {
     const live = (this.campaigns ?? [])
       .filter((c) => c.status === "eligible" || c.status === "in-progress")
-      .map((c) => `✦  ${c.name}`);
+      .map((c) => c.name);
     return live.length > 0 ? live : FALLBACK_TEASERS;
   }
 
@@ -308,7 +508,10 @@ export class DmAttract extends LitElement {
         role="button"
         aria-label="Tap card to start"
       >
-        <div class="teaser" style="opacity:${this._teaserVisible ? 1 : 0}">${teaser}</div>
+        <div class="teaser" style="opacity:${this._teaserVisible ? 1 : 0}">
+          <span class="teaser__dot"></span>
+          <span class="teaser__txt">${teaser}</span>
+        </div>
         <div class="strip">
           <!-- The attract screen belongs to the CASINO — operator name only. The Tier
                Rewards mark appears once the patron is carded in and enters our surface
@@ -320,7 +523,7 @@ export class DmAttract extends LitElement {
             </div>
           </div>
           <div class="tapwrap">
-            <div class="card-icon"></div>
+            <div class="cardwrap"><div class="card-icon"></div></div>
             <button class="tap-cta" type="button">Tap Card to Start</button>
           </div>
           <div class="clockbox"><strong>${time}</strong>${date}</div>

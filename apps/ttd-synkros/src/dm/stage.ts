@@ -69,8 +69,16 @@ export const DM_STAGES: Record<string, StageConfig> = {
       spin: { x: 1752, y: 912, w: 132, h: 132 },
     },
     presets: {
-      band: { x: 0, y: 0, w: 1920, h: 958 },
-      frame: { x: 800, y: 200, w: 1040, h: 585 },
+      // The service strip. Was 122px — enough for a line of type and nothing else, so
+      // the attract teaser and the carded-in greeting had to whisper. 208px gives the
+      // strip a real presence at the bottom of the cabinet without the game losing
+      // anything a player would notice mid-spin.
+      band: { x: 0, y: 0, w: 1920, h: 872 },
+      // CENTRED IN THE RIGHT COLUMN, both axes. The rail is unchanged at 800px: with a
+      // gutter g on each side of the game, rail = canvas - gameW - 2g, so g=40 keeps
+      // 800 exactly. Vertically (1080-585)/2. Equal gutters read as a mounted window;
+      // unequal ones read as a mistake.
+      frame: { x: 840, y: 248, w: 1040, h: 585 },
       rail: { x: 768, y: 0, w: 1152, h: 1080 },
       // Big enough to still read as YOUR game from a seated position — a postage
       // stamp reads as "the game stopped", which is the wrong message mid-claim.
@@ -88,8 +96,8 @@ export const DM_STAGES: Record<string, StageConfig> = {
       spin: { x: 904, y: 648, w: 96, h: 96 },
     },
     presets: {
-      band: { x: 0, y: 0, w: 1024, h: 672 },
-      frame: { x: 400, y: 112, w: 600, h: 338 },
+      band: { x: 0, y: 0, w: 1024, h: 600 }, // 168px strip (was 96px)
+      frame: { x: 412, y: 215, w: 600, h: 338 }, // g=12 keeps the rail at 400 exactly
       rail: { x: 410, y: 0, w: 614, h: 768 },
       // The claim window. Was pinned to the top-right with 505px of black beneath it —
       // two thirds of the column empty, the game reading as a corner stamp rather than

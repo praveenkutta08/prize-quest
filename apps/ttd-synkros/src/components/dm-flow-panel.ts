@@ -30,7 +30,16 @@
 //
 // Host chrome (NOT a @pq widget), themed by the tenant's --arc-* tokens.
 import { LitElement, css, html, type TemplateResult } from "lit";
+import { $activeCampaign, bindAtom } from "@pq/store";
+import type { Campaign } from "@pq/mock-data";
 import { FLOW_DESIGN_WIDTH, FLOW_MIN_WIDTH } from "../dm/stage";
+
+/**
+ * Routes whose composition sets showBack:false — the DM header follows the same rule,
+ * so Back appears on exactly the steps it appeared on before.
+ */
+const NO_BACK = (p: string): boolean =>
+  p === "/loading" || p === "/address" || p.startsWith("/success") || p.startsWith("/voucher");
 
 /** How far the flow may be scaled up to fill the panel. */
 const FLOW_MAX_ZOOM = 1.85;
@@ -92,11 +101,19 @@ export class DmFlowPanel extends LitElement {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 20px;
-      padding: 26px 24px 22px;
+      gap: 16px;
+      padding: 22px 24px 18px;
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
     }
+    /* The root centres its children so the capped .wrap sits mid-rail; the header is
+       full-bleed and must opt out, or it shrink-wraps and the Back button drifts
+       inward — measured at x=67..185 instead of the x=16 every other screen uses. */
+    dm-screen-head {
+      align-self: stretch;
+      width: 100%;
+    }
+
     /* Capped and centred. A claim is a reading-width task; a rail nearly 1240px wide
        would stretch a four-column keypad into something nobody can thumb. */
     /* The panel TAKES the column. Hugging its content left a third of a 768px rail as
@@ -338,8 +355,8 @@ export class DmFlowPanel extends LitElement {
     /* ---------------- 1024×768 ---------------- */
     /* In a 400px rail every pixel of chrome is a pixel the flow does not get. */
     :host-context([data-dm-ff="1024x768"]) .root {
-      gap: 12px;
-      padding: 14px 10px 12px;
+      gap: 10px;
+      padding: 14px 14px 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .wrap {
       width: 100%;
@@ -371,9 +388,11 @@ export class DmFlowPanel extends LitElement {
 
   static override properties = {
     route: { type: String },
+    campaign: { attribute: false },
   };
 
   declare route: string;
+  declare campaign: Campaign | null;
 
   #frame = 0;
   #resize: ResizeObserver | null = null;
@@ -382,6 +401,8 @@ export class DmFlowPanel extends LitElement {
   constructor() {
     super();
     this.route = "/";
+    this.campaign = null;
+    bindAtom(this, $activeCampaign, "campaign");
   }
 
   override connectedCallback(): void {
@@ -518,8 +539,17 @@ export class DmFlowPanel extends LitElement {
     const step = this.step;
     const inRing = step >= 0;
 
+    const name = this.campaign?.name ?? "Tier Rewards";
+    const label = inRing ? STEPS[step].label : "Orders";
+
     return html`
       <div class="root">
+        <dm-screen-head
+          .eyebrow=${name}
+          .label=${label}
+          ?noBack=${NO_BACK(this.route)}
+        ></dm-screen-head>
+
         <div class="wrap">
           <section class="panel">
             <div class="plate">

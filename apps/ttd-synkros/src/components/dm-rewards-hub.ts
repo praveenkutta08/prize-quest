@@ -1,18 +1,27 @@
 // <dm-rewards-hub> — the Tier Rewards landing inside the Device Manager service
-// window (route /rewards). TWO destinations, nothing else: PROMOTIONS and ORDERS.
+// window (route /rewards). TWO destinations, nothing else: PROMOTIONS and MY ORDERS.
 //
-// Treated as a pair of casino cards rather than menu buttons: gold for the one that
-// pays, brushed steel for the one that reports. Each carries a headline NUMERAL — the
-// count is the reason to tap, so it is set at display size the way a casino sets a
-// jackpot — and a short preview of what is behind the card, so the space earns its
-// keep with real content instead of padding.
+// BUTTONS, NOT CARDS (customer direction). The previous version drew two large tiles
+// with a jackpot numeral and a preview list of what sat behind each one. It looked
+// good, but it read as CONTENT — two things to study — when this screen has exactly
+// one job: send the patron down one of two paths. A card invites reading; a button
+// invites pressing, and on a cabinet the second is what you want.
+//
+// So each destination is now a single full-width action bar: medallion, label, one
+// line of live status, count, chevron. What makes it premium is not ornament but
+// hierarchy — the bar that PAYS is gold and heavy, the bar that REPORTS is platinum
+// and quiet, and the whole screen resolves in about a second.
+//
+// The counts survive the change because they are the reason to press: "3 prizes ready
+// to collect" is the difference between a menu and an invitation. The per-item preview
+// chips are gone; that detail belongs on the destination screen, which is one tap away.
 //
 // Identity (name, tier, points) lives in the stage's top band and is not repeated here.
 //
 // HOUSE RULE: no currency values anywhere, and no progress bars.
 //
 // Host chrome (NOT a @pq widget), themed by the tenant's --arc-* tokens.
-import { LitElement, css, html, nothing, type TemplateResult } from "lit";
+import { LitElement, css, html, type TemplateResult } from "lit";
 import { navigate } from "@pq/router";
 import { $campaigns, $claims, bindAtom } from "@pq/store";
 import type { Campaign, Order } from "@pq/mock-data";
@@ -47,14 +56,6 @@ const arrowIcon = html`<svg
   <path d="M5 12h13M12 5l7 7-7 7" />
 </svg>`;
 
-/** Short status word for an order chip. */
-const ORDER_STATUS: Record<string, string> = {
-  processing: "Processing",
-  shipped: "Shipped",
-  "in-transit": "On the way",
-  delivered: "Delivered",
-};
-
 export class DmRewardsHub extends LitElement {
   static override styles = css`
     :host {
@@ -70,493 +71,389 @@ export class DmRewardsHub extends LitElement {
     }
     .root {
       flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      padding: 26px 28px 28px;
+      gap: 30px;
+      padding: 34px 34px 30px;
       color: var(--arc-text, #fff);
       font-family: var(--arc-font-body, "Inter", sans-serif);
     }
 
-    /* ---------- product lockup ---------- */
+    /* ---------------- header ---------------- */
     .head {
       flex: none;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       gap: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
     }
     .head img {
       display: block;
-      height: 44px;
-      max-width: 200px;
+      height: 62px;
+      max-width: 260px;
       object-fit: contain;
     }
     .head__wordmark {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
       font-size: 26px;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--arc-display-bright, #ebd08a);
-      line-height: 1;
-    }
-    .head__sub {
-      margin-left: auto;
-      text-align: right;
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--arc-text-faint, #8a8a8a);
-      line-height: 1.7;
     }
 
-    /* ================= the pair ================= */
-    .cards {
+    /* ---------------- the two buttons ---------------- */
+    /* The buttons TAKE the column. Two small bars floating in a 768px rail was the
+       "unused real estate" note all over again; a capped flex keeps them generous
+       without letting them stretch into slabs on the 1080 cabinet. */
+    .menu {
       flex: 1;
       min-height: 0;
-      display: grid;
-      grid-template-rows: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .card {
-      position: relative;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      padding: 26px 28px;
-      min-height: 200px;
-      text-align: left;
-      cursor: pointer;
-      font: inherit;
-      color: var(--arc-cream, #fff);
-      border-radius: 16px;
-      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.2));
-      /* A button element carries the UA "buttonface" background; the layers below are
-         semi-transparent, so without an explicit base it washes the whole card light. */
-      background-color: var(--arc-bg-base, #0a0a0a);
-      /* Layered: a spotlight from the top-left, a fine diagonal weave for print-like
-         texture, then the surface ramp. Depth without ornament. */
-      background-image:
-        radial-gradient(62% 48% at 14% 0%, rgba(255, 255, 255, 0.05), transparent 72%),
-        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0 2px, transparent 2px 7px),
-        linear-gradient(
-          155deg,
-          var(--arc-bg-glass, rgba(34, 34, 34, 0.6)),
-          var(--arc-bg-glass-2, rgba(12, 12, 12, 0.94))
-        );
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        0 22px 44px -28px rgba(0, 0, 0, 0.9);
-      transition:
-        transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-        border-color 240ms ease;
+      justify-content: center;
+      gap: 20px;
     }
-    .card:hover {
-      transform: translateY(-2px);
-    }
-    .card:focus-visible {
-      outline: 2px solid var(--arc-display, #d4af37);
-      outline-offset: 3px;
-    }
-    /* Corner brackets — the card-table motif, drawn once on opposite corners so it
-       reads as framing rather than a box. */
-    .card__frame {
-      position: absolute;
-      inset: 11px;
-      pointer-events: none;
-    }
-    .card__frame::before,
-    .card__frame::after {
-      content: "";
-      position: absolute;
-      width: 26px;
-      height: 26px;
-      border-color: var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
-      opacity: 0.75;
-    }
-    .card__frame::before {
-      top: 0;
-      left: 0;
-      border-top: 1px solid;
-      border-left: 1px solid;
-      border-top-left-radius: 6px;
-    }
-    .card__frame::after {
-      right: 0;
-      bottom: 0;
-      border-right: 1px solid;
-      border-bottom: 1px solid;
-      border-bottom-right-radius: 6px;
-    }
-    /* Oversized glyph bleeding off the edge — atmosphere, never content. */
-    .card__ghost {
-      position: absolute;
-      right: -40px;
-      bottom: -52px;
-      width: 208px;
-      height: 208px;
-      opacity: 0.06;
-      pointer-events: none;
-      color: currentColor;
-    }
-    .card__ghost svg {
+    .opt {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 24px;
       width: 100%;
-      height: 100%;
+      flex: 1 1 0;
+      /* A button has to keep BUTTON proportions. Letting these stretch to fill a
+         1080px column turned them back into the tall tiles the customer rejected —
+         the giveaway is a thin row of content floating in a deep box. Generous for a
+         cabinet touch target, capped before it becomes a card. */
+      min-height: 132px;
+      max-height: 216px;
+      padding: 22px 30px;
+      overflow: hidden;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 5px;
+      font: inherit;
+      /* These are <button>s: without an explicit background-color the UA buttonface
+         shows through the semi-transparent gradients and washes them grey. */
+      background-color: var(--arc-bg-base, #0a0a0a);
+      transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease;
+    }
+    .opt:active {
+      transform: translateY(1px);
     }
 
-    /* ---------- GOLD · the card that pays ---------- */
-    .card--gold {
-      border-color: var(--arc-display, #d4af37);
-      background-image:
-        radial-gradient(
-          64% 50% at 14% 0%,
-          var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
-          transparent 74%
-        ),
-        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 7px),
-        linear-gradient(
-          155deg,
-          var(--arc-glow-soft, rgba(212, 175, 55, 0.16)),
-          var(--arc-bg-glass-2, rgba(12, 12, 12, 0.94)) 72%
-        );
+    /* The one that PAYS. Gold, heavy, and the only lit thing on the screen. */
+    .opt--primary {
+      border: 1px solid var(--arc-display-deep, #a8862a);
+      background-image: linear-gradient(
+        180deg,
+        var(--arc-display-bright, #ebd08a),
+        var(--arc-display, #d4af37) 52%,
+        var(--arc-display-deep, #a8862a)
+      );
+      color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
+      /* Bevelled like an engraved plaque: seated in a dark ring, lit along the top
+         edge, cut away at the bottom. Flat gold reads as a web button. */
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 0 26px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
-        0 22px 44px -28px rgba(0, 0, 0, 0.9);
+        0 0 0 1px var(--arc-display-deep, #a8862a),
+        0 20px 46px -22px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
+        inset 0 2px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -4px 10px -3px rgba(0, 0, 0, 0.34);
     }
-    .card--gold .card__frame::before,
-    .card--gold .card__frame::after {
-      border-color: var(--arc-display, #d4af37);
-      opacity: 1;
+    /* Slow specular sweep — the one piece of motion on the screen, so it reads as
+       "this is the live one" rather than as decoration. */
+    .opt--primary::after {
+      content: "";
+      position: absolute;
+      inset: -40% -120%;
+      background: linear-gradient(
+        104deg,
+        transparent 42%,
+        rgba(255, 255, 255, 0.42) 50%,
+        transparent 58%
+      );
+      transform: translateX(-32%);
+      animation: sweep 7s ease-in-out infinite;
+      pointer-events: none;
     }
-    .card--gold .card__ghost {
+    @keyframes sweep {
+      0%,
+      66% {
+        transform: translateX(-32%);
+      }
+      100% {
+        transform: translateX(32%);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .opt--primary::after {
+        animation: none;
+      }
+    }
+
+    /* The one that REPORTS. Platinum, quiet, clearly secondary. */
+    .opt--ghost {
+      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
+      background-image: linear-gradient(
+        180deg,
+        var(--arc-bg-glass, rgba(34, 34, 34, 0.6)),
+        var(--arc-bg-glass-2, rgba(12, 12, 12, 0.94))
+      );
+      color: var(--arc-cream, #fff);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.11),
+        inset 0 -4px 12px -4px rgba(0, 0, 0, 0.9),
+        0 18px 40px -26px rgba(0, 0, 0, 0.9);
+    }
+    .opt--ghost:hover {
+      border-color: var(--arc-display-deep, #a8862a);
+    }
+
+    /* Light thrown from behind the medallion. The promo poster uses the same burst,
+       so the landing reads as the front door to that room rather than a menu bolted
+       on. Masked to a soft ellipse so it never draws a hard edge. */
+    .opt__rays {
+      position: absolute;
+      left: -4%;
+      top: 50%;
+      width: 46%;
+      aspect-ratio: 1;
+      transform: translateY(-50%);
+      pointer-events: none;
+      background: repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        currentColor 0deg 2deg,
+        transparent 2deg 16deg
+      );
+      /* Hollow centre: the rays emerge from BEHIND the medallion. Drawn across it they
+         read as a scratch on the plaque, not as light. */
+      -webkit-mask-image: radial-gradient(
+        circle at 50% 50%,
+        transparent 26%,
+        #000 40%,
+        transparent 72%
+      );
+      mask-image: radial-gradient(circle at 50% 50%, transparent 26%, #000 40%, transparent 72%);
+    }
+    .opt--primary .opt__rays {
+      color: rgba(0, 0, 0, 0.42);
+      opacity: 0.1;
+    }
+    .opt--ghost .opt__rays {
       color: var(--arc-display, #d4af37);
       opacity: 0.11;
     }
-    /* A single slow sheen — the only motion, and it stays on the card. */
-    .card--gold::after {
-      content: "";
+    /* Corner brackets — casino signage cue, and they make the plaque read as a framed
+       object rather than a filled rectangle. */
+    .opt__frame {
       position: absolute;
-      top: -20%;
-      bottom: -20%;
-      left: -55%;
-      width: 30%;
-      transform: skewX(-16deg);
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      inset: 8px;
       pointer-events: none;
     }
+    .opt__frame::before,
+    .opt__frame::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+    }
+    .opt__frame::before {
+      top: 0;
+      left: 0;
+      border-top: 1px solid currentColor;
+      border-left: 1px solid currentColor;
+    }
+    .opt__frame::after {
+      bottom: 0;
+      right: 0;
+      border-bottom: 1px solid currentColor;
+      border-right: 1px solid currentColor;
+    }
+    .opt--primary .opt__frame {
+      color: rgba(0, 0, 0, 0.32);
+    }
+    .opt--ghost .opt__frame {
+      color: var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+    }
 
-    /* ---------- STEEL · the card that reports ---------- */
-    .card--steel .card__ghost {
-      color: var(--arc-text-dim, #c0c0c0);
-    }
-    .card--steel .card__frame::before,
-    .card--steel .card__frame::after {
-      border-color: var(--arc-hairline, rgba(192, 192, 192, 0.2));
-    }
-
-    /* ---------- head row ---------- */
-    .card__top {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .card__icon {
+    .opt__medal {
+      position: relative;
+      z-index: 1;
       flex: none;
       display: grid;
       place-items: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: var(--arc-surface-0, rgba(0, 0, 0, 0.7));
-      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.2));
-      color: var(--arc-text-dim, #c0c0c0);
+      width: 68px;
+      height: 68px;
+      border-radius: 4px;
     }
-    .card__icon svg {
-      width: 26px;
-      height: 26px;
+    .opt__medal svg {
+      width: 34px;
+      height: 34px;
     }
-    .card--gold .card__icon {
-      background: linear-gradient(
-        180deg,
-        var(--arc-display-bright, #ebd08a),
-        var(--arc-display, #d4af37) 55%,
-        var(--arc-display-deep, #a8862a)
-      );
-      border-color: var(--arc-display, #d4af37);
+    .opt--primary .opt__medal {
+      border: 1px solid rgba(0, 0, 0, 0.34);
+      background: rgba(0, 0, 0, 0.16);
       color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
-      box-shadow:
-        0 8px 20px -10px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
-        inset 0 1px 0 rgba(255, 255, 255, 0.45);
     }
-    .card__name {
+    .opt--ghost .opt__medal {
+      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      background: var(--arc-bg-deep, #000);
+      color: var(--arc-display, #d4af37);
+      box-shadow: inset 0 0 24px -8px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
+    }
+
+    .opt__text {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .opt__label {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
       font-size: 30px;
       line-height: 1;
       letter-spacing: 0.02em;
       text-transform: uppercase;
-      color: var(--arc-cream, #fff);
     }
-    .card--gold .card__name {
-      color: var(--arc-display-bright, #ebd08a);
-    }
-    .card__eyebrow {
-      margin-top: 7px;
+    /* The status line is the REASON to press, and at 11px/0.18em in a faint grey it
+       was unreadable from a seat. Bigger, tighter tracking, and taken up to a contrast
+       that survives a bright casino floor. */
+    .opt__sub {
       font-family: var(--arc-font-mono, monospace);
-      font-size: 9px;
+      font-size: 14px;
       font-weight: 700;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--arc-text-faint, #8a8a8a);
-    }
-
-    /* ---------- the numeral — the reason to tap ---------- */
-    /* The middle group centres in whatever height is left, so the card never reads as
-       top-loaded with a pool of dead space above the CTA. */
-    .card__body {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 14px;
-    }
-    .stat {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
-      min-width: 0;
-    }
-    .stat__n {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 72px;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      padding-right: 2px;
-      color: var(--arc-cream, #fff);
-    }
-    .card--gold .stat__n {
-      background: linear-gradient(
-        170deg,
-        var(--arc-display-bright, #ebd08a),
-        var(--arc-display, #d4af37) 55%,
-        var(--arc-display-deep, #a8862a)
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 18px var(--arc-display-glow, rgba(212, 175, 55, 0.5)));
-    }
-    .card--steel .stat__n {
-      background: linear-gradient(170deg, #ffffff, var(--arc-text-dim, #c0c0c0) 60%, #6f6f6f);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .stat__l {
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--arc-text-dim, #c0c0c0);
-      line-height: 1.6;
-      max-width: 15ch;
-    }
-    .card--gold .stat__l {
-      color: var(--arc-display-bright, #ebd08a);
-    }
-
-    /* ---------- preview chips — what is actually behind the card ---------- */
-    .chips {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      min-width: 0;
-    }
-    .chip {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: var(--arc-surface-0, rgba(0, 0, 0, 0.55));
-      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.14));
-      font-size: 12px;
-      line-height: 1.2;
-      color: var(--arc-text-dim, #c0c0c0);
-      min-width: 0;
-    }
-    .chip b {
-      font-weight: 600;
-      color: var(--arc-cream, #fff);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .chip i {
-      flex: none;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--arc-text-faint, #8a8a8a);
+    .opt--primary .opt__sub {
+      color: rgba(0, 0, 0, 0.8);
     }
-    .card--gold .chip {
-      border-color: var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
-    }
-    .card--gold .chip i {
-      background: var(--arc-success, #34d670);
-      box-shadow: 0 0 8px var(--arc-success, #34d670);
-    }
-    .chip__tail {
-      margin-left: auto;
-      flex: none;
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--arc-text-faint, #8a8a8a);
-      white-space: nowrap;
-    }
-
-    /* ---------- CTA ---------- */
-    .card__go {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-top: 4px;
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--arc-text-dim, #c0c0c0);
-    }
-    .card--gold .card__go {
+    .opt--ghost .opt__sub {
       color: var(--arc-display-bright, #ebd08a);
     }
-    .card__go svg {
-      width: 17px;
-      height: 17px;
-      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* The count is the reason to press, so it stays — just at button scale now. */
+    .opt__count {
+      flex: none;
+      display: grid;
+      place-items: center;
+      min-width: 76px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: var(--arc-font-display, sans-serif);
+      font-weight: var(--arc-font-display-weight, 900);
+      font-size: 40px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
     }
-    .card:hover .card__go svg {
-      transform: translateX(5px);
+    .opt--primary .opt__count {
+      color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
+      border: 1px solid rgba(0, 0, 0, 0.28);
+      background: rgba(0, 0, 0, 0.12);
+      box-shadow: inset 0 2px 5px -2px rgba(0, 0, 0, 0.45);
+    }
+    .opt--ghost .opt__count {
+      color: var(--arc-display-bright, #ebd08a);
+      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      background: var(--arc-surface-0, rgba(0, 0, 0, 0.7));
+      box-shadow: inset 0 0 20px -8px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
     }
 
-    @media (prefers-reduced-motion: no-preference) {
-      .card--gold {
-        animation: dm-card-glow 3.4s ease-in-out infinite;
-      }
-      .card--gold::after {
-        animation: dm-sheen 5.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-      }
+    .opt__go {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
     }
-    @keyframes dm-card-glow {
-      0%,
-      100% {
-        box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.08),
-          0 0 20px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
-          0 22px 44px -28px rgba(0, 0, 0, 0.9);
-      }
-      50% {
-        box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.08),
-          0 0 38px var(--arc-display-glow, rgba(212, 175, 55, 0.5)),
-          0 22px 44px -28px rgba(0, 0, 0, 0.9);
-      }
-    }
-    @keyframes dm-sheen {
-      0%,
-      62% {
-        left: -55%;
-      }
-      100% {
-        left: 125%;
-      }
-    }
-
-    /* ---------- 1024×768 · the rail is ~400px ---------- */
-    :host-context([data-dm-ff="1024x768"]) .root {
-      gap: 12px;
-      padding: 14px 16px 16px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head {
-      padding-bottom: 10px;
-      gap: 10px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head img {
-      height: 28px;
-      max-width: 130px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__wordmark {
-      font-size: 18px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .head__sub {
-      font-size: 8px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .cards {
-      gap: 11px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .card {
-      padding: 15px 16px;
-      min-height: 140px;
-      gap: 10px;
-      border-radius: 12px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .card__frame {
-      inset: 8px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .card__icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 9px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .card__icon svg {
+    .opt__go svg {
       width: 20px;
       height: 20px;
     }
-    :host-context([data-dm-ff="1024x768"]) .card__name {
+    .opt--primary .opt__go {
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
+    }
+    .opt--ghost .opt__go {
+      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      color: var(--arc-display, #d4af37);
+    }
+
+    /* ---------------- 1024x768 ---------------- */
+    :host-context([data-dm-ff="1024x768"]) .root {
+      gap: 20px;
+      padding: 20px 18px 18px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .head {
+      gap: 10px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .head img {
+      height: 44px;
+      max-width: 180px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .head__wordmark {
+      font-size: 19px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .menu {
+      gap: 14px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .opt {
+      min-height: 96px;
+      max-height: 172px;
+      gap: 14px;
+      padding: 16px 18px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .opt__medal {
+      width: 50px;
+      height: 50px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .opt__medal svg {
+      width: 25px;
+      height: 25px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .opt__label {
       font-size: 21px;
     }
-    :host-context([data-dm-ff="1024x768"]) .card__eyebrow {
-      font-size: 8px;
-      margin-top: 5px;
+    :host-context([data-dm-ff="1024x768"]) .opt__sub {
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
     }
-    :host-context([data-dm-ff="1024x768"]) .stat__n {
-      font-size: 46px;
+    :host-context([data-dm-ff="1024x768"]) .opt__frame {
+      inset: 6px;
     }
-    :host-context([data-dm-ff="1024x768"]) .stat__l {
-      font-size: 8px;
+    :host-context([data-dm-ff="1024x768"]) .opt__frame::before,
+    :host-context([data-dm-ff="1024x768"]) .opt__frame::after {
+      width: 13px;
+      height: 13px;
     }
-    :host-context([data-dm-ff="1024x768"]) .card__body {
-      gap: 9px;
+    :host-context([data-dm-ff="1024x768"]) .opt__count {
+      min-width: 58px;
+      padding: 7px 10px;
+      border-radius: 6px;
     }
-    :host-context([data-dm-ff="1024x768"]) .chip {
-      padding: 6px 10px;
-      font-size: 10px;
+    :host-context([data-dm-ff="1024x768"]) .opt__count {
+      font-size: 28px;
     }
-    :host-context([data-dm-ff="1024x768"]) .chip__tail {
-      display: none;
+    :host-context([data-dm-ff="1024x768"]) .opt__go {
+      width: 32px;
+      height: 32px;
     }
-    :host-context([data-dm-ff="1024x768"]) .card__ghost {
-      width: 130px;
-      height: 130px;
-      right: -26px;
-      bottom: -32px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .card__go {
-      font-size: 9px;
+    :host-context([data-dm-ff="1024x768"]) .opt__go svg {
+      width: 15px;
+      height: 15px;
     }
   `;
 
@@ -589,97 +486,54 @@ export class DmRewardsHub extends LitElement {
     const orders = this.orders ?? [];
     const open = orders.filter((o) => o.status !== "delivered");
 
-    // The numeral is whichever count gives the patron a reason to tap.
+    // The count is whichever number gives the patron a reason to press.
     const promoN = ready.length > 0 ? ready.length : campaigns.length;
-    const promoLabel =
+    const promoSub =
       ready.length > 0
         ? ready.length === 1
           ? "Prize ready to collect"
           : "Prizes ready to collect"
-        : "Promotions running now";
-    const promoPreview = (ready.length > 0 ? ready : campaigns).slice(0, 3);
+        : campaigns.length === 1
+          ? "Promotion running now"
+          : "Promotions running now";
 
     const orderN = open.length > 0 ? open.length : orders.length;
-    const orderLabel =
+    const orderSub =
       open.length > 0
         ? open.length === 1
           ? "Reward on the way"
           : "Rewards on the way"
-        : "Rewards claimed";
-    const orderPreview = orders.slice(0, 3);
+        : orders.length === 0
+          ? "Nothing claimed yet"
+          : "Rewards claimed";
 
     return html`
       <div class="root">
-        <div class="head">
-          ${this.renderMark()}
-          <div class="head__sub">Where would you<br />like to go?</div>
-        </div>
+        <div class="head">${this.renderMark()}</div>
 
-        <div class="cards">
-          <button class="card card--gold" type="button" @click=${() => this.#go("/promotions")}>
-            <span class="card__frame"></span>
-            <span class="card__ghost">${giftIcon}</span>
-            <span class="card__top">
-              <span class="card__icon">${giftIcon}</span>
-              <span>
-                <span class="card__name">Promotions</span>
-                <div class="card__eyebrow">Tier Rewards</div>
-              </span>
+        <div class="menu">
+          <button class="opt opt--primary" type="button" @click=${() => this.#go("/promotions")}>
+            <span class="opt__rays"></span>
+            <span class="opt__frame"></span>
+            <span class="opt__medal">${giftIcon}</span>
+            <span class="opt__text">
+              <span class="opt__label">Promotions</span>
+              <span class="opt__sub">${promoSub}</span>
             </span>
-            <span class="card__body">
-              ${promoN > 0
-                ? html`<span class="stat">
-                    <span class="stat__n">${promoN}</span>
-                    <span class="stat__l">${promoLabel}</span>
-                  </span>`
-                : nothing}
-              ${promoPreview.length
-                ? html`<span class="chips">
-                    ${promoPreview.map(
-                      (c) =>
-                        html`<span class="chip">
-                          <i></i><b>${c.name}</b>
-                          <span class="chip__tail">
-                            ${c.prizeIds.length} prize${c.prizeIds.length === 1 ? "" : "s"}
-                          </span>
-                        </span>`,
-                    )}
-                  </span>`
-                : nothing}
-            </span>
-            <span class="card__go">View promotions ${arrowIcon}</span>
+            <span class="opt__count">${promoN}</span>
+            <span class="opt__go">${arrowIcon}</span>
           </button>
 
-          <button class="card card--steel" type="button" @click=${() => this.#go("/orders")}>
-            <span class="card__frame"></span>
-            <span class="card__ghost">${bagIcon}</span>
-            <span class="card__top">
-              <span class="card__icon">${bagIcon}</span>
-              <span>
-                <span class="card__name">Orders</span>
-                <div class="card__eyebrow">Claims &amp; delivery</div>
-              </span>
+          <button class="opt opt--ghost" type="button" @click=${() => this.#go("/orders")}>
+            <span class="opt__rays"></span>
+            <span class="opt__frame"></span>
+            <span class="opt__medal">${bagIcon}</span>
+            <span class="opt__text">
+              <span class="opt__label">My Orders</span>
+              <span class="opt__sub">${orderSub}</span>
             </span>
-            <span class="card__body">
-              ${orderN > 0
-                ? html`<span class="stat">
-                    <span class="stat__n">${orderN}</span>
-                    <span class="stat__l">${orderLabel}</span>
-                  </span>`
-                : nothing}
-              ${orderPreview.length
-                ? html`<span class="chips">
-                    ${orderPreview.map(
-                      (o) =>
-                        html`<span class="chip">
-                          <i></i><b>${o.prizeName}</b>
-                          <span class="chip__tail">${ORDER_STATUS[o.status] ?? o.status}</span>
-                        </span>`,
-                    )}
-                  </span>`
-                : nothing}
-            </span>
-            <span class="card__go">View orders ${arrowIcon}</span>
+            <span class="opt__count">${orderN}</span>
+            <span class="opt__go">${arrowIcon}</span>
           </button>
         </div>
       </div>
