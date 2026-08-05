@@ -38,6 +38,12 @@ export const styles = css`
        already carries its own overflow/ellipsis, so it is the one that yields when
        space runs out — which is the correct thing to sacrifice. */
   }
+  /* Brandmark hard right. NOTE: this rule was deleted once by a range-based edit that
+     replaced everything between ".left,.right" and ".brand" — the logo then packed to
+     the START of its track and floated mid-header on the 480px TTD panel. */
+  .right {
+    justify-content: flex-end;
+  }
   .brand {
     flex: 0 1 auto;
     text-align: center;

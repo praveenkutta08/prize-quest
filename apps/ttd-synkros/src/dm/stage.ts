@@ -31,6 +31,18 @@ export interface StageConfig {
   minRail: number;
   /** Shallowest band that can still carry a touch target plus padding. */
   minBand: number;
+  /**
+   * Share of the canvas width the CONTENT column takes, 0-1. The remainder is the
+   * game column. Currently 0.65 — content two thirds, game one third.
+   *
+   * This used to be an emergent number. `solveStage` derived the rail from the game's
+   * own x coordinate, so "content is 43.8% at 1920 and 40.2% at 1024" was a side
+   * effect of two magic numbers in two presets and could not be read off the config by
+   * anyone. It is stated once, here, and the solver treats it as a CEILING — never a
+   * floor — so a rect the mixer hands back that leaves less room than this still
+   * resolves rather than overlapping the game.
+   */
+  content?: number;
   /** Host chrome the EGM owns (EXIT, SPIN). We lay out around these, never over them. */
   reserved: Record<string, Rect>;
   /** Game rects per stage mode — vendor-confirmable defaults, see DEFAULTS below. */
@@ -64,6 +76,7 @@ export const DM_STAGES: Record<string, StageConfig> = {
     canvas: { w: 1920, h: 1080 },
     minRail: 320,
     minBand: 96,
+    content: 0.65,
     reserved: {
       exit: { x: 1786, y: 24, w: 110, h: 64 },
       spin: { x: 1752, y: 912, w: 132, h: 132 },
@@ -74,11 +87,17 @@ export const DM_STAGES: Record<string, StageConfig> = {
       // strip a real presence at the bottom of the cabinet without the game losing
       // anything a player would notice mid-spin.
       band: { x: 0, y: 0, w: 1920, h: 872 },
-      // CENTRED IN THE RIGHT COLUMN, both axes. The rail is unchanged at 800px: with a
-      // gutter g on each side of the game, rail = canvas - gameW - 2g, so g=40 keeps
-      // 800 exactly. Vertically (1080-585)/2. Equal gutters read as a mounted window;
-      // unequal ones read as a mistake.
-      frame: { x: 840, y: 248, w: 1040, h: 585 },
+      // SQUARE, centred in the 35% game column.
+      //
+      // Content owns 1248 (65%), the game column owns 672 (35%). The square is now
+      // capped by the COLUMN WIDTH rather than by the panel height — 672 less a 24px
+      // gutter on each side — and the bands above and below it are generous (228px)
+      // because the height is no longer the binding constraint.
+      //
+      // The game reads as a mounted window on the right of the display rather than as
+      // the main event. It clears both reserved zones outright: EXIT sits above it and
+      // SPIN below it, so neither host control lands on game pixels.
+      frame: { x: 1272, y: 228, w: 624, h: 624 },
       rail: { x: 768, y: 0, w: 1152, h: 1080 },
       // Big enough to still read as YOUR game from a seated position — a postage
       // stamp reads as "the game stopped", which is the wrong message mid-claim.
@@ -91,13 +110,19 @@ export const DM_STAGES: Record<string, StageConfig> = {
     canvas: { w: 1024, h: 768 },
     minRail: 260,
     minBand: 78,
+    content: 0.65,
     reserved: {
       exit: { x: 924, y: 16, w: 84, h: 48 },
       spin: { x: 904, y: 648, w: 96, h: 96 },
     },
     presets: {
       band: { x: 0, y: 0, w: 1024, h: 600 }, // 168px strip (was 96px)
-      frame: { x: 412, y: 215, w: 600, h: 338 }, // g=12 keeps the rail at 400 exactly
+      // SQUARE, same construction as 1920. Content 666 (65%), game column 358 (35%),
+      // 16px gutter each side leaves a 326px square with 221px bands. This is a SMALL
+      // window — 13.5% of the canvas — which is the honest consequence of a square that
+      // is one third of a 4:3 panel's width. See the takeover note in solveStage: the
+      // share heuristic had to move to keep this classified as a frame.
+      frame: { x: 682, y: 221, w: 326, h: 326 },
       rail: { x: 410, y: 0, w: 614, h: 768 },
       // The claim window. Was pinned to the top-right with 505px of black beneath it —
       // two thirds of the column empty, the game reading as a corner stamp rather than
@@ -159,11 +184,23 @@ export function solveStage(cfg: StageConfig, game: Rect): StageSolution {
   const botH = Math.max(0, c.h - (game.y + game.h));
 
   const railSide: "left" | "right" = leftW >= rightW ? "left" : "right";
-  const railW = Math.max(leftW, rightW);
+  // Free space beside the game, BEFORE the declared split is applied.
+  const freeW = Math.max(leftW, rightW);
+  // The split is a ceiling on that free space. Whatever it does not claim becomes the
+  // gutter between the content column and the game — which is what lets the game be
+  // square and the column be exactly 35% at the same time.
+  const railW = cfg.content != null ? Math.min(freeW, Math.round(c.w * cfg.content)) : freeW;
+  const railX = railSide === "left" ? 0 : c.w - railW;
   const gameShare = (game.w * game.h) / (c.w * c.h);
 
   let mode: StageMode;
-  if (gameShare < 0.12) mode = "takeover";
+  // 0.08, not 0.12. The threshold answers one question — "is the game a THUMBNAIL, or
+  // is it still a window the patron reads as their game?" — and 0.12 was calibrated when
+  // the game column was the majority of the display. A square filling a 35% column is
+  // 13.5% of a 1024x768 panel: a deliberate, centred, bezelled window that happened to
+  // sit a whisker above the old line. Leaving it there meant a few pixels of gutter
+  // could silently flip the whole screen into takeover.
+  if (gameShare < 0.08) mode = "takeover";
   else if (railW >= cfg.minRail)
     mode = topH >= cfg.minBand || botH >= cfg.minBand ? "frame" : "rail";
   else if (botH >= cfg.minBand || topH >= cfg.minBand) mode = "band";
@@ -172,20 +209,28 @@ export function solveStage(cfg: StageConfig, game: Rect): StageSolution {
   const profile: StageSolution["profile"] =
     mode === "band" ? "compact" : c.w >= 1920 ? "expanded" : "standard";
 
-  const rail =
-    railW >= cfg.minRail
-      ? { x: railSide === "left" ? 0 : game.x + game.w, y: 0, w: railW, h: c.h }
-      : null;
+  const rail = railW >= cfg.minRail ? { x: railX, y: 0, w: railW, h: c.h } : null;
 
   // TAKEOVER — the game is a thumbnail in a corner, so the bands would overlap the
   // rail and fragment the screen. The transacting patron gets ONE region instead: the
   // full column beside the thumbnail, which is where the claim flow wants to live.
   if (mode === "takeover") {
-    return { mode, rail: rail ?? full, top: null, bottom: null, full, profile };
+    // The thumbnail case wants EVERY pixel beside the game, not the declared share —
+    // there is no game column left to protect, so the split does not apply.
+    const wide =
+      freeW >= cfg.minRail
+        ? { x: railSide === "left" ? 0 : c.w - freeW, y: 0, w: freeW, h: c.h }
+        : null;
+    return { mode, rail: wide ?? full, top: null, bottom: null, full, profile };
   }
 
+  // The bands span the GAME COLUMN — content-column edge to canvas edge — not the game
+  // rect. Keyed off game.x they would start at the game's own left edge and leave the
+  // gutter bare, so the identity strip would float 184px clear of the column it belongs
+  // to. Keyed off railW it butts against the content column, which is what makes the
+  // 35/65 split legible as a split rather than as three unrelated pieces.
   const spansFull = mode === "band";
-  const bandX = spansFull ? 0 : railSide === "left" ? game.x : 0;
+  const bandX = spansFull ? 0 : railSide === "left" ? railW : 0;
   const bandW = spansFull ? c.w : c.w - railW;
 
   return {

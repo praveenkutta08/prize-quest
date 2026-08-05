@@ -167,7 +167,10 @@ export class DmPromoList extends LitElement {
       height: 100%;
       /* The card is a landscape object; letting it stretch the full column height
          strands both panes in space. Cap it and let the stage centre it. */
-      max-height: 620px;
+      /* Uncapped, matching the prize and order carousels. The 620px cap dated from the
+         840px content column; at 672 it left the card floating in a 1080 column with
+         black above and below. 1024 has always run uncapped (override below). */
+      max-height: none;
       display: flex;
       gap: 0;
       overflow-x: auto;

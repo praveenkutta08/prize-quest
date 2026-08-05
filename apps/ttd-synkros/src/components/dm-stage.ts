@@ -35,6 +35,9 @@ import {
 /** How far the flow may be scaled up to fill a region taller than it needs. */
 const FLOW_MAX_ZOOM = 1.5;
 
+/** Gap between the game rect and the bezel ring that frames it. */
+const BEZEL = 12;
+
 /** Dev-only game art. Production never renders the game — the mixer owns that layer. */
 const GAME_SIM_SRC = "/dm-game.jpg";
 
@@ -121,9 +124,61 @@ export class DmStage extends LitElement {
         height 320ms cubic-bezier(0.22, 1, 0.36, 1);
     }
     @media (prefers-reduced-motion: reduce) {
-      .game {
+      .game,
+      .bezel {
         transition: none;
       }
+    }
+
+    /* ---------- The BEZEL — draws the square, never covers the game ----------
+       We ask the mixer for a square rect, but we do not control what it does with the
+       source inside one. It may letterback a 16:9 game (black bars) or stretch it. If
+       it letterboxes, those bars land on OUR black layer and the square disappears —
+       the window would read as a smaller rectangle floating in nothing, which is the
+       opposite of the intent. So the square is drawn by us, on our own layer, as a ring
+       around the hole. Then the shape is ours and holds whatever the video does.
+
+       EVERY value here is OUTSET: a border on a box inflated past the rect, and outer
+       shadows. No background, no inset shadow, no pseudo-element that reaches inward.
+       One painted pixel inside the rect would sit over game meters, which is a
+       compliance problem, not a cosmetic one. */
+    .bezel {
+      position: absolute;
+      pointer-events: none;
+      border: 1px solid var(--arc-display-deep, #a8862a);
+      border-radius: 6px;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.9),
+        0 24px 58px rgba(0, 0, 0, 0.55),
+        0 0 40px rgba(212, 175, 55, 0.13);
+      transition:
+        left 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        top 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    /* Corner brackets, in the language the rewards plaques already use. Two pseudos
+       cover four corners: each draws one facing PAIR of rules and is then masked away
+       across the middle, so what survives is the ends — the corners. */
+    .bezel::before,
+    .bezel::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      border: 2px solid var(--arc-display, #d4af37);
+    }
+    .bezel::before {
+      border-left-color: transparent;
+      border-right-color: transparent;
+      -webkit-mask-image: linear-gradient(90deg, #000 0 9%, transparent 15% 85%, #000 91%);
+      mask-image: linear-gradient(90deg, #000 0 9%, transparent 15% 85%, #000 91%);
+    }
+    .bezel::after {
+      border-top-color: transparent;
+      border-bottom-color: transparent;
+      -webkit-mask-image: linear-gradient(180deg, #000 0 9%, transparent 15% 85%, #000 91%);
+      mask-image: linear-gradient(180deg, #000 0 9%, transparent 15% 85%, #000 91%);
     }
     .game img {
       width: 100%;
@@ -147,46 +202,22 @@ export class DmStage extends LitElement {
       padding: 3px 9px;
     }
     /* The live tag reads as OUR reassurance, so it sits just outside the game rect. */
-    .livetag {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.78);
-      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
-      font-family: var(--arc-font-mono, monospace);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--arc-cream, #fff);
-      pointer-events: none;
-    }
-    .livetag i {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--arc-danger, #ff4d6d);
-      box-shadow: 0 0 8px var(--arc-danger, #ff4d6d);
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .livetag i {
-        animation: dm-blink 1.6s ease-in-out infinite;
-      }
-    }
-    @keyframes dm-blink {
-      50% {
-        opacity: 0.35;
-      }
-    }
+    /* The "Your game · Live" tag is GONE. It was reassurance for a patron who might
+       think the game had stopped — but the game is now a large square window with a lit
+       bezel a foot from their hands, which says the same thing without a label. A
+       blinking red dot beside a live game is noise, and on a cabinet it competes with
+       real status indicators that DO mean something. */
 
-    /* ---------- identity strip (top band) ---------- */
+    /* ---------- identity strip (bottom band, hard right) ---------- */
     .id {
       display: flex;
       align-items: center;
-      gap: 18px;
+      /* Hard right, in the band UNDER the game. It sat top-left, which put the greeting
+         directly above the window and made the patron's name the first thing on the
+         screen — louder than the promotion they came for. Under the game and to the
+         right it reads as a signature on the session rather than a headline. */
+      justify-content: flex-end;
+      text-align: right;
       width: 100%;
       height: 100%;
       min-width: 0;
@@ -212,6 +243,7 @@ export class DmStage extends LitElement {
     .id__meta {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
       margin-top: 7px;
       font-family: var(--arc-font-mono, monospace);
@@ -230,40 +262,52 @@ export class DmStage extends LitElement {
     .id__pts {
       color: var(--arc-display-bright, #ebd08a);
     }
-    .id__close {
-      margin-left: auto;
-      flex: none;
+    /* CLOSE — the corner, on its own, at cabinet scale.
+       It used to ride the right end of the identity strip, which meant it moved whenever
+       the greeting did and was sized like a form control. It is now positioned from
+       cfg.reserved.exit: the rect the config already reserves for EXIT chrome in the top
+       right. Anchoring to that rect is what keeps it in the corner on any cabinet
+       without a second set of magic numbers — see the note in render(). */
+    .close {
+      position: absolute;
       display: grid;
       place-items: center;
-      width: 44px;
-      height: 44px;
       border-radius: var(--arc-r-md, 8px);
-      border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
-      background: transparent;
+      border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
+      background: var(--arc-bg-glass, rgba(34, 34, 34, 0.6));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
       color: var(--arc-cream, #fff);
-      font-size: 17px;
+      font-family: var(--arc-font-body, sans-serif);
+      font-size: 30px;
+      font-weight: 300;
       line-height: 1;
       cursor: pointer;
+      transition:
+        border-color 180ms ease,
+        background 180ms ease,
+        color 180ms ease;
     }
-    .id__close:hover {
+    .close:hover {
       border-color: var(--arc-display, #d4af37);
       background: var(--arc-glow-soft, rgba(212, 175, 55, 0.16));
+      color: var(--arc-display-bright, #ebd08a);
     }
 
+    /* The band under the game is only 358px wide now, and the SPIN dead-zone claims
+       140 of it, so the greeting has ~200px to live in. At 15px it truncated to
+       "WELCOME, JAMES M…" — a half-name is worse than a small one. */
     :host([data-ff="1024x768"]) .id {
-      padding: 0 16px;
-      gap: 12px;
+      padding: 0 10px;
+      gap: 10px;
     }
     :host([data-ff="1024x768"]) .id__name {
-      font-size: 15px;
+      font-size: 12px;
     }
     :host([data-ff="1024x768"]) .id__pts {
       display: none;
     }
-    :host([data-ff="1024x768"]) .id__close {
-      width: 36px;
-      height: 36px;
-      font-size: 14px;
+    :host([data-ff="1024x768"]) .close {
+      font-size: 23px;
     }
   `;
 
@@ -422,8 +466,9 @@ export class DmStage extends LitElement {
     const g = this._rect;
     const cfg = stageConfig(this.ff);
     const sim = import.meta.env.VITE_PROD_BUILD !== "true";
-    // The live tag hangs off the top-left of the game rect, never inside it.
-    const tagTop = Math.max(8, g.y - 30);
+    // The live tag hangs off the top-left of the game rect, never inside it — and now
+    // clear of the bezel too, which sits BEZEL px further out on every side.
+    const ex = cfg.reserved.exit;
 
     return html`
       <div class="canvas">
@@ -436,11 +481,11 @@ export class DmStage extends LitElement {
         </div>
 
         <div class="region region--top" style=${this.box(s.top)} ?hidden=${!s.top}>
-          ${this.identity ? this.renderIdentity() : nothing}
           <slot name="top"></slot>
         </div>
 
         <div class="region region--bottom" style=${this.box(s.bottom)} ?hidden=${!s.bottom}>
+          ${this.identity ? this.renderIdentity() : nothing}
           <slot name="bottom"></slot>
         </div>
 
@@ -464,10 +509,33 @@ export class DmStage extends LitElement {
                 <span class="game__sim">Simulated · dev only</span>`
             : nothing}
         </div>
+        <!-- The square, drawn on our layer so it survives whatever the mixer does
+             inside the rect. Suppressed in band mode, where the game is full-bleed and
+             a ring would just trace the edge of the screen. -->
         ${s.mode !== "band"
-          ? html`<span class="livetag" style="left:${g.x}px;top:${tagTop}px">
-              <i></i>Your game · Live
-            </span>`
+          ? html`<div
+              class="bezel"
+              style="left:${g.x - BEZEL}px;top:${g.y - BEZEL}px;width:${g.w +
+              BEZEL * 2}px;height:${g.h + BEZEL * 2}px"
+            ></div>`
+          : nothing}
+        <!-- CLOSE, in the top-right corner. Sized and placed from cfg.reserved.exit so
+             it lands in the corner on every cabinet without its own coordinates: a
+             square the height of that rect, flush with its right edge. NOTE for the
+             vendor conversation — this is the rect the config reserves for host EXIT
+             chrome. Our button IS the exit from Tier Rewards, so the two should not
+             both be drawn there; if the cabinet paints its own EXIT, move this. -->
+        ${this.identity
+          ? html`<button
+              class="close"
+              style="left:${ex.x + ex.w - ex.h}px;top:${ex.y}px;width:${ex.h}px;height:${ex.h}px"
+              type="button"
+              aria-label="Close and return to your game"
+              title="Return to game"
+              @click=${this.#close}
+            >
+              ✕
+            </button>`
           : nothing}
 
         <!-- Host chrome the EGM owns. Laid out around, never over. -->
@@ -494,15 +562,6 @@ export class DmStage extends LitElement {
               : nothing}
           </div>
         </div>
-        <button
-          class="id__close"
-          type="button"
-          aria-label="Close and return to your game"
-          title="Return to game"
-          @click=${this.#close}
-        >
-          ✕
-        </button>
       </div>
     `;
   }

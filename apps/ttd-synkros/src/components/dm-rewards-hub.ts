@@ -416,6 +416,9 @@ export class DmRewardsHub extends LitElement {
       gap: 14px;
       padding: 16px 18px;
     }
+    :host-context([data-dm-ff="1024x768"]) .opt__text {
+      min-width: 0;
+    }
     :host-context([data-dm-ff="1024x768"]) .opt__medal {
       width: 50px;
       height: 50px;
@@ -426,6 +429,7 @@ export class DmRewardsHub extends LitElement {
     }
     :host-context([data-dm-ff="1024x768"]) .opt__label {
       font-size: 21px;
+      white-space: nowrap;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__sub {
       font-size: 10.5px;
@@ -443,8 +447,6 @@ export class DmRewardsHub extends LitElement {
       min-width: 58px;
       padding: 7px 10px;
       border-radius: 6px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .opt__count {
       font-size: 28px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__go {

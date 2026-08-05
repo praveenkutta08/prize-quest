@@ -161,9 +161,12 @@ export class DmScreenHead extends LitElement {
     :host-context([data-dm-ff="1024x768"]) .mid svg {
       display: none;
     }
+    /* 11ch was the cap when the content column was 358-412px wide and the campaign
+       name had to yield to the Back pill and the brandmark. At 666 there is room to
+       read it, and a truncated campaign name tells a patron nothing. */
     :host-context([data-dm-ff="1024x768"]) .eyebrow {
       font-size: 12px;
-      max-width: 11ch;
+      max-width: 26ch;
     }
     :host-context([data-dm-ff="1024x768"]) .label {
       font-size: 12px;

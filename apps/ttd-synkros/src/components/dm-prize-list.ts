@@ -220,7 +220,12 @@ export class DmPrizeList extends LitElement {
       flex: 1;
       min-width: 0;
       height: 100%;
-      max-height: 620px;
+      /* Uncapped. This was 620px, set when the content column was 840 wide and the
+         case was tall enough to fill a 1080 column at that cap. At 672 it is not, and
+         the cap left ~400px of dead black under the card. The 1024 profile has always
+         run uncapped (see the override below) — this makes the two agree. ".box" is
+         "flex: 1 1 auto", so the extra height goes to the lit display, not the type. */
+      max-height: none;
       display: flex;
       gap: 18px;
       /* The peek is PADDING, and the case is flex-basis 100% of the resulting content
@@ -384,7 +389,7 @@ export class DmPrizeList extends LitElement {
     }
     .obj {
       display: block;
-      font-size: 128px;
+      font-size: 172px;
       line-height: 1;
       filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.8))
         drop-shadow(0 0 30px var(--arc-display-glow, rgba(212, 175, 55, 0.5)));
@@ -422,7 +427,7 @@ export class DmPrizeList extends LitElement {
     }
     .mirror span {
       display: block;
-      font-size: 128px;
+      font-size: 172px;
       line-height: 1;
       transform-origin: top center;
       transform: translateY(128px) scaleY(-1);
