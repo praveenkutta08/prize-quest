@@ -38,6 +38,29 @@ import { FLOW_DESIGN_WIDTH, FLOW_MIN_WIDTH } from "../dm/stage";
  * Routes whose composition sets showBack:false — the DM header follows the same rule,
  * so Back appears on exactly the steps it appeared on before.
  */
+/**
+ * Header title per route — the TTD screen titles verbatim, read off the compositions in
+ * packages/compositions/src/configs/ttd (confirm.json "Confirm", pin.json "Enter PIN",
+ * address.json "Address", submit.json "Confirm", voucher.json "Your Voucher",
+ * orders.json "Order History").
+ *
+ * "" means "no title", which <dm-screen-head> resolves to the PRODUCT name — and that
+ * is deliberate for /loading and /success: loading.json and success.json both title
+ * themselves "Tier Rewards Promotions", so those two screens carry the gilded title.
+ *
+ * NOTE this is NOT the same list as STEPS below. STEPS labels the progress ring
+ * (Confirm · Verify · Address · Review · Done) and is untouched; the ring and the
+ * header answer different questions and TTD names them differently.
+ */
+const HEAD_TITLE = (p: string): string => {
+  if (p === "/confirm" || p === "/submit") return "Confirm";
+  if (p === "/pin") return "Enter PIN";
+  if (p === "/address") return "Address";
+  if (p.startsWith("/voucher")) return "Your Voucher";
+  if (p === "/orders") return "Order History";
+  return "";
+};
+
 const NO_BACK = (p: string): boolean =>
   p === "/loading" || p === "/address" || p.startsWith("/success") || p.startsWith("/voucher");
 
@@ -539,14 +562,10 @@ export class DmFlowPanel extends LitElement {
     const step = this.step;
     const inRing = step >= 0;
 
-    const name = this.campaign?.name ?? "Tier Rewards";
-    const label = inRing ? STEPS[step].label : "Orders";
-
     return html`
       <div class="root">
         <dm-screen-head
-          .eyebrow=${name}
-          .label=${label}
+          .title=${HEAD_TITLE(this.route)}
           ?noBack=${NO_BACK(this.route)}
         ></dm-screen-head>
 

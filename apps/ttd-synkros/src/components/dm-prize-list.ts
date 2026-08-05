@@ -154,6 +154,30 @@ export class DmPrizeList extends LitElement {
          promotion pushed the host past the region and the rail grew a scrollbar. */
       min-height: 100%;
       max-height: 100%;
+
+      /* ---------------- TYPE SCALE · one knob per form factor ----------------
+         Same construction as <dm-promo-list>: every type and icon size in the case
+         derives from these tokens, so the two DM screens can be kept in step and
+         retuned in one place each rather than in two dozen scattered literals.
+
+         WHY THEY MOVED UP. ".box" is "flex: 1 1 auto" and ".label" is "flex: none",
+         so EVERY spare pixel in an 889px-tall case went to the lit display and none of
+         it to the words. The object was 172px tall above a spec table set at 13.5px —
+         a jeweller's case with the price tag written in fine print. The label block now
+         carries type sized for the distance the case is read from, and the display
+         gives up the height for it; it still has more room than it needs.
+
+         These are the 1920 values. The 1024 set is at the bottom of the sheet. */
+      --dm-fs-plate: 13px;
+      --dm-fs-name: 38px;
+      --dm-fs-lede: 20px;
+      --dm-fs-dt: 12px;
+      --dm-fs-dd: 19px;
+      --dm-fs-take: 23px;
+      --dm-sz-take-svg: 24px;
+      --dm-pad-spec: 13px;
+      --dm-fs-foot: 13px;
+      --dm-fs-empty: 20px;
     }
     *,
     *::before,
@@ -280,11 +304,11 @@ export class DmPrizeList extends LitElement {
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 11px 16px;
+      padding: 15px 20px;
       border-bottom: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
       background: rgba(0, 0, 0, 0.42);
       font-family: var(--arc-font-mono, monospace);
-      font-size: 9.5px;
+      font-size: var(--dm-fs-plate);
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -442,14 +466,14 @@ export class DmPrizeList extends LitElement {
       flex: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 16px 18px 18px;
+      gap: 16px;
+      padding: 24px 26px 26px;
     }
     .name {
       margin: 0;
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 25px;
+      font-size: var(--dm-fs-name);
       line-height: 1.08;
       letter-spacing: 0.01em;
       text-transform: uppercase;
@@ -459,7 +483,7 @@ export class DmPrizeList extends LitElement {
     }
     .lede {
       margin: 0;
-      font-size: 14px;
+      font-size: var(--dm-fs-lede);
       line-height: 1.5;
       color: var(--arc-text-dim, #c0c0c0);
     }
@@ -476,13 +500,13 @@ export class DmPrizeList extends LitElement {
       align-items: baseline;
       justify-content: space-between;
       gap: 14px;
-      padding: 9px 0;
+      padding: var(--dm-pad-spec) 0;
       border-top: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
     }
     .spec dt {
       flex: none;
       font-family: var(--arc-font-mono, monospace);
-      font-size: 9px;
+      font-size: var(--dm-fs-dt);
       font-weight: 700;
       letter-spacing: 0.2em;
       text-transform: uppercase;
@@ -491,7 +515,7 @@ export class DmPrizeList extends LitElement {
     .spec dd {
       margin: 0;
       text-align: right;
-      font-size: 13.5px;
+      font-size: var(--dm-fs-dd);
       line-height: 1.35;
       color: var(--arc-cream, #fff);
     }
@@ -504,9 +528,9 @@ export class DmPrizeList extends LitElement {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
-      padding: 15px 18px;
+      padding: 22px 18px;
       border-radius: 3px;
       cursor: pointer;
       border: 1px solid var(--arc-display-deep, #a8862a);
@@ -519,14 +543,14 @@ export class DmPrizeList extends LitElement {
       color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 16px;
+      font-size: var(--dm-fs-take);
       letter-spacing: 0.1em;
       text-transform: uppercase;
       box-shadow: 0 10px 26px -14px var(--arc-display-glow, rgba(212, 175, 55, 0.5));
     }
     .take svg {
-      width: 17px;
-      height: 17px;
+      width: var(--dm-sz-take-svg);
+      height: var(--dm-sz-take-svg);
       flex: none;
     }
     .take:disabled {
@@ -612,17 +636,30 @@ export class DmPrizeList extends LitElement {
       margin: 0;
       text-align: center;
       font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
+      font-size: var(--dm-fs-foot);
       letter-spacing: 0.14em;
       color: var(--arc-text-mute, #5a5a5a);
     }
     .empty {
       margin: auto;
       color: var(--arc-text-dim, #c0c0c0);
-      font-size: 15px;
+      font-size: var(--dm-fs-empty);
     }
 
     /* ---------------- 1024×768 ---------------- */
+    /* The type scale, re-cut for a 560x636 case. Same proportions as the 1920 set. */
+    :host-context([data-dm-ff="1024x768"]) {
+      --dm-fs-plate: 10.5px;
+      --dm-fs-name: 26px;
+      --dm-fs-lede: 15.5px;
+      --dm-fs-dt: 10.5px;
+      --dm-fs-dd: 15.5px;
+      --dm-fs-take: 18px;
+      --dm-sz-take-svg: 19px;
+      --dm-pad-spec: 9px;
+      --dm-fs-foot: 11px;
+      --dm-fs-empty: 16px;
+    }
     :host-context([data-dm-ff="1024x768"]) .root {
       gap: 10px;
       padding: 14px 14px 12px;
@@ -645,8 +682,7 @@ export class DmPrizeList extends LitElement {
       flex: 0 0 100%;
     }
     :host-context([data-dm-ff="1024x768"]) .plate {
-      padding: 8px 12px;
-      font-size: 8.5px;
+      padding: 10px 14px;
       letter-spacing: 0.18em;
     }
     :host-context([data-dm-ff="1024x768"]) .plinth {
@@ -667,37 +703,23 @@ export class DmPrizeList extends LitElement {
       margin-top: 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .label {
-      gap: 9px;
-      padding: 12px 14px 14px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .name {
-      font-size: 19px;
+      gap: 11px;
+      padding: 14px 16px 16px;
     }
     :host-context([data-dm-ff="1024x768"]) .lede {
-      font-size: 12px;
       line-height: 1.45;
     }
-    :host-context([data-dm-ff="1024x768"]) .spec > div {
-      padding: 7px 0;
-    }
     :host-context([data-dm-ff="1024x768"]) .spec dt {
-      font-size: 8px;
       letter-spacing: 0.16em;
     }
-    :host-context([data-dm-ff="1024x768"]) .spec dd {
-      font-size: 12px;
-    }
     :host-context([data-dm-ff="1024x768"]) .take {
-      padding: 12px 14px;
-      font-size: 14px;
+      padding: 15px 14px;
+      gap: 9px;
     }
     :host-context([data-dm-ff="1024x768"]) .pick {
       width: 38px;
       height: 38px;
       font-size: 18px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .foot {
-      font-size: 9px;
     }
   `;
 
@@ -887,11 +909,13 @@ export class DmPrizeList extends LitElement {
   override render(): TemplateResult {
     const list = this.list;
     const i = Math.min(this.index, Math.max(0, list.length - 1));
-    const name = this.campaign?.name ?? "Your rewards";
+    // Empty, not "Your rewards": an empty title falls back to the product name, which
+    // is exactly what TTD does when no campaign is active.
+    const name = this.campaign?.name ?? "";
 
     return html`
       <div class="root">
-        <dm-screen-head .eyebrow=${name} label="Prizes"></dm-screen-head>
+        <dm-screen-head .title=${name}></dm-screen-head>
 
         ${list.length
           ? html`

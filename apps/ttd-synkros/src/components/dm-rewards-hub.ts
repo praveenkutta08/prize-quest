@@ -113,22 +113,27 @@ export class DmRewardsHub extends LitElement {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 20px;
+      align-items: center;
+      gap: 22px;
     }
     .opt {
       position: relative;
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 30px;
       width: 100%;
       flex: 1 1 0;
-      /* A button has to keep BUTTON proportions. Letting these stretch to fill a
-         1080px column turned them back into the tall tiles the customer rejected —
-         the giveaway is a thin row of content floating in a deep box. Generous for a
-         cabinet touch target, capped before it becomes a card. */
-      min-height: 132px;
-      max-height: 216px;
-      padding: 22px 30px;
+      /* A PLATE HAS A MEASURE. When the content column went to 65% these ran the full
+         1104px at 216 tall — 5.1:1, which is a rail, not a button — with the lockup
+         jammed into the left 45% and the count floating at 88%. Two separate faults,
+         and fixing either one alone makes the other worse: cap the width and the
+         lockup swims vertically; grow the height and the horizontal void doubles.
+         So all three move together — measure, depth, and the size of what is in it.
+         880x288 is 3.06:1, which reads as a plaque you press. */
+      min-height: 190px;
+      max-height: 288px;
+      max-width: 880px;
+      padding: 30px 38px;
       overflow: hidden;
       cursor: pointer;
       text-align: left;
@@ -286,13 +291,13 @@ export class DmRewardsHub extends LitElement {
       flex: none;
       display: grid;
       place-items: center;
-      width: 68px;
-      height: 68px;
-      border-radius: 4px;
+      width: 176px;
+      height: 176px;
+      border-radius: 6px;
     }
     .opt__medal svg {
-      width: 34px;
-      height: 34px;
+      width: 84px;
+      height: 84px;
     }
     .opt--primary .opt__medal {
       border: 1px solid rgba(0, 0, 0, 0.34);
@@ -313,12 +318,27 @@ export class DmRewardsHub extends LitElement {
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      justify-content: center;
+      gap: 10px;
+      /* Full height, with a rule down its trailing edge. The slack in this row has to
+         go SOMEWHERE — .opt__text is the flex child that absorbs it — and unbounded it
+         opened 600px of blank between "PRIZES READY TO COLLECT" and the count, which
+         split a pair that belongs together. Closing it against the rule turns the same
+         gap into a FIELD: the label side and the value side, divided, the way a brass
+         signage plate is set. Nothing moved; the emptiness just acquired a reason. */
+      align-self: stretch;
+      padding-right: 30px;
+    }
+    .opt--primary .opt__text {
+      border-right: 1px solid rgba(0, 0, 0, 0.22);
+    }
+    .opt--ghost .opt__text {
+      border-right: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
     }
     .opt__label {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 30px;
+      font-size: 40px;
       line-height: 1;
       letter-spacing: 0.02em;
       text-transform: uppercase;
@@ -328,7 +348,7 @@ export class DmRewardsHub extends LitElement {
        that survives a bright casino floor. */
     .opt__sub {
       font-family: var(--arc-font-mono, monospace);
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -348,12 +368,12 @@ export class DmRewardsHub extends LitElement {
       flex: none;
       display: grid;
       place-items: center;
-      min-width: 76px;
-      padding: 10px 14px;
-      border-radius: 8px;
+      min-width: 104px;
+      padding: 14px 18px;
+      border-radius: 9px;
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 40px;
+      font-size: 56px;
       line-height: 1;
       letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
@@ -375,8 +395,8 @@ export class DmRewardsHub extends LitElement {
       flex: none;
       display: grid;
       place-items: center;
-      width: 44px;
-      height: 44px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
     }
     .opt__go svg {
@@ -411,28 +431,33 @@ export class DmRewardsHub extends LitElement {
       gap: 14px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt {
-      min-height: 96px;
-      max-height: 172px;
-      gap: 14px;
-      padding: 16px 18px;
+      min-height: 130px;
+      max-height: 200px;
+      max-width: 560px;
+      gap: 20px;
+      padding: 20px 24px;
+    }
+    :host-context([data-dm-ff="1024x768"]) .opt__text {
+      padding-right: 20px;
+      gap: 7px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__text {
       min-width: 0;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__medal {
-      width: 50px;
-      height: 50px;
+      width: 116px;
+      height: 116px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__medal svg {
-      width: 25px;
-      height: 25px;
+      width: 56px;
+      height: 56px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__label {
-      font-size: 21px;
+      font-size: 27px;
       white-space: nowrap;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__sub {
-      font-size: 10.5px;
+      font-size: 12px;
       letter-spacing: 0.04em;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__frame {
@@ -444,18 +469,18 @@ export class DmRewardsHub extends LitElement {
       height: 13px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__count {
-      min-width: 58px;
-      padding: 7px 10px;
-      border-radius: 6px;
-      font-size: 28px;
+      min-width: 72px;
+      padding: 9px 12px;
+      border-radius: 7px;
+      font-size: 36px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__go {
-      width: 32px;
-      height: 32px;
+      width: 42px;
+      height: 42px;
     }
     :host-context([data-dm-ff="1024x768"]) .opt__go svg {
-      width: 15px;
-      height: 15px;
+      width: 19px;
+      height: 19px;
     }
   `;
 

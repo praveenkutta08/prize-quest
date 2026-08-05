@@ -99,6 +99,39 @@ export class DmPromoList extends LitElement {
          promotion pushed the host past the region and the rail grew a scrollbar. */
       min-height: 100%;
       max-height: 100%;
+
+      /* ---------------- TYPE SCALE · one knob per form factor ----------------
+         Every type and icon size in this card derives from these tokens. They used to
+         be a couple of dozen separate px literals spread across the sheet plus a second
+         set in the 1024 block — which is how the two profiles drifted. Tuning
+         legibility on a cabinet is now an edit in ONE place per screen.
+
+         WHY THEY MOVED UP. The card is 1166x889 inside the 1248px rail and was
+         carrying roughly 350px of content in an 830px detail pane. ".body" is
+         "justify-content: space-between", so the surplus became VOIDS between the three
+         blocks rather than readable type: the screen read as under-filled while the
+         copy was simultaneously too small. An EGM main screen is read from a seated
+         position at arm's length — 15px body copy was desk-distance type on a
+         cabinet-distance panel.
+
+         These are the 1920 values. The 1024 set is the same scale re-cut for a 556x636
+         STACKED card, where the detail pane is the part that can outgrow the card; it
+         lives with the rest of that profile at the bottom of the sheet. Both are sized
+         so the longest campaign in the catalogue still fits without scrolling. */
+      --dm-fs-name: 45px;
+      --dm-fs-pill: 13px;
+      --dm-sz-pill-svg: 17px;
+      --dm-fs-cta: 27px;
+      --dm-sz-cta-svg: 27px;
+      --dm-sz-icon: 128px;
+      --dm-sz-icon-svg: 70px;
+      --dm-fs-sect: 14px;
+      --dm-fs-body: 22px;
+      --dm-lh-body: 1.5;
+      --dm-sz-step: 52px;
+      --dm-sz-step-svg: 27px;
+      --dm-gap-step: 18px;
+      --dm-fs-foot: 14px;
     }
     *,
     *::before,
@@ -237,8 +270,8 @@ export class DmPromoList extends LitElement {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      padding: 30px 24px;
+      gap: 18px;
+      padding: 34px 28px;
       text-align: center;
       overflow: hidden;
       background:
@@ -328,8 +361,8 @@ export class DmPromoList extends LitElement {
     .art__icon {
       display: grid;
       place-items: center;
-      width: 96px;
-      height: 96px;
+      width: var(--dm-sz-icon);
+      height: var(--dm-sz-icon);
       border-radius: 50%;
       color: var(--arc-display, #d4af37);
       background: radial-gradient(
@@ -346,13 +379,13 @@ export class DmPromoList extends LitElement {
       filter: none;
     }
     .art__icon svg {
-      width: 52px;
-      height: 52px;
+      width: var(--dm-sz-icon-svg);
+      height: var(--dm-sz-icon-svg);
     }
     .art__name {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 30px;
+      font-size: var(--dm-fs-name);
       line-height: 1.04;
       letter-spacing: 0.02em;
       text-transform: uppercase;
@@ -365,12 +398,12 @@ export class DmPromoList extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 6px 14px;
+      padding: 7px 16px;
       border-radius: 999px;
       border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
       background: var(--arc-surface-0, rgba(0, 0, 0, 0.6));
       font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
+      font-size: var(--dm-fs-pill);
       font-weight: 700;
       letter-spacing: 0.16em;
       text-transform: uppercase;
@@ -378,8 +411,8 @@ export class DmPromoList extends LitElement {
       white-space: nowrap;
     }
     .art__pill svg {
-      width: 13px;
-      height: 13px;
+      width: var(--dm-sz-pill-svg);
+      height: var(--dm-sz-pill-svg);
     }
     .card--locked .art__pill {
       color: var(--arc-text-dim, #c0c0c0);
@@ -389,12 +422,14 @@ export class DmPromoList extends LitElement {
     .art__cta {
       pointer-events: none;
       width: 100%;
-      max-width: 240px;
+      /* Tracks the type: a 240px cap sized for 19px copy squeezed 27px copy into a
+         pill that no longer read as the primary action on the card. */
+      max-width: 340px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 9px;
-      padding: 14px 20px;
+      gap: 11px;
+      padding: 20px 28px;
       border-radius: 10px;
       border: 1px solid var(--arc-display, #d4af37);
       background: linear-gradient(
@@ -406,7 +441,7 @@ export class DmPromoList extends LitElement {
       color: var(--arc-on-tint, rgba(0, 0, 0, 0.88));
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 19px;
+      font-size: var(--dm-fs-cta);
       letter-spacing: 0.12em;
       text-transform: uppercase;
       box-shadow:
@@ -414,8 +449,8 @@ export class DmPromoList extends LitElement {
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
     .art__cta svg {
-      width: 19px;
-      height: 19px;
+      width: var(--dm-sz-cta-svg);
+      height: var(--dm-sz-cta-svg);
     }
     .art__cta--locked {
       background: var(--arc-surface-0, rgba(0, 0, 0, 0.7));
@@ -434,7 +469,7 @@ export class DmPromoList extends LitElement {
          middle — on a cabinet the slack reads as an unfinished screen. */
       justify-content: space-between;
       gap: 18px;
-      padding: 30px 28px;
+      padding: 38px 36px;
       overflow-y: auto;
       scrollbar-width: none;
     }
@@ -443,34 +478,35 @@ export class DmPromoList extends LitElement {
     }
     /* A hairline above each block turns three paragraphs into a spec sheet. */
     .body section + section {
-      padding-top: 22px;
+      padding-top: 28px;
       border-top: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.12));
     }
     .sec__t {
       font-family: var(--arc-font-mono, monospace);
-      font-size: 11px;
+      font-size: var(--dm-fs-sect);
       font-weight: 700;
       letter-spacing: 0.26em;
       text-transform: uppercase;
       color: var(--arc-display, #d4af37);
-      margin-bottom: 11px;
+      margin-bottom: 15px;
     }
-    /* 15px, not 13: an EGM is read at arm's length, not desk distance. */
+    /* An EGM is read at arm's length from a seated position, not at desk distance —
+       see the type-scale note on :host for why this is no longer 15px. */
     .sec__p {
-      font-size: 15px;
-      line-height: 1.55;
+      font-size: var(--dm-fs-body);
+      line-height: var(--dm-lh-body);
       color: var(--arc-text-dim, #c0c0c0);
     }
     .steps {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: var(--dm-gap-step);
     }
     .step {
       display: flex;
       align-items: center;
-      gap: 13px;
-      font-size: 15px;
+      gap: 19px;
+      font-size: var(--dm-fs-body);
       line-height: 1.3;
       color: var(--arc-cream, #fff);
     }
@@ -478,16 +514,16 @@ export class DmPromoList extends LitElement {
       flex: none;
       display: grid;
       place-items: center;
-      width: 36px;
-      height: 36px;
+      width: var(--dm-sz-step);
+      height: var(--dm-sz-step);
       border-radius: 8px;
       background: var(--arc-glow-soft, rgba(212, 175, 55, 0.16));
       border: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
       color: var(--arc-display, #d4af37);
     }
     .step span svg {
-      width: 19px;
-      height: 19px;
+      width: var(--dm-sz-step-svg);
+      height: var(--dm-sz-step-svg);
     }
     .card--locked .step span {
       color: var(--arc-text-faint, #8a8a8a);
@@ -527,13 +563,13 @@ export class DmPromoList extends LitElement {
     .foot {
       flex: none;
       text-align: center;
-      font-size: 11px;
+      font-size: var(--dm-fs-foot);
       color: var(--arc-text-mute, #5a5a5a);
     }
     .empty {
       margin: auto;
       text-align: center;
-      font-size: 14px;
+      font-size: var(--dm-fs-body);
       line-height: 1.5;
       color: var(--arc-text-dim, #c0c0c0);
       max-width: 34ch;
@@ -559,6 +595,26 @@ export class DmPromoList extends LitElement {
     }
 
     /* ---------- 1024×768 · the rail is ~400px: stack the two panes ---------- */
+    /* The type scale, re-cut. Same proportions as the 1920 set, sized for a 556x636
+       STACKED card where the detail pane — not the card — is what scrolls. Every
+       size below is a token, so this block and the :host block are the only two
+       places type is declared. */
+    :host-context([data-dm-ff="1024x768"]) {
+      --dm-fs-name: 28px;
+      --dm-fs-pill: 11px;
+      --dm-sz-pill-svg: 14px;
+      --dm-fs-cta: 18px;
+      --dm-sz-cta-svg: 18px;
+      --dm-sz-icon: 64px;
+      --dm-sz-icon-svg: 34px;
+      --dm-fs-sect: 11.5px;
+      --dm-fs-body: 16px;
+      --dm-lh-body: 1.4;
+      --dm-sz-step: 32px;
+      --dm-sz-step-svg: 17px;
+      --dm-gap-step: 11px;
+      --dm-fs-foot: 11px;
+    }
     :host-context([data-dm-ff="1024x768"]) .root {
       gap: 10px;
       padding: 14px 14px 12px;
@@ -581,7 +637,7 @@ export class DmPromoList extends LitElement {
     }
     :host-context([data-dm-ff="1024x768"]) .art {
       flex: none;
-      gap: 9px;
+      gap: 7px;
       padding: 14px 14px 16px;
       border-right: none;
       border-bottom: 1px solid var(--arc-hairline-2, rgba(212, 175, 55, 0.35));
@@ -590,33 +646,22 @@ export class DmPromoList extends LitElement {
       border-bottom-color: var(--arc-hairline, rgba(192, 192, 192, 0.18));
     }
     :host-context([data-dm-ff="1024x768"]) .art {
-      padding: 16px 14px 18px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .art__icon {
-      width: 62px;
-      height: 62px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .art__icon svg {
-      width: 32px;
-      height: 32px;
+      padding: 13px 14px 15px;
     }
     :host-context([data-dm-ff="1024x768"]) .art__orn {
       width: 62%;
     }
-    :host-context([data-dm-ff="1024x768"]) .art__name {
-      font-size: 21px;
-    }
     :host-context([data-dm-ff="1024x768"]) .art__pill {
-      font-size: 9px;
-      padding: 5px 11px;
+      padding: 5px 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .art__cta {
-      padding: 11px 16px;
-      font-size: 14px;
+      max-width: 250px;
+      padding: 11px 18px;
+      gap: 9px;
     }
     :host-context([data-dm-ff="1024x768"]) .body {
-      gap: 14px;
-      padding: 16px 16px 18px;
+      gap: 12px;
+      padding: 14px 16px 14px;
       /* Stacked at 1024 the detail pane is the part that can outgrow the card. Let IT
          scroll rather than the card clipping the PRIZES block off the bottom or the
          whole screen growing. Bar hidden — this is a touch surface. */
@@ -628,27 +673,17 @@ export class DmPromoList extends LitElement {
       display: none;
     }
     :host-context([data-dm-ff="1024x768"]) .body section + section {
-      padding-top: 13px;
+      padding-top: 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .sec__t {
-      font-size: 9px;
-      margin-bottom: 6px;
+      letter-spacing: 0.2em;
+      margin-bottom: 5px;
     }
-    :host-context([data-dm-ff="1024x768"]) .sec__p,
     :host-context([data-dm-ff="1024x768"]) .step {
-      font-size: 12px;
+      gap: 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .step span {
-      width: 27px;
-      height: 27px;
       border-radius: 7px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .step span svg {
-      width: 14px;
-      height: 14px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .foot {
-      font-size: 9px;
     }
   `;
 
@@ -721,7 +756,10 @@ export class DmPromoList extends LitElement {
 
     return html`
       <div class="root">
-        <dm-screen-head eyebrow="Tier Rewards" label="Promotions"></dm-screen-head>
+        <!-- No title: it falls back to the PRODUCT name, which is the one case that
+             earns the trophy and the gold last word — "TIER REWARDS PROMOTIONS", the
+             same title the TTD promotions screen carries. -->
+        <dm-screen-head></dm-screen-head>
 
         ${list.length
           ? html`

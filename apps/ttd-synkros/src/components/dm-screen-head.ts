@@ -9,14 +9,29 @@
 //
 // The contract every screen in the window keeps:
 //
-//   [ ‹ BACK ]        [ trophy ]  EYEBROW  LABEL        [ BRANDMARK ]
+//   [ ‹ BACK ]              ONE TITLE               [ BRANDMARK ]
 //   ────────────────────────── hairline ──────────────────────────
 //
 //   · Back pill hard left, always the same size, at the same y.
-//   · Eyebrow (the campaign, when there is one) then the screen LABEL, optically
-//     centred. The label never yields to the eyebrow — a header reading
-//     "SUNDAY SLOT..." tells a patron nothing about where they are.
+//   · ONE title, optically centred.
 //   · Brandmark hard right on its dark plate.
+//
+// TITLE RULE — ported verbatim from <pq-screen-header> (packages/widgets), which is
+// what the TTD and iVIEW panels render. The DM screens are the same product on a
+// different panel, so the two must not title themselves differently:
+//
+//   · When the title IS the product name, a gold trophy leads it and the LAST WORD
+//     renders in gold — "TIER REWARDS *PROMOTIONS*". That treatment marks the
+//     promotions surface specifically.
+//   · Every other title — a campaign name, or a step name like "Enter PIN" — renders
+//     PLAIN. No trophy, no gold.
+//
+// This replaced an `eyebrow` + `label` pair that always drew the trophy and always
+// gilded the label, so the prize screen read "SUNDAY SLOT SPRINT PRIZES" against TTD's
+// "SUNDAY SLOT SPRINT". A note here used to argue FOR that label, on the grounds that a
+// bare campaign name does not say where you are. That is a fair point and it lost on
+// purpose: consistency with the panel the patron already knows beats a wayfinding word
+// that only exists on one of the two surfaces.
 //
 // `noBack` HIDES the pill but keeps its footprint, so the centred title does not shift
 // sideways between a step that can go back and one that cannot.
@@ -24,15 +39,11 @@
 // Host chrome (NOT a @pq widget), themed by the tenant's --arc-* tokens.
 import { LitElement, css, html, nothing, type TemplateResult } from "lit";
 
-const trophyIcon = html`<svg
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="1.6"
-  aria-hidden="true"
->
-  <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z" />
-  <path d="M6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3M9 15h6M12 13v2M8 20h8" />
+/** The filled mark <pq-screen-header> uses — same glyph, so the two surfaces match. */
+const trophyIcon = html`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path
+    d="M6 3h12v2h3v3a4 4 0 0 1-4 4h-.35A6 6 0 0 1 13 15.9V18h3v2H8v-2h3v-2.1A6 6 0 0 1 7.35 12H7a4 4 0 0 1-4-4V5h3V3Zm-1 4v1a2 2 0 0 0 2 2V7H5Zm14 0h-2v3a2 2 0 0 0 2-2V7Z"
+  />
 </svg>`;
 
 export class DmScreenHead extends LitElement {
@@ -40,6 +51,19 @@ export class DmScreenHead extends LitElement {
     :host {
       display: block;
       flex: none;
+
+      /* TYPE SCALE — one knob per form factor, matching the pattern the two DM list
+         screens now use. The header sits directly above cards whose body copy is 22px
+         at 1920; at 17px the screen LABEL — the one element that tells a patron where
+         they are — had become the quietest type on the screen rather than the loudest.
+         The bump is modest on purpose: this is chrome, and it must not out-shout the
+         promotion or the prize it introduces. */
+      --dm-fs-head: 21px;
+      --dm-fs-back: 12px;
+      --dm-sz-mid: 24px;
+      --dm-sz-ico: 22px;
+      --dm-fs-wordmark: 17px;
+      --dm-sz-mark: 30px;
     }
     *,
     *::before,
@@ -58,13 +82,13 @@ export class DmScreenHead extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 9px 15px;
+      padding: 10px 17px;
       border-radius: 999px;
       border: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.2));
       background: var(--arc-surface-0, rgba(0, 0, 0, 0.6));
       color: var(--arc-text-dim, #c0c0c0);
       font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
+      font-size: var(--dm-fs-back);
       font-weight: 700;
       letter-spacing: 0.16em;
       text-transform: uppercase;
@@ -88,37 +112,50 @@ export class DmScreenHead extends LitElement {
       min-width: 0;
       /* Pinned so a taller or shorter centre block cannot nudge the row's vertical
          centring — that is exactly how the 1px drift showed up. */
-      height: 20px;
+      height: var(--dm-sz-mid);
     }
-    .mid svg {
-      width: 20px;
-      height: 20px;
-      flex: none;
-      color: var(--arc-display, #d4af37);
-    }
-    .eyebrow {
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
+    /* Mono, 700, wide tracking — the face and rhythm <pq-screen-header> sets, at the
+       size this panel needs rather than the 9px a 640x240 TTD strip needs. */
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      min-width: 0;
+      font-family: var(--arc-font-mono, monospace);
+      font-weight: 700;
+      font-size: var(--dm-fs-head);
       line-height: 1;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--arc-cream, #fff);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 26ch;
     }
-    .label {
+    .brand-ico {
       flex: none;
-      font-family: var(--arc-font-display, sans-serif);
-      font-weight: var(--arc-font-display-weight, 900);
-      font-size: 17px;
-      line-height: 1;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      display: inline-grid;
+      place-items: center;
+      width: var(--dm-sz-ico);
+      height: var(--dm-sz-ico);
       color: var(--arc-display, #d4af37);
-      white-space: nowrap;
+      filter: drop-shadow(0 0 4px var(--arc-display-glow, rgba(212, 175, 55, 0.5)));
+    }
+    .brand-ico svg {
+      width: 100%;
+      height: 100%;
+    }
+    /* Gilded by a clipped gradient, not a flat fill — same as the TTD title. */
+    .brand-gold {
+      background: linear-gradient(
+        180deg,
+        var(--arc-display-bright, #ebd08a),
+        var(--arc-display, #d4af37) 60%,
+        var(--arc-display-deep, #a8862a)
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .mark {
       flex: none;
@@ -131,14 +168,14 @@ export class DmScreenHead extends LitElement {
     }
     .mark img {
       display: block;
-      height: 26px;
+      height: var(--dm-sz-mark);
       max-width: 128px;
       object-fit: contain;
     }
     .wordmark {
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 14px;
+      font-size: var(--dm-fs-wordmark);
       line-height: 1;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -146,55 +183,57 @@ export class DmScreenHead extends LitElement {
     }
 
     /* ---------------- 1024x768 ---------------- */
+    :host-context([data-dm-ff="1024x768"]) {
+      --dm-fs-head: 14px;
+      --dm-fs-back: 10px;
+      --dm-sz-mid: 17px;
+      --dm-sz-ico: 15px;
+      --dm-fs-wordmark: 12px;
+      --dm-sz-mark: 22px;
+    }
     :host-context([data-dm-ff="1024x768"]) .head {
       gap: 8px;
       padding-bottom: 10px;
     }
     :host-context([data-dm-ff="1024x768"]) .back {
-      padding: 7px 11px;
-      font-size: 9px;
+      padding: 7px 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .mid {
       gap: 7px;
-      height: 15px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .mid svg {
-      display: none;
-    }
-    /* 11ch was the cap when the content column was 358-412px wide and the campaign
-       name had to yield to the Back pill and the brandmark. At 666 there is room to
-       read it, and a truncated campaign name tells a patron nothing. */
-    :host-context([data-dm-ff="1024x768"]) .eyebrow {
-      font-size: 12px;
-      max-width: 26ch;
-    }
-    :host-context([data-dm-ff="1024x768"]) .label {
-      font-size: 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .mark img {
-      height: 20px;
       max-width: 96px;
     }
   `;
 
   static override properties = {
-    eyebrow: { type: String },
-    label: { type: String },
+    title: { type: String },
     noBack: { type: Boolean },
     logoBroken: { state: true },
   };
 
-  declare eyebrow: string;
-  declare label: string;
+  // NB: `title` shadows HTMLElement.title, so it must stay a plain `string` — the same
+  // caveat <pq-screen-header> carries. Callers bind it as a PROPERTY (.title=) so it
+  // never lands in the attribute and never becomes a browser tooltip.
+  declare title: string;
   declare noBack: boolean;
   declare logoBroken: boolean;
 
   constructor() {
     super();
-    this.eyebrow = "";
-    this.label = "";
+    this.title = "";
     this.noBack = false;
     this.logoBroken = false;
+  }
+
+  /** The PRODUCT name, published by the host before boot. */
+  private get brand(): string {
+    return document.documentElement.dataset.pqProductName ?? "Tier Rewards Promotions";
+  }
+
+  /** An empty title falls back to the product name — which is what gilds it. */
+  private get displayTitle(): string {
+    return this.title || this.brand;
   }
 
   #back = (): void => {
@@ -213,14 +252,24 @@ export class DmScreenHead extends LitElement {
         >
           ‹ Back
         </button>
-        <div class="mid">
-          ${trophyIcon}
-          ${this.eyebrow ? html`<span class="eyebrow">${this.eyebrow}</span>` : nothing}
-          ${this.label ? html`<span class="label">${this.label}</span>` : nothing}
-        </div>
+        <div class="mid"><span class="brand">${this.renderTitle()}</span></div>
         ${this.renderMark()}
       </div>
     `;
+  }
+
+  /**
+   * Trophy + gold last word when the title IS the product name; plain otherwise.
+   * Lifted from <pq-screen-header>.renderTitle so the two cannot drift.
+   */
+  private renderTitle(): TemplateResult {
+    const title = this.displayTitle;
+    if (title !== this.brand) return html`${title}`;
+    const words = title.trim().split(/\s+/);
+    const last = words.pop() ?? "";
+    return html`<span class="brand-ico">${trophyIcon}</span>${words.length
+        ? html`<span>${words.join(" ")}</span>`
+        : nothing}<span class="brand-gold">${last}</span>`;
   }
 
   /** The product mark — reads <html data-pq-product-*>; degrades to a wordmark. */

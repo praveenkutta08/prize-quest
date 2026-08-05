@@ -94,6 +94,32 @@ export class DmOrderList extends LitElement {
          promotion pushed the host past the region and the rail grew a scrollbar. */
       min-height: 100%;
       max-height: 100%;
+
+      /* ---------------- TYPE SCALE · one knob per form factor ----------------
+         The same construction, and the same values, as <dm-prize-list>: an order card
+         IS a prize card after the fact, and the two sit one tap apart. If they are
+         sized differently the patron reads it as two different products.
+
+         WHY THEY MOVED UP. Identical cause to the prize case — ".box" is "flex: 1" and
+         ".label" is "flex: none", so the whole surplus of an 889px-tall case went to
+         the lit display and none of it to the words. A patron checking where their
+         order is was reading a tracking number at 12px from a seated position.
+
+         ONE DIFFERENCE from the prize card: this label carries up to FIVE spec rows
+         (order no, claimed, status, tracking, won with) and no Collect button, so it is
+         the taller of the two blocks. The 1024 values are set from that worst case —
+         a shipped order with a tracking number and a campaign name.
+
+         These are the 1920 values; the 1024 set is at the bottom of the sheet. */
+      --dm-fs-plate: 13px;
+      --dm-fs-name: 38px;
+      --dm-fs-lede: 20px;
+      --dm-fs-dt: 12px;
+      --dm-fs-dd: 19px;
+      --dm-fs-dd-mono: 17px;
+      --dm-pad-spec: 13px;
+      --dm-fs-foot: 13px;
+      --dm-fs-empty: 20px;
     }
     *,
     *::before,
@@ -209,11 +235,11 @@ export class DmOrderList extends LitElement {
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 11px 16px;
+      padding: 15px 20px;
       border-bottom: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
       background: rgba(0, 0, 0, 0.42);
       font-family: var(--arc-font-mono, monospace);
-      font-size: 9.5px;
+      font-size: var(--dm-fs-plate);
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -228,8 +254,8 @@ export class DmOrderList extends LitElement {
       flex: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
+      gap: 7px;
+      padding: 5px 12px;
       border-radius: 999px;
       white-space: nowrap;
       letter-spacing: 0.16em;
@@ -368,14 +394,14 @@ export class DmOrderList extends LitElement {
       flex: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 16px 18px 18px;
+      gap: 16px;
+      padding: 24px 26px 26px;
     }
     .name {
       margin: 0;
       font-family: var(--arc-font-display, sans-serif);
       font-weight: var(--arc-font-display-weight, 900);
-      font-size: 25px;
+      font-size: var(--dm-fs-name);
       line-height: 1.08;
       letter-spacing: 0.01em;
       text-transform: uppercase;
@@ -386,7 +412,7 @@ export class DmOrderList extends LitElement {
     }
     .lede {
       margin: 0;
-      font-size: 14px;
+      font-size: var(--dm-fs-lede);
       line-height: 1.5;
       color: var(--arc-text-dim, #c0c0c0);
     }
@@ -400,13 +426,13 @@ export class DmOrderList extends LitElement {
       align-items: baseline;
       justify-content: space-between;
       gap: 14px;
-      padding: 9px 0;
+      padding: var(--dm-pad-spec) 0;
       border-top: 1px solid var(--arc-hairline, rgba(192, 192, 192, 0.18));
     }
     .spec dt {
       flex: none;
       font-family: var(--arc-font-mono, monospace);
-      font-size: 9px;
+      font-size: var(--dm-fs-dt);
       font-weight: 700;
       letter-spacing: 0.2em;
       text-transform: uppercase;
@@ -415,7 +441,7 @@ export class DmOrderList extends LitElement {
     .spec dd {
       margin: 0;
       text-align: right;
-      font-size: 13.5px;
+      font-size: var(--dm-fs-dd);
       line-height: 1.35;
       color: var(--arc-cream, #fff);
       /* Confirmation numbers are long single tokens; let them break rather than
@@ -424,7 +450,7 @@ export class DmOrderList extends LitElement {
     }
     .spec dd.mono {
       font-family: var(--arc-font-mono, monospace);
-      font-size: 12px;
+      font-size: var(--dm-fs-dd-mono);
       letter-spacing: 0.04em;
     }
 
@@ -470,18 +496,31 @@ export class DmOrderList extends LitElement {
       margin: 0;
       text-align: center;
       font-family: var(--arc-font-mono, monospace);
-      font-size: 10px;
+      font-size: var(--dm-fs-foot);
       letter-spacing: 0.14em;
       color: var(--arc-text-mute, #5a5a5a);
     }
     .empty {
       margin: auto;
       color: var(--arc-text-dim, #c0c0c0);
-      font-size: 15px;
+      font-size: var(--dm-fs-empty);
       text-align: center;
     }
 
     /* ---------------- 1024x768 ---------------- */
+    /* Re-cut for the stacked 560x636 case. Matches <dm-prize-list> exactly, which is
+       the point: the two cases must not read as two different components. */
+    :host-context([data-dm-ff="1024x768"]) {
+      --dm-fs-plate: 10.5px;
+      --dm-fs-name: 26px;
+      --dm-fs-lede: 15.5px;
+      --dm-fs-dt: 10.5px;
+      --dm-fs-dd: 15.5px;
+      --dm-fs-dd-mono: 14px;
+      --dm-pad-spec: 9px;
+      --dm-fs-foot: 11px;
+      --dm-fs-empty: 16px;
+    }
     :host-context([data-dm-ff="1024x768"]) .root {
       gap: 10px;
       padding: 14px 14px 12px;
@@ -500,12 +539,11 @@ export class DmOrderList extends LitElement {
       padding: 0;
     }
     :host-context([data-dm-ff="1024x768"]) .plate {
-      padding: 8px 10px;
-      font-size: 8px;
+      padding: 10px 12px;
       letter-spacing: 0.14em;
     }
     :host-context([data-dm-ff="1024x768"]) .badge {
-      padding: 3px 8px;
+      padding: 4px 9px;
       letter-spacing: 0.1em;
     }
     :host-context([data-dm-ff="1024x768"]) .plinth {
@@ -526,36 +564,19 @@ export class DmOrderList extends LitElement {
       margin-top: 12px;
     }
     :host-context([data-dm-ff="1024x768"]) .label {
-      gap: 9px;
-      padding: 12px 14px 14px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .name {
-      font-size: 19px;
+      gap: 11px;
+      padding: 14px 16px 16px;
     }
     :host-context([data-dm-ff="1024x768"]) .lede {
-      font-size: 12px;
       line-height: 1.45;
     }
-    :host-context([data-dm-ff="1024x768"]) .spec > div {
-      padding: 7px 0;
-    }
     :host-context([data-dm-ff="1024x768"]) .spec dt {
-      font-size: 8px;
       letter-spacing: 0.16em;
-    }
-    :host-context([data-dm-ff="1024x768"]) .spec dd {
-      font-size: 12px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .spec dd.mono {
-      font-size: 11px;
     }
     :host-context([data-dm-ff="1024x768"]) .pick {
       width: 38px;
       height: 38px;
       font-size: 18px;
-    }
-    :host-context([data-dm-ff="1024x768"]) .foot {
-      font-size: 9px;
     }
   `;
 
@@ -690,9 +711,9 @@ export class DmOrderList extends LitElement {
 
     return html`
       <div class="root">
-        <!-- No eyebrow: a prize screen needs the campaign name for context, but order
-             history is self-describing. -->
-        <dm-screen-head label="Order history"></dm-screen-head>
+        <!-- Plain, no trophy — "ORDER HISTORY" is what orders.json titles the TTD
+             screen with, and it is not the product name, so it is not gilded. -->
+        <dm-screen-head .title=${"Order History"}></dm-screen-head>
 
         ${list.length
           ? html`
